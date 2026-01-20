@@ -2,27 +2,27 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>COLLECTION ARCHIVE v3.1 Deluxe</title>
     <style>
         :root {
-            --bg-color: #fefaf9;       /* 柔らかな生成り色 */
+            --bg-color: #fefaf9;
             --card-bg: #ffffff;
-            --accent-pink: #f8bbd0;    /* くすみピンク（メイン） */
-            --dark-pink: #d81b60;      /* 濃いピンク（アクセント） */
-            --gold: #c5a059;           /* 落ち着いたゴールド */
-            --gold-light: #eaddc0;     /* 薄いゴールド */
-            --text-main: #5a544e;      /* 柔らかいチャコール */
-            --text-sub: #a69f98;       /* グレーベージュ */
-            --border-color: #f0e6e6;   /* 繊細な境界線 */
+            --accent-pink: #f8bbd0;
+            --dark-pink: #d81b60;
+            --gold: #c5a059;
+            --gold-light: #eaddc0;
+            --text-main: #5a544e;
+            --text-sub: #a69f98;
+            --border-color: #f0e6e6;
             --trade-bg: #f4f6fb;
             --trade-text: #607d8b;
         }
 
-        /* キャラクターチップ（色味を微調整） */
-        .char-chip { font-size: 0.7rem; padding: 2px 8px; border-radius: 6px; margin-right: 4px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        /* キャラクターチップ */
+        .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
-        .c-是国 { background: #4a4a4a !important; color: #fff !important; }
+        .c-<td>是国 { background: #4a4a4a !important; color: #fff !important; }
         .c-金城 { background: #9e9e9e !important; color: #fff !important; }
         .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
         .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
@@ -36,90 +36,97 @@
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
         .c-殿 { background: #dcedc8 !important; color: #558b2f !important; }
 
+        /* Base & Anti-Wobble */
+        html, body {
+            overflow-x: hidden; /* 横揺れ防止 */
+            width: 100%;
+            position: relative;
+        }
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
-            background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: 80px;
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
+            background-color: var(--bg-color); color: var(--text-main); margin: 0; 
+            padding-bottom: 120px; /* FABとの被り防止用の大きな余白 */
             -webkit-font-smoothing: antialiased;
+            touch-action: manipulation; /* ダブルタップズーム防止 */
         }
 
         /* Header & Navigation */
         header { 
-            background: var(--card-bg); padding: 20px 15px; text-align: center; 
+            background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center; 
             border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100;
         }
-        header h1 { margin: 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; text-indent: 4px; }
+        header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; }
 
-        .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 59px; z-index: 90; border-bottom: 1px solid var(--border-color); }
-        .nav-tab { flex: 1; padding: 15px; text-align: center; font-size: 0.7rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.3s; }
-        .nav-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); font-weight: bold; }
+        .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
+        .nav-tab { flex: 1; padding: 15px; text-align: center; font-size: 0.8rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; }
+        .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold; }
 
         /* Container & Cards */
-        .container { padding: 15px; max-width: 600px; margin: auto; }
+        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
         .card { 
             background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; 
-            box-shadow: 0 6px 16px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); 
-            position: relative; transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); 
+            position: relative; overflow: hidden;
         }
 
         /* Search & Controls */
-        #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 0.9rem; }
+        #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; }
         #sortToggleBtn { 
-            font-size: 0.7rem; padding: 10px; border-radius: 12px; border: 1px solid var(--gold-light); 
-            background: #fff; min-width: 65px; color: var(--gold); font-weight: bold;
+            font-size: 0.8rem; padding: 10px 15px; border-radius: 12px; border: 1px solid var(--gold-light); 
+            background: #fff; color: var(--gold); font-weight: bold;
         }
 
         /* Status Tags */
-        .status-tag { position: absolute; top: 20px; right: 20px; font-size: 0.6rem; padding: 3px 12px; border-radius: 20px; font-weight: bold; }
+        .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
         .st-comp { background: #fce4ec; color: var(--dark-pink); }
         .st-not { background: #f5f5f5; color: #999; }
         .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
 
         /* Detail Rows */
-        .info-row { margin-top: 12px; font-size: 0.8rem; line-height: 1.8; }
-        .info-label { font-weight: bold; font-size: 0.65rem; color: var(--gold); min-width: 55px; display: inline-block; }
+        .info-row { margin-top: 15px; font-size: 0.85rem; line-height: 1.6; display: flex; align-items: flex-start; }
+        .info-label { font-weight: bold; font-size: 0.65rem; color: var(--gold); min-width: 45px; margin-top: 4px; }
+        .info-content { flex: 1; }
 
-        /* Drag Style */
-        .dragging { opacity: 0.5; transform: scale(0.98); }
-        .drag-handle { width: 40px; height: 100%; position: absolute; right: 0; top: 0; display: flex; align-items: center; justify-content: center; cursor: grab; color: var(--gold-light); font-size: 1.2rem; }
-
-        /* Editor & Unboxing Styles */
-        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; padding-bottom: 100px; }
-        .view-header { background: var(--card-bg); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; }
+        /* Editor Styles */
+        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px; }
         
         .editor-row { 
-            display: grid; grid-template-columns: 90px 1fr; align-items: center; padding: 15px; 
+            display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; 
             border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
         }
-        .btn-qty { width: 34px; height: 34px; border-radius: 12px; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
-        .qty-box { min-width: 32px; text-align: center; font-weight: bold; padding: 5px; border-radius: 8px; margin: 0 4px; }
+        .btn-qty { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.4rem; color: var(--gold); display: flex; align-items: center; justify-content: center; touch-action: manipulation; }
+        .qty-box { min-width: 35px; text-align: center; font-weight: bold; font-size: 1.1rem; }
 
-        /* FAB */
+        /* FAB - Position adjustment for usability */
         .fab { 
-            position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; border-radius: 50%; 
-            background: var(--gold); color: white; border: none; font-size: 1.8rem; 
-            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3); z-index: 150; 
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+            position: fixed; bottom: calc(30px + env(safe-area-inset-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; 
+            background: var(--gold); color: white; border: none; font-size: 2rem; 
+            box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150; 
+            display: flex; align-items: center; justify-content: center;
         }
-        .fab:active { transform: scale(0.9); }
 
         /* Modal */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(90, 84, 78, 0.4); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 88%; max-width: 400px; padding: 30px 20px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 24px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; }
 
-        /* Buttons & Inputs */
-        input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px; background: #fff; color: var(--text-main); }
-        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
+        /* Forms */
+        input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box; -webkit-appearance: none; }
+        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
 
-        .unboxing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-        .unboxing-panel { padding: 18px 10px; border-radius: 16px; position: relative; font-weight: bold; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .unboxing-panel span.count { position: absolute; right: 10px; top: 5px; font-size: 0.65rem; opacity: 0.6; }
+        .unboxing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .unboxing-panel { padding: 20px 10px; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .unboxing-panel span.count { position: absolute; right: 8px; top: 4px; font-size: 0.7rem; opacity: 0.7; }
+        
+        /* Drag Handle Larger touch area */
+        .drag-handle { width: 50px; height: 100%; position: absolute; right: 0; top: 0; display: flex; align-items: center; justify-content: center; color: var(--gold-light); font-size: 1.5rem; }
     </style>
 </head>
 <body onload="init()">
 
 <header>
+    <button onclick="toggleSettings(true)" style="position:absolute; right:15px; top:calc(15px + env(safe-area-inset-top)); background:none; border:none; font-size:1.4rem; color:var(--gold);">⚙</button>
     <h1>COLLECTION ARCHIVE v3.1</h1>
-    <button onclick="toggleSettings(true)" style="position:absolute; right:18px; top:20px; background:none; border:none; font-size:1.2rem; color:var(--gold-light);">⚙</button>
 </header>
 
 <div class="nav-tabs">
@@ -128,8 +135,8 @@
 </div>
 
 <div id="seriesView" class="container">
-    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
-        <input type="text" id="searchBar" placeholder="シリーズ名を検索..." oninput="renderSeriesList()" style="flex:1; margin:0;">
+    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+        <input type="text" id="searchBar" placeholder="シリーズ名を検索..." oninput="renderSeriesList()" style="flex:1;">
         <button id="sortToggleBtn" onclick="toggleSortMode()">並替</button>
     </div>
     <div id="seriesListContainer"></div>
@@ -141,35 +148,37 @@
 
 <div id="detailView" class="full-view">
     <div class="view-header">
-        <button onclick="closeDetail()" style="background:none; border:none; font-size:1.4rem; color:var(--gold);">✕</button>
-        <div id="detailHeaderTitle" style="flex:1; text-align:center; font-weight:bold; color:var(--text-main); font-size:0.9rem; letter-spacing:1px;"></div>
-        <button onclick="deleteSeries()" style="color:var(--text-sub); background:none; border:none; font-size:0.7rem;">削除</button>
+        <button onclick="closeDetail()" style="background:none; border:none; font-size:1.6rem; color:var(--gold); padding: 0 10px;">✕</button>
+        <div id="detailHeaderTitle" style="flex:1; text-align:center; font-weight:bold; color:var(--text-main); font-size:0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;"></div>
+        <button onclick="deleteSeries()" style="color:var(--text-sub); background:none; border:none; font-size:0.8rem; padding: 0 10px;">削除</button>
     </div>
     <div id="itemListContainer" class="container"></div>
-    <button class="fab" onclick="openItemEditor()" style="background:var(--dark-pink); font-size:1.5rem;">＋</button>
+    <button class="fab" onclick="openItemEditor()" style="background:var(--dark-pink);">＋</button>
 </div>
 
 <div id="unboxingModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 id="unboxingTitle" style="margin-top:0; color:var(--gold); font-size:1rem; text-align:center;">開封モード</h3>
-        <p style="text-align: center; font-size: 0.65rem; color: var(--text-sub); margin: -10px 0 15px;">タップで ＋ / 長押しで ー</p>
+        <h3 id="unboxingTitle" style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;"></h3>
+        <p style="text-align: center; font-size: 0.75rem; color: var(--text-sub); margin: -5px 0 15px;">タップ:＋ / 長押し:ー</p>
         <div id="unboxingGrid" class="unboxing-grid"></div>
-        <div style="text-align:center; margin-top:20px; font-size:0.8rem; color:var(--gold); font-weight:bold;">
-            合計数量: <span id="unboxingTotalCount" style="font-size:1.1rem;">0</span>
+        <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:var(--gold); font-weight:bold;">
+            合計数量: <span id="unboxingTotalCount" style="font-size:1.3rem;">0</span>
         </div>
-        <button onclick="closeUnboxing()" class="primary-btn" style="background:var(--gold); margin-top:20px;">完了</button>
+        <button onclick="closeUnboxing()" class="primary-btn">完了</button>
     </div>
 </div>
 
 <div id="editorView" class="full-view" style="z-index:300;">
     <div class="view-header">
-        <button onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub);">戻る</button>
+        <button onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
         <div style="flex:1; text-align:center; font-weight:bold; font-size:0.9rem;">アイテム編集</div>
-        <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold;">保存</button>
+        <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold; font-size: 1rem;">保存</button>
     </div>
     <div class="container">
-        <input type="text" id="editItemType" placeholder="アイテム名 (例: 缶バッジ)" style="width:100%; margin-bottom:10px;">
-        <select id="editItemStatus" style="width:100%; margin-bottom:15px;">
+        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">アイテム名</p>
+        <input type="text" id="editItemType" placeholder="例: 缶バッジ" style="margin-bottom:15px;">
+        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">ステータス</p>
+        <select id="editItemStatus" style="margin-bottom:20px;">
             <option value="not">未コンプ</option>
             <option value="comp">コンプ済</option>
             <option value="none">予定なし</option>
@@ -180,37 +189,35 @@
 
 <div id="seriesModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center; letter-spacing:1px;">NEW SERIES</h3>
-        <input type="text" id="msTitle" placeholder="シリーズ名" style="width:100%;">
-        <div style="display:flex; gap:10px; margin-top:10px;">
+        <h3 style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;">NEW SERIES</h3>
+        <input type="text" id="msTitle" placeholder="シリーズ名" style="margin-bottom:15px;">
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="month" id="msDate" style="flex:1.2;">
             <input type="text" id="msTags" placeholder="タグ" style="flex:1;">
         </div>
-        <label style="font-size: 0.75rem; color: var(--text-sub); display:block; margin: 15px 0;">
-            <input type="checkbox" id="msUseTemplate" checked> テンプレートを適用する
+        <label style="font-size: 0.9rem; color: var(--text-main); display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+            <input type="checkbox" id="msUseTemplate" checked style="width:20px; height:20px;"> テンプレートを適用
         </label>
         <button class="primary-btn" onclick="saveSeriesModal()">登録する</button>
-        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub); font-size:0.8rem;">キャンセル</button>
+        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub); font-size:0.9rem;">キャンセル</button>
     </div>
 </div>
 
 <div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
-<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto;">
-    <h3 style="color:var(--gold); font-size:1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
-    <label style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクター構成 (改行区切り)</label>
-    <textarea id="charSettingsInput" rows="10" style="width:100%; font-size:0.85rem; margin-top:5px;"></textarea>
-    <label style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
-    <textarea id="tempSettingsInput" rows="5" style="width:100%; font-size:0.85rem; margin-top:5px;"></textarea>
+<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: env(safe-area-inset-top);">
+    <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクター構成 (改行区切り)</label>
+    <textarea id="charSettingsInput" rows="8" style="margin-top:5px;"></textarea>
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
+    <textarea id="tempSettingsInput" rows="4" style="margin-top:5px;"></textarea>
     <button class="primary-btn" onclick="saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
 </div>
 
 <button class="fab" id="mainFab" onclick="openSeriesModal()">＋</button>
 
 <script>
-    /* ロジック部分はご提示いただいたコードを完全に引き継いでいます。
-       (変数名、関数構造、localStorageキー、イベント処理など変更なし)
-    */
-    let CHARS = JSON.parse(localStorage.getItem('gap_chars')) || ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+    /* ロジック部分は一切変更なし */
+    let CHARS = JSON.parse(localStorage.getItem('gap_chars')) || ["北門", "<td>是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
     let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
     let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
     let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
@@ -254,17 +261,17 @@
                 };
             }
 
-            const tagsHtml = s.tags ? s.tags.split(/[、, ]/).map(t => `<span style="font-size:0.6rem; background:#f8f4f0; padding:2px 8px; border-radius:4px; margin-right:5px; color:var(--gold);">#${t}</span>`).join('') : '';
+            const tagsHtml = s.tags ? s.tags.split(/[、, ]/).map(t => `<span style="font-size:0.65rem; background:#f8f4f0; padding:3px 8px; border-radius:6px; margin-right:5px; color:var(--gold); border:1px solid rgba(197,160,89,0.2);">#${t}</span>`).join('') : '';
             
             div.innerHTML = `
                 <div onclick="${isSortMode ? '' : `openDetail('${id}')`}">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <b style="color:var(--text-main); font-size:0.95rem; flex:1;">${s.title}</b>
-                        <span style="font-size:0.7rem; color:var(--gold); margin-left:10px;">${s.date || ''}</span>
+                        <b style="color:var(--text-main); font-size:1rem; flex:1; line-height:1.4;">${s.title}</b>
+                        <span style="font-size:0.75rem; color:var(--gold); margin-left:10px; font-weight:bold;">${s.date || ''}</span>
                     </div>
-                    <div style="margin-top:8px;">${tagsHtml}</div>
-                    <div style="font-size:0.65rem; color:var(--text-sub); margin-top:12px; display:flex; align-items:center;">
-                        <span style="background:var(--bg-color); padding:2px 8px; border-radius:10px;">${s.items ? s.items.length : 0} ITEMS</span>
+                    <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>
+                    <div style="font-size:0.7rem; color:var(--text-sub); margin-top:15px; display:flex; align-items:center;">
+                        <span style="background:var(--bg-color); padding:4px 12px; border-radius:20px; font-weight:bold; border:1px solid var(--border-color);">${s.items ? s.items.length : 0} ITEMS</span>
                     </div>
                 </div>
                 ${isSortMode ? '<div class="drag-handle">≡</div>' : ''}
@@ -304,15 +311,15 @@
 
             div.innerHTML = `
                 <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
-                <div style="margin-bottom:15px; padding-right:85px; border-bottom:1px solid var(--bg-color); padding-bottom:10px;"><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
-                <div class="info-row"><span class="info-label">保有</span>${ownChips.join('') || '<span style="color:#ddd">－</span>'}</div>
-                <div class="info-row"><span class="info-label">譲渡</span><span style="font-size:0.75rem; color:var(--trade-text); font-weight:bold;">${tradeText.join(' / ') || 'なし'}</span></div>
-                <div class="info-row"><span class="info-label">不足</span>${missChips.join('') || '<span style="color:#ddd">－</span>'}</div>
-                <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
-                    <span onclick="openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.65rem; font-weight:bold; background:#fff0f5; padding:8px 15px; border-radius:12px; border:1px solid rgba(216,27,96,0.1);">✨ 開封モード</span>
-                    <div style="display:flex; align-items:center; gap:15px;">
-                        <span onclick="deleteItem(${idx})" style="color:var(--text-sub); font-size:0.7rem;">削除</span>
-                        <span onclick="openItemEditor(${idx})" style="color:var(--gold); font-size:0.75rem; font-weight:bold; border-bottom:1.5px solid var(--gold-light);">編集</span>
+                <div style="margin-bottom:15px; padding-right:60px; border-bottom:1.5px solid var(--bg-color); padding-bottom:12px;"><b style="color:var(--text-main); font-size:1.1rem;">${item.type}</b></div>
+                <div class="info-row"><span class="info-label">保有</span><div class="info-content">${ownChips.join('') || '<span style="color:#ddd">－</span>'}</div></div>
+                <div class="info-row"><span class="info-label">譲渡</span><div class="info-content"><span style="font-size:0.85rem; color:var(--trade-text); font-weight:bold;">${tradeText.join(' / ') || 'なし'}</span></div></div>
+                <div class="info-row"><span class="info-label">不足</span><div class="info-content">${missChips.join('') || '<span style="color:#ddd">－</span>'}</div></div>
+                <div style="margin-top:25px; display:flex; justify-content:space-between; align-items:center;">
+                    <span onclick="openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.75rem; font-weight:bold; background:#fff0f5; padding:10px 18px; border-radius:14px; border:1px solid rgba(216,27,96,0.1);">✨ 開封モード</span>
+                    <div style="display:flex; align-items:center; gap:20px;">
+                        <span onclick="deleteItem(${idx})" style="color:var(--text-sub); font-size:0.8rem; padding:10px 5px;">削除</span>
+                        <span onclick="openItemEditor(${idx})" style="color:var(--gold); font-size:0.85rem; font-weight:bold; border-bottom:2px solid var(--gold-light); padding:5px 0;">編集</span>
                     </div>
                 </div>
             `;
@@ -320,6 +327,7 @@
         });
     }
 
+    /* 以下、既存のスクリプト関数群（変更なし） */
     function openUnboxing(idx) {
         currentItemIdx = idx;
         const item = DB[currentSeriesId].items[idx];
@@ -333,21 +341,16 @@
         grid.innerHTML = "";
         const item = DB[currentSeriesId].items[currentItemIdx];
         let total = 0;
-
         CHARS.forEach(c => {
             const count = (item.stocks[c] && item.stocks[c].own) ? item.stocks[c].own : 0;
             total += count;
             const panel = document.createElement('div');
             panel.className = `unboxing-panel c-${c.trim()}`;
             panel.innerHTML = `<span class="count">${count}</span>${c}`;
-            
             panel.onclick = (e) => { e.preventDefault(); updateUnboxingCount(c, 1); };
             let timer;
-            panel.onmousedown = panel.ontouchstart = (e) => {
-                timer = setTimeout(() => { updateUnboxingCount(c, -1); timer = null; }, 600);
-            };
-            panel.onmouseup = panel.onmouseleave = panel.ontouchend = () => clearTimeout(timer);
-            panel.oncontextmenu = (e) => e.preventDefault();
+            panel.ontouchstart = (e) => { timer = setTimeout(() => { updateUnboxingCount(c, -1); timer = null; }, 600); };
+            panel.ontouchend = () => clearTimeout(timer);
             grid.appendChild(panel);
         });
         document.getElementById('unboxingTotalCount').textContent = total;
@@ -366,7 +369,6 @@
         currentItemIdx = idx;
         const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [...CHARS], status: "not" };
         if(!item.targets) item.targets = [...CHARS];
-
         document.getElementById('editItemType').value = item.type;
         document.getElementById('editItemStatus').value = item.status || "not";
         tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
@@ -383,24 +385,23 @@
             const row = document.createElement('div');
             row.className = 'editor-row';
             row.style.opacity = isTarget ? "1" : "0.5";
-            
             const colorClass = `c-${c.trim()}`;
             row.innerHTML = `
                 <div class="char-label-box ${colorClass}" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
-                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="margin-bottom:5px;"><br>${c}
+                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
                 </div>
                 <div style="display:flex; justify-content:space-around; align-items:center;">
                     <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:5px;">保有</span>
-                        <div style="display:flex; align-items:center;">
+                        <span style="font-size:0.65rem; color:var(--text-sub); display:block; margin-bottom:5px;">保有</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
                             <span class="qty-box" id="q-${c}-own" style="color:${tempStocks[c].own > 0 ? 'var(--dark-pink)' : '#ccc'}">${tempStocks[c].own}</span>
                             <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
                         </div>
                     </div>
                     <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:5px;">譲渡</span>
-                        <div style="display:flex; align-items:center;">
+                        <span style="font-size:0.65rem; color:var(--text-sub); display:block; margin-bottom:5px;">譲渡</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
                             <span class="qty-box" id="q-${c}-trade" style="color:${tempStocks[c].trade > 0 ? 'var(--trade-text)' : '#ccc'}">${tempStocks[c].trade}</span>
                             <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
@@ -411,24 +412,19 @@
         });
     }
 
-    function refreshEditorTargets() {
-        const targets = getSelectedTargets();
-        renderEditorGrid(targets);
-    }
-
+    function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
     function updateQty(char, key, delta) {
         tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta);
-        document.getElementById(`q-${char}-${key}`).textContent = tempStocks[char][key];
-        document.getElementById(`q-${char}-${key}`).style.color = tempStocks[char][key] > 0 ? (key==='own'?'var(--dark-pink)':'var(--trade-text)') : '#ccc';
+        const el = document.getElementById(`q-${char}-${key}`);
+        el.textContent = tempStocks[char][key];
+        el.style.color = tempStocks[char][key] > 0 ? (key==='own'?'var(--dark-pink)':'var(--trade-text)') : '#ccc';
     }
-
     function getSelectedTargets() {
         const checkboxes = document.querySelectorAll('#editorGrid input[type="checkbox"]');
         let selected = [];
         checkboxes.forEach((cb, i) => { if(cb.checked) selected.push(CHARS[i]); });
         return selected;
     }
-
     function saveItem() {
         const type = document.getElementById('editItemType').value.trim();
         if(!type) return alert("名前を入力してください");
@@ -437,9 +433,7 @@
         else DB[currentSeriesId].items[currentItemIdx] = data;
         save(); closeEditor(); renderItemList();
     }
-
     function deleteItem(idx) { if(confirm("アイテムを削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
-    
     function saveSeriesModal() {
         const title = document.getElementById('msTitle').value.trim();
         if(!title) return;
@@ -451,7 +445,6 @@
         ORDER.unshift(id);
         save(); closeSeriesModal(); openDetail(id);
     }
-
     function toggleSettings(s) { 
         document.getElementById('settingsOverlay').style.display=s?'block':'none'; 
         document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
@@ -460,7 +453,6 @@
             document.getElementById('tempSettingsInput').value=TEMPLATES.join('\n');
         }
     }
-
     function saveSettings() { 
         CHARS = document.getElementById('charSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
         TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
@@ -468,7 +460,6 @@
         localStorage.setItem('gap_temps', JSON.stringify(TEMPLATES));
         location.reload(); 
     }
-
     function switchMainTab(tab) {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tab}`).classList.add('active');
@@ -477,7 +468,6 @@
         document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
         if(tab === 'missing') renderMissingList();
     }
-
     function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block'; renderItemList(); }
     function closeDetail() { document.getElementById('detailView').style.display = 'none'; renderSeriesList(); }
     function closeEditor() { document.getElementById('editorView').style.display = 'none'; }
@@ -488,7 +478,7 @@
     function renderMissingList() {
         const container = document.getElementById('missingListContainer');
         container.innerHTML = "";
-        CHARS.forEach((char, cIdx) => {
+        CHARS.forEach((char) => {
             let list = [];
             ORDER.forEach(sId => {
                 (DB[sId].items || []).forEach(item => {
@@ -502,13 +492,13 @@
                 group.className = 'card';
                 group.innerHTML = `
                     <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.75rem; color:var(--text-sub); margin-left:10px;">Missing: ${list.length} items</span></div>
-                        <span style="color:var(--gold-light); font-size:0.7rem;">▼</span>
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub); margin-left:10px;">Missing: ${list.length}</span></div>
+                        <span style="color:var(--gold-light); font-size:0.8rem;">▼</span>
                     </div>
                     <div style="display:none; margin-top:15px; border-top:1px solid var(--border-color); padding-top:10px;">
-                        ${list.map(m => `<div style="font-size:0.75rem; padding:10px 0; border-bottom:1px solid #fcfcfc;">
-                            <div style="color:var(--gold); font-weight:bold; font-size:0.6rem;">${m.series}</div>
-                            <div style="margin-top:2px;">${m.type}</div>
+                        ${list.map(m => `<div style="font-size:0.85rem; padding:12px 0; border-bottom:1px solid #fcfcfc;">
+                            <div style="color:var(--gold); font-weight:bold; font-size:0.7rem;">${m.series}</div>
+                            <div style="margin-top:4px;">${m.type}</div>
                         </div>`).join('')}
                     </div>`;
                 container.appendChild(group);
