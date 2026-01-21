@@ -66,14 +66,14 @@
             box-sizing: border-box; width: 100%; border-radius: 20px;
             transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
             will-change: transform;
+            touch-action: pan-y; /* 縦スクロールは生かしつつ、横スワイプをJSで制御 */
         }
         
         .card.swiping { transition: none; }
 
         /* 初期状態で非表示、スワイプ時のみ見えるように変更 */
-        .delete-btn-overlay { position: absolute; top: 0; right: -100px; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; transition: right 0.3s cubic-bezier(0.2, 0, 0, 1); }
-        .swipe-container.active-swipe .delete-btn-overlay { right: 0; }
-
+        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
+        
         #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
         .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
         .st-comp { background: #fce4ec; color: var(--dark-pink); }
@@ -106,7 +106,7 @@
         .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 2px; }
-        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: background 0.1s; }
+        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: background 0.1s; touch-action: none; -webkit-touch-callout: none; }
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
         .ub-area:active { background: rgba(255,255,255,0.25); }
@@ -344,31 +344,32 @@
 
     function attachSwipeEvents(element, onDelete) {
         let startX = 0;
-        let currentX = 0;
         let isSwiping = false;
-        const wrapper = element.parentElement; // .swipe-container
 
         element.addEventListener('touchstart', (e) => {
             if (SORT_MODE === 'custom') return;
-            // 画面の右側30%以内を触った時だけ反応するように制限
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
-            const threshold = rect.right - (rect.width * 0.3);
-
-            if (touchX < threshold) return;
+            
+            // 右端25%の範囲を触った時のみ反応するように制限
+            const startThreshold = rect.right - (rect.width * 0.25);
+            if (touchX < startThreshold) {
+                isSwiping = false;
+                return;
+            }
 
             startX = touchX;
-            element.classList.add('swiping');
-            wrapper.classList.add('active-swipe'); // 赤い枠を表示
             isSwiping = true;
+            element.classList.add('swiping');
         }, {passive: true});
 
         element.addEventListener('touchmove', (e) => {
             if (!isSwiping || SORT_MODE === 'custom') return;
-            currentX = e.touches[0].clientX - startX;
+            let currentX = e.touches[0].clientX - startX;
             
-            // 左スワイプのみ許容。最大-150pxまで。
+            // 左スワイプのみ許容。最大-120pxまで。
             if (currentX < 0) {
+                if (currentX < -120) currentX = -120;
                 if (!isTicking) {
                     window.requestAnimationFrame(() => {
                         element.style.transform = `translateX(${currentX}px)`;
@@ -385,20 +386,19 @@
             element.classList.remove('swiping');
             
             const finalX = e.changedTouches[0].clientX - startX;
-            // 50px以上引き出していたら固定、そうでなければ戻す
+            // 50px以上引き出していたら100px固定、そうでなければ戻す
             if (finalX < -50) { 
                 element.style.transform = 'translateX(-100px)'; 
             } else { 
                 element.style.transform = 'translateX(0)'; 
-                wrapper.classList.remove('active-swipe'); // 赤い枠を非表示
             }
         }, {passive: true});
 
         const originalOnClick = element.onclick;
         element.onclick = (e) => {
+            // スワイプ状態ならクリックで戻すだけにする
             if (element.style.transform === 'translateX(-100px)') {
                 element.style.transform = 'translateX(0)';
-                wrapper.classList.remove('active-swipe');
                 e.stopPropagation();
             } else if (originalOnClick) {
                 originalOnClick(e);
@@ -518,7 +518,6 @@
             const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn-overlay'; deleteBtn.textContent = '削除'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteItem(idx); };
             const div = document.createElement('div'); div.className = 'card item-card'; 
             
-            // 全体クリックイベントを削除し、内部のグリッドのみに設定するように変更
             attachSwipeEvents(div, () => deleteItem(idx));
             const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
             
@@ -615,7 +614,7 @@
     function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save(); renderSeriesList(); } }
     function deleteAllItems() { if(confirm("全削除しますか？")) { DB[currentSeriesId].items = []; save(); renderItemList(); } }
     function openUnboxing(idx) { currentItemIdx = idx; document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type; renderUnboxingGrid(); document.getElementById('unboxingModal').style.display = 'flex'; }
-    function renderUnboxingGrid() { const grid = document.getElementById('unboxingGrid'); grid.innerHTML = ""; const item = DB[currentSeriesId].items[currentItemIdx]; const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; let tOwn = 0, tTrade = 0; list.forEach(c => { const s = item.stocks[c] || { own: 0, trade: 0 }; tOwn += s.own; tTrade += s.trade; const panel = document.createElement('div'); panel.className = `unboxing-panel c-${c.trim()}`; const createHandler = (type) => { let timer; return { onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); }, onpointerup: (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } } }; }; panel.innerHTML = `<div class="ub-char-label">${c}</div><div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div><div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); grid.appendChild(panel); }); updateUnboxingFooter(tOwn, tTrade); }
+    function renderUnboxingGrid() { const grid = document.getElementById('unboxingGrid'); grid.innerHTML = ""; const item = DB[currentSeriesId].items[currentItemIdx]; const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; let tOwn = 0, tTrade = 0; list.forEach(c => { const s = item.stocks[c] || { own: 0, trade: 0 }; tOwn += s.own; tTrade += s.trade; const panel = document.createElement('div'); panel.className = `unboxing-panel c-${c.trim()}`; const createHandler = (type) => { let timer; return { onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); }, onpointerup: (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } }, oncontextmenu: (e) => { e.preventDefault(); } }; }; panel.innerHTML = `<div class="ub-char-label">${c}</div><div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div><div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); grid.appendChild(panel); }); updateUnboxingFooter(tOwn, tTrade); }
     function updateUnboxingCount(char, type, delta) { const item = DB[currentSeriesId].items[currentItemIdx]; if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0 }; item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta); const oldStatus = item.status; item.status = autoDetermineStatus(item); if (oldStatus !== item.status) showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました"); save(); renderUnboxingGrid(); }
     function updateUnboxingFooter(own, trade) { document.getElementById('unboxingTotalCount').innerHTML = `保管: ${own} / 譲渡: ${trade} / 合計: ${own+trade}`; }
     function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
