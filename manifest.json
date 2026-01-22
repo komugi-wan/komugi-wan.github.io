@@ -1,8 +1,10 @@
 {
-  "short_name": "COLLECTION",
-  "name": "COLLECTION ARCHIVE",
+  "name": "COLLECTION ARCHIVE v3.9.3",
+  "short_name": "CollArchive",
+  "description": "グッズ収集・管理アーカイブ",
+  "start_url": "index.html",
   "display": "standalone",
-  "start_url": "./index.html",
+  "orientation": "portrait",
   "background_color": "#fefaf9",
   "theme_color": "#c5a059",
   "icons": [
