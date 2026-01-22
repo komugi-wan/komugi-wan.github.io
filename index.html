@@ -27,6 +27,8 @@
 
         /* キャラクターチップ & 開封モード用カラー定義 */
         .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9); } /* 無限回収中の所有済み表示 */
+        
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
         .c-是国 { background: #000000 !important; color: #ffffff !important; }
@@ -58,7 +60,6 @@
 
         .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
         
-        /* スワイプコンテナの最適化 */
         .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent; }
         .swipe-container.dragging { opacity: 0.5; }
         
@@ -70,12 +71,11 @@
             box-sizing: border-box; width: 100%; border-radius: 20px;
             transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
             will-change: transform;
-            touch-action: pan-y; /* 縦スクロールは生かしつつ、横スワイプをJSで制御 */
+            touch-action: pan-y;
         }
         
         .card.swiping { transition: none; }
 
-        /* 初期状態で非表示、スワイプ時のみ見えるように変更 */
         .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
         
         #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
@@ -90,7 +90,6 @@
         .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1; align-items: center; }
         .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px; }
         
-        /* 数量サマリーのスタイル */
         .inv-summary-row { display: flex; justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light); }
         .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
         .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
@@ -109,14 +108,24 @@
         .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
         .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
-        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 2px; }
-        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: background 0.1s; touch-action: none; -webkit-touch-callout: none; }
+        .inf-btn { background: none; border: none; font-size: 1.1rem; color: #ddd; cursor: pointer; padding: 0; line-height: 1; transition: 0.2s; }
+        .inf-btn.active { color: var(--gold); }
+
+        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 6px; background: #eee; }
+        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: all 0.1s; touch-action: none; -webkit-touch-callout: none; z-index: 1; }
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
-        .ub-area:active { background: rgba(255,255,255,0.25); }
-        .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 5; white-space: nowrap; color: var(--text-main); pointer-events: none; }
+        
+        .ub-area:active { 
+            background: rgba(0,0,0,0.1); 
+            transform: scale(0.96); 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); 
+            z-index: 2;
+        }
+        
+        .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none; }
 
-        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
         .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
         .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 
@@ -132,7 +141,7 @@
 
         #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
         .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; }
-        .bulk-group-left { display: flex; gap: 8px; }
+        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
         .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
         .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
         
@@ -201,7 +210,7 @@
 
 <div id="editorView" class="full-view" style="z-index:300;">
     <div class="view-header">
-        <button onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
+        <button id="editorBackBtn" onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
         <div style="flex:1; text-align:center; font-weight:bold; font-size:0.9rem;">アイテム編集</div>
         <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold; font-size: 1rem;">保存</button>
     </div>
@@ -220,6 +229,7 @@
             <div class="bulk-group-left">
                 <button class="bulk-btn" onclick="bulkToggleTargets(true)">ALL SELECT</button>
                 <button class="bulk-btn" onclick="bulkToggleTargets(false)">CANCEL</button>
+                <button class="bulk-btn" onclick="bulkIncrementOwn()">ALL +1</button>
             </div>
             <button class="bulk-btn bulk-btn-danger" onclick="bulkResetCounts()">RESET ALL</button>
         </div>
@@ -288,6 +298,7 @@
     let activeCharList = [];
     let dragSrcId = null;
     let isTicking = false;
+    let editorFromMissing = false; // MISSINGから遷移したかのフラグ
 
     function init() { renderSeriesList(); }
     function save() { 
@@ -355,7 +366,6 @@
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
             
-            // 右端25%の範囲を触った時のみ反応するように制限
             const startThreshold = rect.right - (rect.width * 0.25);
             if (touchX < startThreshold) {
                 isSwiping = false;
@@ -371,7 +381,6 @@
             if (!isSwiping || SORT_MODE === 'custom') return;
             let currentX = e.touches[0].clientX - startX;
             
-            // 左スワイプのみ許容。最大-120pxまで。
             if (currentX < 0) {
                 if (currentX < -120) currentX = -120;
                 if (!isTicking) {
@@ -390,7 +399,6 @@
             element.classList.remove('swiping');
             
             const finalX = e.changedTouches[0].clientX - startX;
-            // 50px以上引き出していたら100px固定、そうでなければ戻す
             if (finalX < -50) { 
                 element.style.transform = 'translateX(-100px)'; 
             } else { 
@@ -400,7 +408,6 @@
 
         const originalOnClick = element.onclick;
         element.onclick = (e) => {
-            // スワイプ状態ならクリックで戻すだけにする
             if (element.style.transform === 'translateX(-100px)') {
                 element.style.transform = 'translateX(0)';
                 e.stopPropagation();
@@ -479,18 +486,37 @@
         const state = e.state || {};
         const editor = document.getElementById('editorView');
         const detail = document.getElementById('detailView');
-        if (editor.style.display === 'block') editor.style.display = 'none';
+        if (editor.style.display === 'block') {
+            editor.style.display = 'none';
+            if (editorFromMissing) {
+                editorFromMissing = false;
+                renderMissingList();
+            }
+        }
         else if (detail.style.display === 'block' && state.view !== 'detail') {
             detail.style.display = 'none';
             renderSeriesList();
         }
     };
+
     function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block'; history.pushState({view: 'detail', seriesId: id}, ''); renderItemList(); }
     function closeDetail() { document.getElementById('detailView').style.display = 'none'; if (history.state && history.state.view === 'detail') history.back(); renderSeriesList(); }
-    function autoDetermineStatus(item) { if (item.status === "none") return "none"; const targets = item.targets || []; if (targets.length === 0) return item.status; const isAllCollected = targets.every(char => { const s = item.stocks[char] || { own: 0, trade: 0 }; return (s.own + s.trade) >= 1; }); return isAllCollected ? "comp" : "not"; }
     
-    function openItemEditor(idx = null) {
+    function autoDetermineStatus(item) { 
+        if (item.status === "none") return "none"; 
+        const targets = item.targets || []; 
+        if (targets.length === 0) return item.status; 
+        const isAllCollected = targets.every(char => { 
+            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false }; 
+            if(s.infinite) return false; 
+            return (s.own + s.trade) >= 1; 
+        }); 
+        return isAllCollected ? "comp" : "not"; 
+    }
+    
+    function openItemEditor(idx = null, fromMissing = false) {
         currentItemIdx = idx;
+        editorFromMissing = fromMissing;
         const setSelect = document.getElementById('editCharSetName');
         setSelect.innerHTML = Object.keys(CHAR_SETS).map(n => `<option value="${n}">${n}</option>`).join('');
         const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
@@ -510,9 +536,27 @@
         data.status = autoDetermineStatus(data);
         if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
         else DB[currentSeriesId].items[currentItemIdx] = data;
-        save(); showToast("保存しました"); history.back(); document.getElementById('editorView').style.display = 'none'; renderItemList(); 
+        save(); 
+        showToast("保存しました"); 
+        history.back(); 
+        document.getElementById('editorView').style.display = 'none'; 
+        if (!editorFromMissing) {
+            renderItemList(); 
+        } else {
+            // MISSINGから来た場合はフラグを戻して再描画
+            editorFromMissing = false;
+            renderMissingList();
+        }
     }
-    function closeEditor() { document.getElementById('editorView').style.display = 'none'; if (history.state && history.state.view === 'editor') history.back(); }
+
+    function closeEditor() { 
+        document.getElementById('editorView').style.display = 'none'; 
+        if (history.state && history.state.view === 'editor') history.back(); 
+        if (editorFromMissing) {
+            editorFromMissing = false;
+            renderMissingList();
+        }
+    }
     
     function renderItemList() {
         const container = document.getElementById('itemListContainer'); container.innerHTML = "";
@@ -525,12 +569,12 @@
             attachSwipeEvents(div, () => deleteItem(idx));
             const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
             
-            let ownChips = [], tradeText = [], missChips = [], tradeArr = [];
+            let ownChips = [], tradeText = [], missChips = [], tradeArr = [], targetArr = [];
             let totalOwn = 0, totalTrade = 0;
             
             const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
             list.forEach(c => {
-                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0};
+                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
                 const isTarget = (item.targets || list).includes(c);
                 
                 totalOwn += s.own;
@@ -538,10 +582,20 @@
                 
                 if(s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
                 if(s.trade > 0) { tradeText.push(`${c}${s.trade}`); tradeArr.push(`${c}${s.trade}`); }
-                if(isTarget && s.own === 0 && s.trade === 0) missChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
+                
+                if(isTarget) {
+                    const isMissing = (s.own === 0 && s.trade === 0);
+                    const isInfCollecting = s.infinite;
+                    
+                    if(isMissing || isInfCollecting) {
+                        const infClass = (!isMissing && isInfCollecting) ? 'is-infinite-collected' : '';
+                        missChips.push(`<span class="char-chip c-${c.trim()} ${infClass}">${c}</span>`);
+                        targetArr.push(c + (s.infinite ? '(∞)' : ''));
+                    }
+                }
             });
             const totalStock = totalOwn + totalTrade;
-            const copyStr = `${item.type} 譲：${tradeArr.join('・') || 'なし'} 求：${(item.targets || []).join('・')}`;
+            const copyStr = `${item.type} 譲：${tradeArr.join('・') || 'なし'} 求：${targetArr.join('・') || '完遂'}`;
             
             div.innerHTML = `
                 <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
@@ -570,10 +624,11 @@
         const grid = document.getElementById('editorGrid'); 
         grid.innerHTML = ""; 
         activeCharList.forEach(c => { 
-            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0 }; 
+            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; 
             const isTarget = targets.includes(c); 
             const ownVal = tempStocks[c].own;
             const tradeVal = tempStocks[c].trade;
+            const isInf = tempStocks[c].infinite || false;
             const ownClass = ownVal > 0 ? 'qty-has' : 'qty-zero';
             const tradeClass = tradeVal > 0 ? 'qty-has' : 'qty-zero';
             
@@ -581,8 +636,9 @@
             row.className = 'editor-row'; 
             row.style.opacity = isTarget ? "1" : "0.5"; 
             row.innerHTML = `
-                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
+                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
                     <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
+                    <button class="inf-btn ${isInf?'active':''}" onclick="toggleInfinite('${c}')" style="display:block; margin:5px auto 0;">${isInf?'∞':'∞'}</button>
                 </div>
                 <div style="display:flex; justify-content:space-around;">
                     <div style="text-align:center;">
@@ -606,22 +662,62 @@
         }); 
     }
 
+    function toggleInfinite(char) { tempStocks[char].infinite = !tempStocks[char].infinite; renderEditorGrid(getSelectedTargets()); }
     function updateQty(char, key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
     function directInputQty(char, key, val) { let n = parseInt(val); if(isNaN(n) || n < 0) n = 0; tempStocks[char][key] = n; renderEditorGrid(getSelectedTargets()); }
     function getSelectedTargets() { const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]'); let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(activeCharList[i]); }); return selected; }
     function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
     function changeCharSet(setName) { activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS; renderEditorGrid([...activeCharList]); }
     function bulkToggleTargets(s) { renderEditorGrid(s ? [...activeCharList] : []); }
-    function bulkResetCounts() { if(confirm("カウントをすべて削除しますがよろしいですか？")) { Object.keys(tempStocks).forEach(c => { tempStocks[c].own = 0; tempStocks[c].trade = 0; }); renderEditorGrid(getSelectedTargets()); showToast("リセットしました"); } }
+    function bulkIncrementOwn() { activeCharList.forEach(c => { if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; tempStocks[c].own += 1; }); renderEditorGrid(getSelectedTargets()); showToast("保管を+1しました"); }
+    function bulkResetCounts() { if(confirm("カウントをすべて削除しますがよろしいですか？")) { Object.keys(tempStocks).forEach(c => { tempStocks[c].own = 0; tempStocks[c].trade = 0; tempStocks[c].infinite = false; }); renderEditorGrid(getSelectedTargets()); showToast("リセットしました"); } }
     function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
     function deleteItem(idx) { if(confirm("削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
     function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save(); renderSeriesList(); } }
     function deleteAllItems() { if(confirm("全削除しますか？")) { DB[currentSeriesId].items = []; save(); renderItemList(); } }
+    
     function openUnboxing(idx) { currentItemIdx = idx; document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type; renderUnboxingGrid(); document.getElementById('unboxingModal').style.display = 'flex'; }
-    function renderUnboxingGrid() { const grid = document.getElementById('unboxingGrid'); grid.innerHTML = ""; const item = DB[currentSeriesId].items[currentItemIdx]; const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; let tOwn = 0, tTrade = 0; list.forEach(c => { const s = item.stocks[c] || { own: 0, trade: 0 }; tOwn += s.own; tTrade += s.trade; const panel = document.createElement('div'); panel.className = `unboxing-panel c-${c.trim()}`; const createHandler = (type) => { let timer; return { onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); }, onpointerup: (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } }, oncontextmenu: (e) => { e.preventDefault(); } }; }; panel.innerHTML = `<div class="ub-char-label">${c}</div><div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div><div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); grid.appendChild(panel); }); updateUnboxingFooter(tOwn, tTrade); }
-    function updateUnboxingCount(char, type, delta) { const item = DB[currentSeriesId].items[currentItemIdx]; if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0 }; item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta); const oldStatus = item.status; item.status = autoDetermineStatus(item); if (oldStatus !== item.status) showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました"); save(); renderUnboxingGrid(); }
+    function renderUnboxingGrid() { 
+        const grid = document.getElementById('unboxingGrid'); 
+        grid.innerHTML = ""; 
+        const item = DB[currentSeriesId].items[currentItemIdx]; 
+        const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
+        let tOwn = 0, tTrade = 0; 
+        list.forEach(c => { 
+            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false }; 
+            tOwn += s.own; 
+            tTrade += s.trade; 
+            const panel = document.createElement('div'); 
+            panel.className = `unboxing-panel c-${c.trim()}`; 
+            
+            const createHandler = (type) => { 
+                let timer; 
+                return { 
+                    onpointerdown: (e) => { 
+                        e.preventDefault(); 
+                        timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); 
+                    }, 
+                    onpointerup: (e) => { 
+                        e.preventDefault(); 
+                        if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } 
+                    }, 
+                    oncontextmenu: (e) => { e.preventDefault(); } 
+                }; 
+            }; 
+            panel.innerHTML = `
+                <div class="ub-char-label">${c}${s.infinite?'(∞)':''}</div>
+                <div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
+                <div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; 
+            Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); 
+            Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); 
+            grid.appendChild(panel); 
+        }); 
+        updateUnboxingFooter(tOwn, tTrade); 
+    }
+    function updateUnboxingCount(char, type, delta) { const item = DB[currentSeriesId].items[currentItemIdx]; if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false }; item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta); const oldStatus = item.status; item.status = autoDetermineStatus(item); if (oldStatus !== item.status) showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました"); save(); renderUnboxingGrid(); }
     function updateUnboxingFooter(own, trade) { document.getElementById('unboxingTotalCount').innerHTML = `保管: ${own} / 譲渡: ${trade} / 合計: ${own+trade}`; }
     function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
+
     function openSeriesModal() { document.getElementById('msTitle').value=""; document.getElementById('seriesModal').style.display='flex'; }
     function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
     function saveSeriesModal() { const title = document.getElementById('msTitle').value.trim(); if(!title) return; const id = "s" + Date.now(); const useTemp = document.getElementById('msUseTemplate').checked; let items = []; if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...DEFAULT_CHARS], status: "not", charSetName: "デフォルト" })); DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: items, fav: false }; ORDER.unshift(id); save(); closeSeriesModal(); openDetail(id); }
@@ -629,16 +725,69 @@
     function saveSettings() { const lines = document.getElementById('charSettingsInput').value.split('\n'); let newSets = {}; lines.forEach(line => { const p = line.split(':'); if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c); }); CHAR_SETS = Object.keys(newSets).length ? newSets : { "デフォルト": DEFAULT_CHARS }; TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n); save(); location.reload(); }
     function exportBackup() { const data = { gap_db: DB, gap_order: ORDER, gap_char_sets: CHAR_SETS, gap_temps: TEMPLATES, gap_sort_mode: SORT_MODE }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'})); a.download=`backup.json`; a.click(); }
     function importBackup(e) { const reader = new FileReader(); reader.onload = (ev) => { const data = JSON.parse(ev.target.result); if(confirm("上書きしますか？")) { localStorage.setItem('gap_db', JSON.stringify(data.gap_db)); localStorage.setItem('gap_order', JSON.stringify(data.gap_order)); localStorage.setItem('gap_char_sets', JSON.stringify(data.gap_char_sets || { "デフォルト": DEFAULT_CHARS })); localStorage.setItem('gap_sort_mode', data.gap_sort_mode || 'new'); location.reload(); } }; reader.readAsText(e.target.files[0]); }
+    
+    function jumpToEditorFromMissing(sId, itemIdx, charName) {
+        currentSeriesId = sId;
+        // 編集画面へ
+        openItemEditor(itemIdx, true); 
+        // 編集対象のキャラの場所まで少しスクロールさせると使いやすい
+        setTimeout(() => {
+            const rows = document.querySelectorAll('.editor-row');
+            for(let row of rows) {
+                if(row.innerText.includes(charName)) {
+                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    row.style.outline = "2px solid var(--gold)";
+                    setTimeout(() => row.style.outline = "none", 2000);
+                    break;
+                }
+            }
+        }, 300);
+    }
+
     function renderMissingList() {
         const container = document.getElementById('missingListContainer'); container.innerHTML = "";
         let found = false; let allChars = new Set(); Object.values(CHAR_SETS).forEach(list => list.forEach(c => allChars.add(c)));
         Array.from(allChars).forEach(char => {
             let list = [];
-            ORDER.forEach(sId => { (DB[sId].items || []).forEach(item => { const charList = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; if(!charList.includes(char)) return; if(!(item.targets || charList).includes(char)) return; const s = item.stocks[char] || {own: 0, trade: 0}; if (item.status === 'not' && s.own === 0 && s.trade === 0) list.push({ series: DB[sId].title, type: item.type }); }); });
-            if (list.length > 0) { found = true; const group = document.createElement('div'); group.className = 'card'; group.style.marginBottom = "15px"; group.innerHTML = `<div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;"><div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div><span style="color:var(--gold-light);">▼</span></div><div style="display:none; margin-top:10px;">${list.map(li => `<div style="font-size:0.75rem; padding:8px 0; border-top:1px solid #eee;"><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type}</div>`).join('')}</div>`; container.appendChild(group); }
+            ORDER.forEach(sId => { (DB[sId].items || []).forEach((item, itemIdx) => { 
+                const charList = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
+                if(!charList.includes(char)) return; 
+                if(!(item.targets || charList).includes(char)) return; 
+                const s = item.stocks[char] || {own: 0, trade: 0, infinite: false}; 
+                
+                const isMissing = (s.own === 0 && s.trade === 0);
+                const isInf = s.infinite;
+                
+                if (item.status === 'not' && (isMissing || isInf)) {
+                    list.push({ series: DB[sId].title, seriesId: sId, type: item.type, itemIdx: itemIdx, isInf: isInf, isOwn: !isMissing }); 
+                }
+            }); });
+            if (list.length > 0) { 
+                found = true; 
+                const group = document.createElement('div'); 
+                group.className = 'card'; 
+                group.id = `missing-group-${char}`;
+                group.style.marginBottom = "15px"; 
+                group.innerHTML = `
+                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
+                        <span style="color:var(--gold-light);">▼</span>
+                    </div>
+                    <div style="display:none; margin-top:10px;">
+                        ${list.map(li => `
+                            <div onclick="jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
+                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
+                                </div>
+                            </div>`).join('')}
+                    </div>`; 
+                container.appendChild(group); 
+            }
         });
         if(!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
     }
+    
     function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
     function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
     function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
