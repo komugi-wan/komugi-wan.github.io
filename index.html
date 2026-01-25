@@ -48,20 +48,17 @@
            ========================================= */
         .container { padding: 15px; max-width: 600px; margin: auto; }
         .full-view {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-color); z-index: 200; overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
         .modal-overlay {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
             z-index: 1000; align-items: center; justify-content: center;
         }
         .modal-content {
-            background: white;
-            width: 95%; max-width: 450px; padding: 15px;
+            background: white; width: 95%; max-width: 450px; padding: 15px;
             border-radius: 20px; max-height: 95vh; overflow-y: auto;
         }
 
@@ -69,44 +66,36 @@
            3. Headers & Navigation
            ========================================= */
         header {
-            background: var(--card-bg);
-            padding: var(--safe-top) 15px 15px;
+            background: var(--card-bg); padding: var(--safe-top) 15px 15px;
             text-align: center; border-bottom: 1px solid var(--gold-light);
             position: sticky; top: 0; z-index: 100;
         }
         header h1 {
-            margin: 15px 0 0;
-            font-size: 0.85rem; letter-spacing: 4px;
+            margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px;
             color: var(--gold); font-weight: 600;
         }
         .header-btn-right {
-            position: absolute;
-            right: 15px; top: calc(15px + var(--safe-top));
+            position: absolute; right: 15px; top: calc(15px + var(--safe-top));
             background: none; border: none; font-size: 1.4rem; color: var(--gold);
         }
         .nav-tabs {
-            display: flex;
-            background: var(--card-bg); position: sticky;
+            display: flex; background: var(--card-bg); position: sticky;
             top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color);
         }
         .nav-tab {
-            flex: 1;
-            padding: 15px; text-align: center; font-size: 0.8rem;
+            flex: 1; padding: 15px; text-align: center; font-size: 0.8rem;
             color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s;
         }
         .nav-tab.active {
-            color: var(--gold);
-            border-bottom: 3px solid var(--gold); font-weight: bold;
+            color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold;
         }
         .view-header {
-            background: var(--card-bg);
-            padding: var(--safe-top) 15px 15px;
+            background: var(--card-bg); padding: var(--safe-top) 15px 15px;
             display: flex; align-items: center; border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 210; height: 50px;
         }
         .view-header-title {
-            flex: 1;
-            text-align: center; font-weight: bold; color: var(--text-main);
+            flex: 1; text-align: center; font-weight: bold; color: var(--text-main);
             font-size: 0.9rem; white-space: nowrap; overflow: hidden;
             text-overflow: ellipsis; padding: 0 10px;
         }
@@ -115,25 +104,21 @@
            4. Components: Cards & Swipe
            ========================================= */
         .swipe-container {
-            position: relative;
-            margin-bottom: 15px; overflow: hidden;
+            position: relative; margin-bottom: 15px; overflow: hidden;
             border-radius: 20px; touch-action: pan-y; background: transparent;
         }
         .swipe-container.dragging { opacity: 0.5; }
         .card {
-            background: var(--card-bg);
-            padding: 20px;
+            background: var(--card-bg); padding: 20px;
             box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08);
             border: 1px solid rgba(197, 160, 89, 0.1);
-            position: relative;
-            z-index: 2; width: 100%; border-radius: 20px;
+            position: relative; z-index: 2; width: 100%; border-radius: 20px;
             transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
             will-change: transform; touch-action: pan-y;
         }
         .card.swiping { transition: none; }
         .delete-btn-overlay {
-            position: absolute;
-            top: 0; right: 0; width: 100px; height: 100%;
+            position: absolute; top: 0; right: 0; width: 100px; height: 100%;
             background: var(--danger); color: white; display: flex;
             align-items: center; justify-content: center; font-weight: bold;
             font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0;
@@ -143,31 +128,27 @@
            5. Components: Chips & Status
            ========================================= */
         .char-chip {
-            font-size: 0.75rem;
-            padding: 4px 10px; border-radius: 8px;
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
             margin-right: 6px; margin-bottom: 6px; display: inline-block;
             font-weight: bold; border: 1px solid rgba(0,0,0,0.03);
         }
         .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9); }
         .tag-chip {
-            font-size: 0.65rem;
-            background: var(--gold-light); color: var(--text-main);
+            font-size: 0.65rem; background: var(--gold-light); color: var(--text-main);
             padding: 4px 10px; border-radius: 8px; margin-right: 6px;
             font-weight: bold; cursor: pointer; display: inline-block;
             transition: 0.2s;
         }
         .tag-chip:active { opacity: 0.6; }
         .status-tag {
-            position: absolute;
-            top: 0; right: 0; font-size: 0.65rem;
+            position: absolute; top: 0; right: 0; font-size: 0.65rem;
             padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold;
         }
         .st-comp { background: #fce4ec; color: var(--dark-pink); }
         .st-not { background: #f5f5f5; color: #999; }
         .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
         .preset-chip {
-            display: inline-block;
-            background: var(--gold-light); color: var(--gold);
+            display: inline-block; background: var(--gold-light); color: var(--gold);
             padding: 8px 12px; border-radius: 12px; font-size: 0.75rem;
             font-weight: bold; margin: 4px; cursor: pointer;
         }
@@ -193,49 +174,40 @@
            6. Components: Inventory Grid
            ========================================= */
         .inventory-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
             margin-top: 12px; cursor: pointer;
         }
         .inv-box {
-            background: #fafafa;
-            border: 1px solid #f0f0f0; border-radius: 12px;
+            background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px;
             padding: 8px 4px; text-align: center; min-height: 70px;
             display: flex; flex-direction: column; pointer-events: none;
         }
         .inv-label {
-            font-size: 0.6rem;
-            font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
+            font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
         }
         .inv-content {
-            display: flex;
-            flex-wrap: wrap; justify-content: center; gap: 2px;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 2px;
             flex: 1; align-items: center;
         }
         .inv-content .char-chip {
-            font-size: 0.6rem;
-            padding: 2px 5px; margin-right: 2px; margin-bottom: 2px;
+            font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px;
         }
         .inv-summary-row {
-            display: flex;
-            justify-content: space-around; margin-top: 8px;
+            display: flex; justify-content: space-around; margin-top: 8px;
             padding: 6px 10px; background: #fdfaf5; border-radius: 10px;
             border: 1px dashed var(--gold-light);
         }
         .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
         .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
         .trade-text-small {
-            font-size: 0.65rem;
-            color: var(--trade-text); word-break: break-all;
+            font-size: 0.65rem; color: var(--trade-text); word-break: break-all;
             font-weight: bold; line-height: 1.2;
         }
         .inf-status-container {
-            display: flex;
-            flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px;
+            display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px;
         }
         .inf-status-chip {
-            font-size: 0.6rem;
-            padding: 2px 6px; border-radius: 6px;
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 6px;
             font-weight: bold; display: flex; align-items: center; gap: 3px;
         }
         .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
@@ -244,21 +216,18 @@
            7. Components: Editor
            ========================================= */
         .editor-row {
-            display: grid;
-            grid-template-columns: 80px 1fr; gap: 10px;
+            display: grid; grid-template-columns: 80px 1fr; gap: 10px;
             align-items: center; padding: 15px; border-radius: 16px;
             margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
         }
         .btn-qty {
-            width: 36px;
-            height: 36px; border-radius: 50%;
+            width: 36px; height: 36px; border-radius: 50%;
             border: 1px solid var(--gold-light); background: #fff;
             font-size: 1.2rem; color: var(--gold); display: flex;
             align-items: center; justify-content: center;
         }
         .qty-display {
-            width: 40px;
-            border: none; border-bottom: 1px solid var(--gold-light);
+            width: 40px; border: none; border-bottom: 1px solid var(--gold-light);
             background: transparent; text-align: center; font-size: 1rem;
             padding: 2px 0; -moz-appearance: textfield; transition: 0.2s;
         }
@@ -266,27 +235,23 @@
         .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
         .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .inf-btn {
-            background: none;
-            border: none; font-size: 1.1rem; color: #ddd;
+            background: none; border: none; font-size: 1.1rem; color: #ddd;
             cursor: pointer; padding: 0; line-height: 1; transition: 0.2s;
         }
         .inf-btn.active { color: var(--gold); }
         .editor-bulk-actions {
-            display: flex;
-            justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 10px; padding: 0 5px;
         }
         .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
         .bulk-btn {
-            background: none;
-            border: 1px solid var(--gold-light);
+            background: none; border: 1px solid var(--gold-light);
             color: var(--gold); font-size: 0.65rem; padding: 5px 10px;
             border-radius: 8px; font-weight: bold;
         }
         .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
         .history-banner {
-            background: #fff9f0;
-            border: 1px dashed var(--gold); padding: 10px;
+            background: #fff9f0; border: 1px dashed var(--gold); padding: 10px;
             border-radius: 12px; margin-bottom: 15px; display: flex;
             justify-content: space-between; align-items: center;
         }
@@ -295,40 +260,33 @@
            8. Components: Unboxing
            ========================================= */
         .unboxing-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr; padding: 0;
+            display: grid; grid-template-columns: 1fr 1fr; padding: 0;
             border-radius: 12px; position: relative; font-weight: bold;
             font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             user-select: none; -webkit-user-select: none; touch-action: none;
             height: 54px; overflow: visible; margin-bottom: 6px; background: #eee;
         }
         .ub-area {
-            display: flex;
-            flex-direction: column; justify-content: center;
+            display: flex; flex-direction: column; justify-content: center;
             align-items: center; position: relative; transition: all 0.1s;
             touch-action: none; -webkit-touch-callout: none; z-index: 1;
         }
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
         .ub-area:active {
-            background: rgba(0,0,0,0.1);
-            transform: scale(0.96);
+            background: rgba(0,0,0,0.1); transform: scale(0.96);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2;
         }
         .ub-char-label {
-            position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: white; padding: 1px 6px; border-radius: 6px;
-            font-size: 0.6rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none;
         }
         .unboxing-count-badge {
-            min-width: 24px;
-            height: 24px; padding: 0 6px; border-radius: 12px;
+            min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
             font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 2px; font-weight: 800;
-            transition: all 0.15s; pointer-events: none;
+            margin-bottom: 2px; font-weight: 800; transition: all 0.15s; pointer-events: none;
         }
         .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
         .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
@@ -337,46 +295,38 @@
            9. UI Elements (Inputs, Buttons, FAB)
            ========================================= */
         input[type="text"], input[type="month"], select {
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border: 1px solid var(--border-color); border-radius: 12px;
             padding: 14px; font-size: 16px !important; background: #fff;
             color: var(--text-main); width: 100%;
         }
         .primary-btn {
-            width: 100%;
-            padding: 16px; border: none; border-radius: 14px;
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
             background: var(--gold); color: white; font-weight: bold;
             font-size: 1rem; margin-top: 10px;
         }
         .danger-btn {
-            color: var(--danger);
-            background: none; border: none; font-size: 0.8rem;
+            color: var(--danger); background: none; border: none; font-size: 0.8rem;
         }
         .secondary-btn {
-            width: 100%;
-            padding: 12px; border: 1px solid var(--gold);
+            width: 100%; padding: 12px; border: 1px solid var(--gold);
             border-radius: 14px; background: white; color: var(--gold);
             font-weight: bold; font-size: 0.9rem; margin-top: 10px;
         }
         .fab {
-            position: fixed;
-            bottom: calc(30px + var(--safe-bottom)); right: 20px;
+            position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px;
             width: 64px; height: 64px; border-radius: 50%; background: var(--gold);
             color: white; border: none; font-size: 2rem;
             box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150;
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         #toast {
-            position: fixed;
-            bottom: 100px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.8); color: white; padding: 12px 24px;
-            border-radius: 25px; font-size: 0.85rem; z-index: 2000;
-            display: none;
+            border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;
         }
         #splash-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.5s ease;
@@ -387,32 +337,27 @@
            10. Sorting & Filtering
            ========================================= */
         .sort-controls {
-            display: flex;
-            gap: 8px; margin-bottom: 15px; overflow-x: auto;
+            display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto;
             padding-bottom: 5px; -webkit-overflow-scrolling: touch;
         }
         .sort-btn {
-            white-space: nowrap;
-            padding: 6px 12px; border-radius: 20px;
+            white-space: nowrap; padding: 6px 12px; border-radius: 20px;
             border: 1px solid var(--gold-light); background: #fff;
             color: var(--gold); font-size: 0.7rem; font-weight: bold;
         }
         .sort-btn.active { background: var(--gold); color: #fff; }
         .handle {
-            color: var(--gold-light);
-            cursor: grab; padding: 10px;
+            color: var(--gold-light); cursor: grab; padding: 10px;
             font-size: 1.2rem; display: none;
         }
         .sort-custom .handle { display: block; }
         .fav-btn {
-            background: none;
-            border: none; font-size: 1.2rem;
+            background: none; border: none; font-size: 1.2rem;
             color: #ddd; padding: 0 5px; transition: 0.2s;
         }
         .fav-btn.active { color: #fbc02d; }
         .series-comp-mark {
-            color: var(--gold);
-            font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
+            color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
         }
         
         /* Utility */
@@ -551,18 +496,23 @@
 <div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="App.toggleSettings(false)"></div>
 <div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: var(--safe-top);">
     <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
+    
     <label class="label-sm" style="margin-top:20px;">募集文カスタマイズ</label>
     <input type="text" id="tradePrefixInput" placeholder="【交換】" style="margin-top:5px; font-size: 0.8rem !important; margin-bottom:5px;">
     <input type="text" id="tradeSuffixInput" placeholder="郵送希望です。検索からお気軽にどうぞ。" style="font-size: 0.8rem !important; margin-bottom:10px;">
     <label style="font-size:0.7rem; color:var(--text-sub); display:flex; align-items:center; gap:5px; margin-bottom:15px;">
         <input type="checkbox" id="tradeShowInfMark" style="width:16px; height:16px;"> 無限回収に(∞)を表示する
     </label>
+
     <label class="label-sm" style="margin-top:20px;">キャラクターセット（セット名:名,名...）</label>
     <textarea id="charSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;"></textarea>
+    
     <label class="label-sm" style="margin-top:20px;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
     <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
+
     <label class="label-sm" style="margin-top:20px;">新規登録テンプレート</label>
     <textarea id="tempSettingsInput" rows="3" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; padding:10px;"></textarea>
+    
     <button class="primary-btn" onclick="Actions.saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
     <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:20px;">
         <button class="secondary-btn" onclick="Actions.exportBackup()">バックアップを書き出し</button>
@@ -576,8 +526,58 @@
 
 <script>
 /**
- * COLLECTION ARCHIVE v1.0 - IndexedDB Migrated Version
+ * COLLECTION ARCHIVE v1.0
+ * IndexedDB Migrated Version
  */
+
+// =========================================
+// 0. IndexedDB Manager (Native API Wrapper)
+// =========================================
+const DB = {
+    dbName: 'CollectionArchiveDB',
+    storeName: 'app_data',
+    _db: null,
+
+    async connect() {
+        if (this._db) return this._db;
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, 1);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    db.createObjectStore(this.storeName);
+                }
+            };
+            request.onsuccess = (e) => {
+                this._db = e.target.result;
+                resolve(this._db);
+            };
+            request.onerror = (e) => reject(e.target.error);
+        });
+    },
+
+    async get(key) {
+        const db = await this.connect();
+        return new Promise((resolve) => {
+            const tx = db.transaction(this.storeName, 'readonly');
+            const store = tx.objectStore(this.storeName);
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => resolve(null);
+        });
+    },
+
+    async set(key, value) {
+        const db = await this.connect();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(this.storeName, 'readwrite');
+            const store = tx.objectStore(this.storeName);
+            const request = store.put(value, key);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+};
 
 // =========================================
 // 1. Constants & Configuration
@@ -595,122 +595,66 @@ const CONSTANTS = {
     },
     DEFAULT_CHARS: ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"],
     DEFAULT_TEMPLATES: ["缶バッジ", "アクスタ", "ブロマイド"],
-    IDB_NAME: 'CollectionArchiveDB',
-    IDB_STORE: 'AppSettings'
 };
 
 // =========================================
-// 2. Native IndexedDB Wrapper
-// =========================================
-class IDB {
-    static open() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(CONSTANTS.IDB_NAME, 1);
-            request.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains(CONSTANTS.IDB_STORE)) {
-                    db.createObjectStore(CONSTANTS.IDB_STORE);
-                }
-            };
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    static async get(key) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(CONSTANTS.IDB_STORE, 'readonly');
-            const store = transaction.objectStore(CONSTANTS.IDB_STORE);
-            const request = store.get(key);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    static async set(key, value) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(CONSTANTS.IDB_STORE, 'readwrite');
-            const store = transaction.objectStore(CONSTANTS.IDB_STORE);
-            const request = store.put(value, key);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
-    }
-}
-
-// =========================================
-// 3. State Management (Store)
+// 2. State Management (Store)
 // =========================================
 const Store = {
-    db: {},
-    order: [],
-    charSets: {},
-    templates: [],
-    presets: [],
+    db: {}, order: [], charSets: {}, templates: [], presets: [],
     tradeConfig: { prefix: "", suffix: "", showInf: true },
-    sortMode: 'new',
-    lastItem: null,
-
+    sortMode: 'new', lastItem: null,
+    
     // Temp State
-    currentSeriesId: null,
-    currentItemIdx: null,
-    activeCharList: [],
-    tempStocks: {},
-    editorFromMissing: false,
+    currentSeriesId: null, currentItemIdx: null, activeCharList: [],
+    tempStocks: {}, editorFromMissing: false,
 
     async init() {
-        // --- Migration Logic ---
-        const legacyData = localStorage.getItem(CONSTANTS.KEYS.DB);
-        if (legacyData) {
-            console.log("Migration: Moving localStorage data to IndexedDB...");
-            const dataToMigrate = {
-                [CONSTANTS.KEYS.DB]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.DB)) || {},
-                [CONSTANTS.KEYS.ORDER]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.ORDER)) || [],
-                [CONSTANTS.KEYS.SETS]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS },
-                [CONSTANTS.KEYS.TEMPLATES]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES,
-                [CONSTANTS.KEYS.PRESETS]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.PRESETS)) || [],
-                [CONSTANTS.KEYS.TRADE]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true },
-                [CONSTANTS.KEYS.SORT]: localStorage.getItem(CONSTANTS.KEYS.SORT) || 'new',
-                [CONSTANTS.KEYS.LAST_ITEM]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.LAST_ITEM)) || null
-            };
-
-            for (const key in dataToMigrate) {
-                await IDB.set(key, dataToMigrate[key]);
+        // --- Migration logic from localStorage ---
+        const keys = Object.values(CONSTANTS.KEYS);
+        let hasLocalStorageData = false;
+        
+        for (const key of keys) {
+            const localData = localStorage.getItem(key);
+            if (localData !== null) {
+                hasLocalStorageData = true;
+                await DB.set(key, key === CONSTANTS.KEYS.SORT ? localData : JSON.parse(localData));
             }
-            localStorage.clear();
-            console.log("Migration: Completed.");
+        }
+
+        if (hasLocalStorageData) {
+            keys.forEach(key => localStorage.removeItem(key));
+            console.log("Migration to IndexedDB completed.");
         }
 
         // --- Load from IndexedDB ---
-        this.db = await IDB.get(CONSTANTS.KEYS.DB) || {};
-        this.order = await IDB.get(CONSTANTS.KEYS.ORDER) || [];
-        this.charSets = await IDB.get(CONSTANTS.KEYS.SETS) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-        this.templates = await IDB.get(CONSTANTS.KEYS.TEMPLATES) || CONSTANTS.DEFAULT_TEMPLATES;
-        this.presets = await IDB.get(CONSTANTS.KEYS.PRESETS) || [];
-        this.tradeConfig = await IDB.get(CONSTANTS.KEYS.TRADE) || { prefix: "", suffix: "", showInf: true };
-        this.sortMode = await IDB.get(CONSTANTS.KEYS.SORT) || 'new';
-        this.lastItem = await IDB.get(CONSTANTS.KEYS.LAST_ITEM) || null;
+        this.db = await DB.get(CONSTANTS.KEYS.DB) || {};
+        this.order = await DB.get(CONSTANTS.KEYS.ORDER) || [];
+        this.charSets = await DB.get(CONSTANTS.KEYS.SETS) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+        this.templates = await DB.get(CONSTANTS.KEYS.TEMPLATES) || CONSTANTS.DEFAULT_TEMPLATES;
+        this.presets = await DB.get(CONSTANTS.KEYS.PRESETS) || [];
+        this.tradeConfig = await DB.get(CONSTANTS.KEYS.TRADE) || { prefix: "", suffix: "", showInf: true };
+        this.sortMode = await DB.get(CONSTANTS.KEYS.SORT) || 'new';
+        this.lastItem = await DB.get(CONSTANTS.KEYS.LAST_ITEM) || null;
     },
 
     async save() {
-        await IDB.set(CONSTANTS.KEYS.DB, this.db);
-        await IDB.set(CONSTANTS.KEYS.ORDER, this.order);
-        await IDB.set(CONSTANTS.KEYS.SETS, this.charSets);
-        await IDB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
-        await IDB.set(CONSTANTS.KEYS.SORT, this.sortMode);
-        await IDB.set(CONSTANTS.KEYS.PRESETS, this.presets);
-        await IDB.set(CONSTANTS.KEYS.TEMPLATES, this.templates);
+        await DB.set(CONSTANTS.KEYS.DB, this.db);
+        await DB.set(CONSTANTS.KEYS.ORDER, this.order);
+        await DB.set(CONSTANTS.KEYS.SETS, this.charSets);
+        await DB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
+        await DB.set(CONSTANTS.KEYS.SORT, this.sortMode);
+        await DB.set(CONSTANTS.KEYS.PRESETS, this.presets);
+        await DB.set(CONSTANTS.KEYS.TEMPLATES, this.templates);
     },
 
     async saveLastItem() {
-        await IDB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
+        await DB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
     }
 };
 
 // =========================================
-// 4. Utilities
+// 3. Utilities
 // =========================================
 const Utils = {
     showToast(msg) {
@@ -731,49 +675,63 @@ const Utils = {
         return isAllCollected ? "comp" : "not";
     },
     attachSwipe(element, actionCallback, isCustomSort) {
-        let startX = 0, isSwiping = false;
+        let startX = 0, isSwiping = false, isTicking = false;
         element.addEventListener('touchstart', (e) => {
             if (Store.sortMode === 'custom' && isCustomSort) return;
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
             if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
-            startX = touchX; isSwiping = true;
+            startX = touchX;
+            isSwiping = true;
             element.classList.add('swiping');
-        });
+        }, {passive: true});
         element.addEventListener('touchmove', (e) => {
-            if (!isSwiping) return;
-            const diff = e.touches[0].clientX - startX;
-            if (diff < 0) element.style.transform = `translateX(${diff}px)`;
-        });
+            if (!isSwiping || (Store.sortMode === 'custom' && isCustomSort)) return;
+            let currentX = e.touches[0].clientX - startX;
+            if (currentX < 0) {
+                if (currentX < -120) currentX = -120;
+                if (!isTicking) {
+                    window.requestAnimationFrame(() => {
+                        element.style.transform = `translateX(${currentX}px)`;
+                        isTicking = false;
+                    });
+                    isTicking = true;
+                }
+            }
+        }, {passive: true});
         element.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
-            const diff = e.changedTouches[0].clientX - startX;
             element.classList.remove('swiping');
-            element.style.transform = '';
-            if (diff < -60) actionCallback();
+            const finalX = e.changedTouches[0].clientX - startX;
+            if (finalX < -80) {
+                element.style.transform = 'translateX(-100%)';
+                setTimeout(() => actionCallback(), 300);
+            } else {
+                element.style.transform = 'translateX(0)';
+            }
             isSwiping = false;
         });
     }
 };
 
 // =========================================
-// 5. Actions (Logic)
+// 4. Actions (Data Operations)
 // =========================================
 const Actions = {
     async saveSeriesModal() {
         const title = document.getElementById('msTitle').value.trim();
-        const date = document.getElementById('msDate').value;
-        const tagsRaw = document.getElementById('msTags').value;
-        const useTemplate = document.getElementById('msUseTemplate').checked;
         if (!title) return;
-
-        const id = 's' + Date.now();
-        const tags = tagsRaw ? tagsRaw.split(/[,、]/).map(t => t.trim()).filter(t => t) : [];
-        const items = useTemplate ? Store.templates.map(type => ({
-            type, charSet: "デフォルト", status: "not", targets: [], stocks: {}
-        })) : [];
-
-        Store.db[id] = { title, date, tags, items, isFavorite: false };
+        const id = "s_" + Date.now();
+        const date = document.getElementById('msDate').value || "";
+        const tags = document.getElementById('msTags').value.split(/[,、]/).map(t => t.trim()).filter(t => t);
+        const useTemp = document.getElementById('msUseTemplate').checked;
+        
+        Store.db[id] = { title, date, tags, items: [] };
+        if (useTemp) {
+            Store.db[id].items = Store.templates.map(type => ({
+                type, charSetName: "デフォルト", status: "not", targets: [], stocks: {}
+            }));
+        }
         Store.order.unshift(id);
         await Store.save();
         App.closeSeriesModal();
@@ -781,108 +739,142 @@ const Actions = {
     },
 
     async deleteSeries(id) {
-        if (!confirm('このシリーズを削除しますか？')) return;
         delete Store.db[id];
         Store.order = Store.order.filter(oid => oid !== id);
         await Store.save();
         Render.seriesList();
     },
 
-    async toggleFavorite(id, e) {
-        e.stopPropagation();
-        Store.db[id].isFavorite = !Store.db[id].isFavorite;
+    async saveItem() {
+        const s = Store.db[Store.currentSeriesId];
+        const item = {
+            type: document.getElementById('editItemType').value.trim() || "無題",
+            charSetName: document.getElementById('editCharSetName').value,
+            status: document.getElementById('editItemStatus').value,
+            targets: [...Store.activeCharList],
+            stocks: JSON.parse(JSON.stringify(Store.tempStocks))
+        };
+        item.status = Utils.autoDetermineStatus(item);
+
+        if (Store.currentItemIdx === null) {
+            s.items.push(item);
+        } else {
+            s.items[Store.currentItemIdx] = item;
+        }
+
+        Store.lastItem = {
+            type: item.type,
+            charSetName: item.charSetName,
+            targets: item.targets
+        };
+        await Store.saveLastItem();
         await Store.save();
+        App.closeEditor();
+        Render.itemList();
         Render.seriesList();
     },
 
-    async saveItem() {
-        const type = document.getElementById('editItemType').value.trim();
-        const charSetName = document.getElementById('editCharSetName').value;
-        const status = document.getElementById('editItemStatus').value;
-        if (!type) return;
-
-        const item = { type, charSet: charSetName, status, targets: [...Store.activeCharList], stocks: { ...Store.tempStocks } };
-        item.status = Utils.autoDetermineStatus(item);
-
-        const series = Store.db[Store.currentSeriesId];
-        if (Store.currentItemIdx !== null) {
-            series.items[Store.currentItemIdx] = item;
-        } else {
-            series.items.push(item);
-        }
-        Store.lastItem = { type, charSet: charSetName, targets: [...Store.activeCharList] };
-        await Store.save();
-        await Store.saveLastItem();
-        App.closeEditor();
-        Render.itemList();
-    },
-
     async deleteItem(idx) {
-        if (!confirm('このアイテムを削除しますか？')) return;
         Store.db[Store.currentSeriesId].items.splice(idx, 1);
         await Store.save();
         Render.itemList();
+        Render.seriesList();
     },
 
     async deleteAllItems() {
-        if (!confirm('シリーズ内の全アイテムを削除しますか？')) return;
+        if (!confirm("このシリーズ内の全アイテムを削除しますか？")) return;
         Store.db[Store.currentSeriesId].items = [];
         await Store.save();
         Render.itemList();
+        Render.seriesList();
     },
 
     async saveSettings() {
-        const tradePrefix = document.getElementById('tradePrefixInput').value;
-        const tradeSuffix = document.getElementById('tradeSuffixInput').value;
-        const tradeShowInf = document.getElementById('tradeShowInfMark').checked;
-        Store.tradeConfig = { prefix: tradePrefix, suffix: tradeSuffix, showInf: tradeShowInf };
-
-        const charRaw = document.getElementById('charSettingsInput').value;
+        const charInput = document.getElementById('charSettingsInput').value.trim();
+        const lines = charInput.split('\n');
         const newSets = {};
-        charRaw.split('\n').forEach(line => {
-            const [name, chars] = line.split(':');
-            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim()).filter(c => c);
+        lines.forEach(line => {
+            const [name, chars] = line.split(/[:：]/);
+            if (name && chars) newSets[name.trim()] = chars.split(/[,、]/).map(c => c.trim()).filter(c => c);
         });
         if (Object.keys(newSets).length > 0) Store.charSets = newSets;
 
-        const presetRaw = document.getElementById('presetSettingsInput').value;
-        Store.presets = presetRaw.split('\n').map(line => {
-            const parts = line.split(',');
-            if (parts.length >= 3) return { type: parts[0].trim(), charSet: parts[1].trim(), targetStr: parts[2].trim() };
-            return null;
-        }).filter(p => p);
+        const presetInput = document.getElementById('presetSettingsInput').value.trim();
+        Store.presets = presetInput.split('\n').filter(l => l).map(line => {
+            const [type, setName, targetStr] = line.split(/[,、]/);
+            return { type: type?.trim(), setName: setName?.trim(), targetStr: targetStr?.trim() };
+        });
 
-        const tempRaw = document.getElementById('tempSettingsInput').value;
-        Store.templates = tempRaw.split('\n').map(t => t.trim()).filter(t => t);
+        const tempInput = document.getElementById('tempSettingsInput').value.trim();
+        Store.templates = tempInput.split(/[,、\n]/).map(t => t.trim()).filter(t => t);
+
+        Store.tradeConfig.prefix = document.getElementById('tradePrefixInput').value;
+        Store.tradeConfig.suffix = document.getElementById('tradeSuffixInput').value;
+        Store.tradeConfig.showInf = document.getElementById('tradeShowInfMark').checked;
 
         await Store.save();
         location.reload();
     },
 
-    async setSortMode(mode) {
-        Store.sortMode = mode;
-        await Store.save();
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`sort-${mode}`).classList.add('active');
-        Render.seriesList();
+    async importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                Store.db = data.db || {};
+                Store.order = data.order || [];
+                Store.charSets = data.charSets || Store.charSets;
+                Store.tradeConfig = data.tradeConfig || Store.tradeConfig;
+                Store.presets = data.presets || [];
+                Store.templates = data.templates || Store.templates;
+                await Store.save();
+                alert("バックアップを復元しました");
+                location.reload();
+            } catch (err) { alert("無効なファイルです"); }
+        };
+        reader.readAsText(file);
     },
 
-    // Unboxing Logic
-    async updateStock(char, field, diff) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        Store.tempStocks[char][field] = Math.max(0, (Store.tempStocks[char][field] || 0) + diff);
-        
-        const series = Store.db[Store.currentSeriesId];
-        series.items[Store.currentItemIdx].stocks = { ...Store.tempStocks };
-        series.items[Store.currentItemIdx].status = Utils.autoDetermineStatus(series.items[Store.currentItemIdx]);
-        
-        await Store.save();
-        Render.unboxingGrid();
+    exportBackup() {
+        const data = {
+            db: Store.db, order: Store.order, charSets: Store.charSets,
+            tradeConfig: Store.tradeConfig, presets: Store.presets, templates: Store.templates
+        };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `collection_archive_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+    },
+
+    bulkToggleTargets(val) {
+        const chars = Store.charSets[document.getElementById('editCharSetName').value] || [];
+        Store.activeCharList = val ? [...chars] : [];
+        Render.editorGrid();
+    },
+    bulkIncrementOwn() {
+        Store.activeCharList.forEach(c => {
+            if (!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
+            Store.tempStocks[c].own++;
+        });
+        Render.editorGrid();
+    },
+    bulkResetCounts() {
+        if (!confirm("全ての個数をリセットしますか？")) return;
+        Object.keys(Store.tempStocks).forEach(c => {
+            Store.tempStocks[c].own = 0;
+            Store.tempStocks[c].trade = 0;
+            Store.tempStocks[c].infinite = false;
+        });
+        Render.editorGrid();
     }
 };
 
 // =========================================
-// 6. Rendering (UI)
+// 5. Render Engine
 // =========================================
 const Render = {
     seriesList() {
@@ -890,231 +882,277 @@ const Render = {
         const q = document.getElementById('searchBar').value.toLowerCase();
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
-        container.innerHTML = '';
+        container.innerHTML = "";
 
-        let ids = [...Store.order];
+        let displayIds = [...Store.order];
+
+        // Filtering
+        displayIds = displayIds.filter(id => {
+            const s = Store.db[id];
+            if (!s) return false;
+            const matchesSearch = s.title.toLowerCase().includes(q) || s.tags.some(t => t.toLowerCase().includes(q));
+            let matchesDate = true;
+            if (start) matchesDate = matchesDate && s.date >= start;
+            if (end) matchesDate = matchesDate && s.date <= end;
+            return matchesSearch && matchesDate;
+        });
+
+        // Sorting
         if (Store.sortMode === 'date') {
-            ids.sort((a, b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
+            displayIds.sort((a, b) => (Store.db[b].date || "0000-00").localeCompare(Store.db[a].date || "0000-00"));
+        } else if (Store.sortMode === 'new') {
+            // Keep original order
         }
 
-        ids.forEach(id => {
-            const s = Store.db[id];
-            if (!s) return;
-            const matchesSearch = s.title.toLowerCase().includes(q) || s.tags.some(t => t.toLowerCase().includes(q));
-            const matchesDate = (!start || s.date >= start) && (!end || s.date <= end);
-            if (!matchesSearch || !matchesDate) return;
+        if (displayIds.length === 0) {
+            container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">
+                表示できるシリーズがありません
+            </div>`;
+            return;
+        }
 
-            const card = document.createElement('div');
-            card.className = 'swipe-container';
-            const isComp = s.items.length > 0 && s.items.every(i => i.status === 'comp' || i.status === 'none');
-            
-            card.innerHTML = `
+        const fragment = document.createDocumentFragment();
+        displayIds.forEach(id => {
+            const s = Store.db[id];
+            const wrap = document.createElement('div');
+            wrap.className = 'swipe-container';
+            if (Store.sortMode === 'custom') wrap.classList.add('sort-custom');
+
+            const isAllComp = s.items.length > 0 && s.items.every(it => it.status === 'comp');
+
+            wrap.innerHTML = `
                 <div class="delete-btn-overlay">削除</div>
                 <div class="card" onclick="App.openDetail('${id}')">
-                    <div class="flex justify-between align-center mb-15">
-                        <div class="text-bold" style="font-size:0.95rem;">
-                            ${s.title}${isComp ? '<span class="series-comp-mark">✔</span>' : ''}
+                    <div class="flex align-center">
+                        <span class="handle">⠿</span>
+                        <div style="flex:1">
+                            <div style="font-size:0.9rem; font-weight:bold;">
+                                ${s.title} ${isAllComp ? '<span class="series-comp-mark">✔</span>' : ''}
+                            </div>
+                            <div style="font-size:0.65rem; color:var(--text-sub); margin-top:4px;">
+                                ${s.date || '日付未設定'} • ${s.items.length} items
+                            </div>
+                            <div style="margin-top:8px;">
+                                ${s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); App.filterByTag('${t}')">${t}</span>`).join('')}
+                            </div>
                         </div>
-                        <button class="fav-btn ${s.isFavorite ? 'active' : ''}" onclick="Actions.toggleFavorite('${id}', event)">${s.isFavorite ? '★' : '☆'}</button>
-                    </div>
-                    <div class="flex align-center justify-between">
-                        <div>${s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); App.filterByTag('${t}')">#${t}</span>`).join('')}</div>
-                        <div style="font-size:0.65rem; color:var(--text-sub); font-weight:bold;">${s.date || '---'}</div>
                     </div>
                 </div>
             `;
-            Utils.attachSwipe(card.querySelector('.card'), () => Actions.deleteSeries(id));
-            container.appendChild(card);
+            Utils.attachSwipe(wrap.querySelector('.card'), () => Actions.deleteSeries(id), true);
+            fragment.appendChild(wrap);
         });
+        container.appendChild(fragment);
+
+        if (Store.sortMode === 'custom') {
+            // Placeholder for Sortable.js if added later. Current requirement: keep logic same.
+        }
     },
 
     itemList() {
+        const s = Store.db[Store.currentSeriesId];
+        document.getElementById('detailHeaderTitle').textContent = s.title;
         const container = document.getElementById('itemListContainer');
-        const series = Store.db[Store.currentSeriesId];
-        document.getElementById('detailHeaderTitle').textContent = series.title;
-        container.innerHTML = '';
+        container.innerHTML = "";
 
-        series.items.forEach((item, idx) => {
-            const card = document.createElement('div');
-            card.className = 'swipe-container';
-            const statusClass = item.status === 'comp' ? 'st-comp' : (item.status === 'none' ? 'st-none' : 'st-not');
-            const statusText = item.status === 'comp' ? 'COMPLETE' : (item.status === 'none' ? '予定なし' : '未コンプ');
+        if (s.items.length === 0) {
+            container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">
+                アイテムが登録されていません
+            </div>`;
+            return;
+        }
+
+        s.items.forEach((item, idx) => {
+            const wrap = document.createElement('div');
+            wrap.className = 'swipe-container';
             
-            let invHtml = '';
-            if (item.targets.length > 0) {
-                const ownList = item.targets.filter(c => (item.stocks[c]?.own || 0) > 0);
-                const tradeList = item.targets.filter(c => (item.stocks[c]?.trade || 0) > 0);
-                invHtml = `
-                    <div class="inventory-grid" onclick="App.openUnboxing(${idx})">
-                        <div class="inv-box"><span class="inv-label">OWN</span><div class="inv-content">${ownList.map(c => `<span class="char-chip c-${c}">${c}</span>`).join('')}</div></div>
-                        <div class="inv-box"><span class="inv-label">TRADE</span><div class="inv-content">${tradeList.map(c => `<span class="char-chip c-${c}">${c}</span>`).join('')}</div></div>
-                        <div class="inv-box"><span class="inv-label">WANT</span><div class="inv-content">${item.targets.filter(c => (item.stocks[c]?.own||0)+(item.stocks[c]?.trade||0) === 0).map(c => `<span class="char-chip c-default">${c}</span>`).join('')}</div></div>
-                    </div>
-                `;
-            }
+            const totalOwn = Object.values(item.stocks).reduce((sum, st) => sum + (st.own || 0), 0);
+            const totalTrade = Object.values(item.stocks).reduce((sum, st) => sum + (st.trade || 0), 0);
 
-            card.innerHTML = `
+            let statusClass = "st-none", statusText = "対象外";
+            if (item.status === 'comp') { statusClass = "st-comp"; statusText = "COMPLETED"; }
+            else if (item.status === 'not') { statusClass = "st-not"; statusText = "INCOMPLETE"; }
+
+            wrap.innerHTML = `
                 <div class="delete-btn-overlay">削除</div>
                 <div class="card" onclick="App.openItemEditor(${idx})">
-                    <span class="status-tag ${statusClass}">${statusText}</span>
-                    <div class="text-bold mb-15" style="font-size:0.85rem; color:var(--gold);">${item.type}</div>
-                    ${invHtml}
-                </div>
-            `;
-            Utils.attachSwipe(card.querySelector('.card'), () => Actions.deleteItem(idx));
-            container.appendChild(card);
-        });
-    },
-
-    editorGrid() {
-        const container = document.getElementById('editorGrid');
-        container.innerHTML = '';
-        const currentSet = Store.charSets[document.getElementById('editCharSetName').value] || [];
-        
-        currentSet.forEach(char => {
-            const isTarget = Store.activeCharList.includes(char);
-            const stock = Store.tempStocks[char] || { own: 0, trade: 0, infinite: false };
-            const row = document.createElement('div');
-            row.className = 'editor-row';
-            row.innerHTML = `
-                <div class="char-chip c-${char}" style="margin:0; text-align:center; padding:10px 0; font-size:0.7rem; cursor:pointer; border:${isTarget?'2px solid var(--gold)':'1px solid #eee'}; opacity:${isTarget?1:0.4};" onclick="App.toggleTarget('${char}')">${char}</div>
-                <div class="flex align-center justify-between" style="padding-left:10px;">
-                    <div class="flex align-center gap-10">
-                        <button class="btn-qty" onclick="App.stepQty('${char}', -1)">-</button>
-                        <input type="number" class="qty-display ${stock.own>0?'qty-has':'qty-zero'}" value="${stock.own}" onchange="App.setQty('${char}', this.value)">
-                        <button class="btn-qty" onclick="App.stepQty('${char}', 1)">+</button>
+                    <div class="status-tag ${statusClass}">${statusText}</div>
+                    <div style="font-size:0.85rem; font-weight:bold; color:var(--gold); margin-bottom:10px;">${item.type}</div>
+                    
+                    <div class="inventory-grid" onclick="event.stopPropagation(); App.openUnboxing(${idx})">
+                        <div class="inv-box">
+                            <span class="inv-label">保有 (${totalOwn})</span>
+                            <div class="inv-content">
+                                ${item.targets.map(c => {
+                                    const st = item.stocks[c] || {own:0};
+                                    if(st.own <= 0) return '';
+                                    return `<span class="char-chip c-${c}">${c}${st.own > 1 ? '×'+st.own : ''}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="inv-box">
+                            <span class="inv-label">譲渡 (${totalTrade})</span>
+                            <div class="inv-content">
+                                ${item.targets.map(c => {
+                                    const st = item.stocks[c] || {trade:0};
+                                    if(st.trade <= 0) return '';
+                                    return `<span class="char-chip c-${c}">${c}${st.trade > 1 ? '×'+st.trade : ''}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="inv-box">
+                            <span class="inv-label">不足</span>
+                            <div class="inv-content">
+                                ${item.targets.map(c => {
+                                    const st = item.stocks[c] || {own:0, trade:0, infinite:false};
+                                    if((st.own + st.trade) >= 1 || st.infinite) return '';
+                                    return `<span class="char-chip c-default">${c}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
                     </div>
-                    <button class="inf-btn ${stock.infinite?'active':''}" onclick="App.toggleInfinite('${char}')">∞</button>
-                </div>
-            `;
-            container.appendChild(row);
-        });
-    },
 
-    unboxingGrid() {
-        const container = document.getElementById('unboxingGrid');
-        container.innerHTML = '';
-        let total = 0;
-        Store.activeCharList.forEach(char => {
-            const s = Store.tempStocks[char] || { own: 0, trade: 0 };
-            total += (s.own + s.trade);
-            const area = document.createElement('div');
-            area.className = 'unboxing-panel';
-            area.innerHTML = `
-                <div class="ub-char-label c-${char}">${char}</div>
-                <div class="ub-area ub-area-left" id="ub-own-${char}">
-                    <div class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</div>
-                </div>
-                <div class="ub-area ub-area-right" id="ub-trade-${char}">
-                    <div class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</div>
+                    <div class="inv-summary-row">
+                        <div class="summary-item">回収中: <span>${item.targets.length}人</span></div>
+                        <div class="summary-item">収集率: <span>${Math.floor((item.targets.filter(c => (item.stocks[c]?.own||0)+(item.stocks[c]?.trade||0) >= 1).length / (item.targets.length || 1))*100)}%</span></div>
+                    </div>
+
+                    <div class="flex align-center" style="margin-top:12px; border-top:1px solid #f9f2e8; padding-top:10px;">
+                         <div class="inf-status-container">
+                             ${item.targets.filter(c => item.stocks[c]?.infinite).map(c => `
+                                <div class="inf-status-chip c-${c}"><span>∞</span>${c}</div>
+                             `).join('')}
+                         </div>
+                         <button class="bulk-btn" onclick="event.stopPropagation(); App.copyTradeText(${idx})" style="padding:4px 8px;">コピー</button>
+                    </div>
                 </div>
             `;
-            // Add long press and click listeners
-            const setupArea = (el, field) => {
-                let timer;
-                el.onclick = () => Actions.updateStock(char, field, 1);
-                el.ontouchstart = () => timer = setTimeout(() => Actions.updateStock(char, field, -1), 600);
-                el.ontouchend = () => clearTimeout(timer);
-            };
-            setupArea(area.querySelector('.ub-area-left'), 'own');
-            setupArea(area.querySelector('.ub-area-right'), 'trade');
-            container.appendChild(area);
+            Utils.attachSwipe(wrap.querySelector('.card'), () => Actions.deleteItem(idx));
+            container.appendChild(wrap);
         });
-        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total} 点`;
     },
 
     missingList() {
         const container = document.getElementById('missingListContainer');
-        container.innerHTML = '';
-        const missingMap = {};
+        container.innerHTML = "";
+        let hasMissing = false;
 
-        Object.keys(Store.db).forEach(sId => {
-            Store.db[sId].items.forEach((item, itemIdx) => {
-                if (item.status === 'not') {
-                    item.targets.forEach(char => {
-                        const s = item.stocks[char] || { own: 0, trade: 0 };
-                        if (s.own + s.trade === 0) {
-                            if (!missingMap[char]) missingMap[char] = [];
-                            missingMap[char].push({ sId, sTitle: Store.db[sId].title, itemType: item.type, itemIdx });
-                        }
-                    });
+        Store.order.forEach(sId => {
+            const s = Store.db[sId];
+            const missingInSeries = [];
+
+            s.items.forEach((item, itemIdx) => {
+                const missingChars = item.targets.filter(c => {
+                    const st = item.stocks[c] || {own:0, trade:0, infinite:false};
+                    return (st.own + st.trade) < 1 && !st.infinite;
+                });
+                if (missingChars.length > 0) {
+                    missingInSeries.push({ item, itemIdx, missingChars });
                 }
             });
+
+            if (missingInSeries.length > 0) {
+                hasMissing = true;
+                const sHeader = document.createElement('div');
+                sHeader.innerHTML = `<div style="font-size:0.75rem; color:var(--gold); font-weight:bold; margin:20px 0 10px; border-left:3px solid var(--gold); padding-left:8px;">${s.title}</div>`;
+                container.appendChild(sHeader);
+
+                missingInSeries.forEach(m => {
+                    const card = document.createElement('div');
+                    card.className = 'card mb-15';
+                    card.style.padding = '15px';
+                    card.innerHTML = `
+                        <div style="font-size:0.8rem; font-weight:bold; margin-bottom:8px;">${m.item.type}</div>
+                        <div>
+                            ${m.missingChars.map(c => `<span class="char-chip c-default" onclick="App.jumpToEditorFromMissing('${sId}', ${m.itemIdx}, '${c}')">${c}</span>`).join('')}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
         });
 
-        const sortedChars = Object.keys(missingMap).sort((a, b) => missingMap[b].length - missingMap[a].length);
-        sortedChars.forEach(char => {
-            const section = document.createElement('div');
-            section.className = 'card mb-15';
-            section.style.padding = '15px';
-            section.innerHTML = `
-                <div class="flex align-center mb-15">
-                    <span class="char-chip c-${char}" style="font-size:0.9rem; padding:6px 15px;">${char}</span>
-                    <span class="text-gold text-bold" style="font-size:0.7rem; margin-left:10px;">Missing: ${missingMap[char].length}</span>
-                </div>
-                <div>
-                    ${missingMap[char].map(m => `
-                        <div style="font-size:0.75rem; padding:10px; background:var(--bg-color); border-radius:10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;" onclick="App.jumpToEditorFromMissing('${m.sId}', ${m.itemIdx}, '${char}')">
-                            <div>
-                                <div class="text-bold" style="color:var(--text-main);">${m.sTitle}</div>
-                                <div style="color:var(--text-sub); font-size:0.65rem;">${m.itemType}</div>
-                            </div>
-                            <span style="color:var(--gold);">→</span>
-                        </div>
-                    `).join('')}
+        if (!hasMissing) {
+            container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">不足しているアイテムはありません</div>`;
+        }
+    },
+
+    editorGrid() {
+        const container = document.getElementById('editorGrid');
+        container.innerHTML = "";
+        const charSet = Store.charSets[document.getElementById('editCharSetName').value] || [];
+
+        charSet.forEach(char => {
+            const isTarget = Store.activeCharList.includes(char);
+            const s = Store.tempStocks[char] || { own: 0, trade: 0, infinite: false };
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            if (!isTarget) row.style.opacity = "0.5";
+
+            row.innerHTML = `
+                <div class="char-chip c-${isTarget ? char : 'default'}" style="margin:0; text-align:center; width:70px;" 
+                     onclick="App.toggleEditorTarget('${char}')">${char}</div>
+                <div class="flex align-center justify-between">
+                    <div class="flex align-center gap-10">
+                        <button class="btn-qty" onclick="App.updateQty('${char}', 'own', -1)">-</button>
+                        <input type="number" class="qty-display ${s.own > 0 ? 'qty-has' : 'qty-zero'}" value="${s.own}" 
+                               onchange="App.updateQty('${char}', 'own', 0, this.value)">
+                        <button class="btn-qty" onclick="App.updateQty('${char}', 'own', 1)">+</button>
+                    </div>
+                    <div class="flex align-center gap-10">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
+                        <input type="number" class="qty-display ${s.trade > 0 ? 'qty-has' : 'qty-zero'}" value="${s.trade}" style="width:30px;"
+                               onchange="App.updateQty('${char}', 'trade', 0, this.value)">
+                        <button class="inf-btn ${s.infinite ? 'active' : ''}" onclick="App.toggleInfinite('${char}')">∞</button>
+                    </div>
                 </div>
             `;
-            container.appendChild(section);
+            container.appendChild(row);
         });
-        if (sortedChars.length === 0) container.innerHTML = '<p style="text-align:center; color:var(--text-sub); padding-top:50px;">不足しているアイテムはありません</p>';
     }
 };
 
 // =========================================
-// 7. App Controller (UI Events)
+// 6. Application Controller
 // =========================================
 const App = {
     async init() {
-        try {
-            await Store.init();
-            this.initSettingsFields();
-            Render.seriesList();
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
-        } catch (e) {
-            console.error("Initialization failed", e);
-            alert("データの読み込みに失敗しました。再読み込みしてください。");
-        }
-    },
-
-    initSettingsFields() {
-        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
-        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
-        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
+        await Store.init();
+        this.renderInitialSettings();
+        Render.seriesList();
         
-        let charStr = "";
-        for (let set in Store.charSets) charStr += `${set}:${Store.charSets[set].join(',')}\n`;
-        document.getElementById('charSettingsInput').value = charStr.trim();
-
-        let presetStr = "";
-        Store.presets.forEach(p => presetStr += `${p.type},${p.charSet},${p.targetStr}\n`);
-        document.getElementById('presetSettingsInput').value = presetStr.trim();
-
-        document.getElementById('tempSettingsInput').value = Store.templates.join('\n');
+        // Hide splash with fade
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0';
+        setTimeout(() => splash.style.display = 'none', 500);
     },
 
+    renderInitialSettings() {
+        document.getElementById('charSettingsInput').value = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
+        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix;
+        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix;
+        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
+        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
+        document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.type},${p.setName},${p.targetStr}`).join('\n');
+
+        const setSelect = document.getElementById('editCharSetName');
+        setSelect.innerHTML = Object.keys(Store.charSets).map(k => `<option value="${k}">${k}</option>`).join('');
+    },
+
+    // Navigation
     switchMainTab(tab) {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.getElementById('seriesView').style.display = (tab === 'list') ? 'block' : 'none';
+        document.getElementById('missingView').style.display = (tab === 'missing') ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = (tab === 'list') ? 'flex' : 'none';
         if (tab === 'missing') Render.missingList();
     },
 
-    // Series Handlers
+    // Series Logic
     openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
     closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
+    
     openDetail(id) {
         Store.currentSeriesId = id;
         document.getElementById('detailView').style.display = 'block';
@@ -1126,66 +1164,70 @@ const App = {
         Render.seriesList();
     },
 
-    // Editor Handlers
-    openItemEditor(idx = null, fromMissing = false) {
+    // Editor Logic
+    openItemEditor(idx = null) {
         Store.currentItemIdx = idx;
-        Store.editorFromMissing = fromMissing;
-        const series = Store.db[Store.currentSeriesId];
-        
-        // Reset Editor State
-        const select = document.getElementById('editCharSetName');
-        select.innerHTML = Object.keys(Store.charSets).map(s => `<option value="${s}">${s}</option>`).join('');
+        const s = Store.db[Store.currentSeriesId];
         
         if (idx !== null) {
-            const item = series.items[idx];
+            const item = s.items[idx];
             document.getElementById('editItemType').value = item.type;
-            document.getElementById('editCharSetName').value = item.charSet;
+            document.getElementById('editCharSetName').value = item.charSetName;
             document.getElementById('editItemStatus').value = item.status;
             Store.activeCharList = [...item.targets];
-            Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+            Store.tempStocks = JSON.parse(JSON.stringify(item.stocks));
+            document.getElementById('historyBanner').style.display = 'none';
         } else {
             document.getElementById('editItemType').value = "";
-            document.getElementById('editCharSetName').value = "デフォルト";
             document.getElementById('editItemStatus').value = "not";
             Store.activeCharList = [];
             Store.tempStocks = {};
-            if (Store.lastItem) document.getElementById('historyBanner').style.display = 'flex';
+            document.getElementById('historyBanner').style.display = Store.lastItem ? 'flex' : 'none';
         }
-        
-        this.renderPresets();
+
+        this.updatePresetChips();
         Render.editorGrid();
         document.getElementById('editorView').style.display = 'block';
         window.history.pushState({view:'editor'}, "");
     },
 
-    closeEditor() {
-        document.getElementById('editorView').style.display = 'none';
-        document.getElementById('historyBanner').style.display = 'none';
-        if (Store.editorFromMissing) Render.missingList();
-    },
-
     applyHistory() {
         if (!Store.lastItem) return;
         document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.charSet;
+        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
         Store.activeCharList = [...Store.lastItem.targets];
         Render.editorGrid();
         document.getElementById('historyBanner').style.display = 'none';
     },
 
-    renderPresets() {
-        const area = document.getElementById('presetArea');
-        const chipContainer = document.getElementById('presetChips');
-        if (Store.presets.length === 0) { area.style.display = 'none'; return; }
-        area.style.display = 'block';
-        chipContainer.innerHTML = Store.presets.map(p => `<span class="preset-chip" onclick="App.applyPreset('${p.type}','${p.charSet}','${p.targetStr}')">${p.type}</span>`).join('');
+    updatePresetChips() {
+        const container = document.getElementById('presetChips');
+        container.innerHTML = "";
+        if (Store.presets.length === 0) {
+            document.getElementById('presetArea').style.display = 'none';
+            return;
+        }
+        document.getElementById('presetArea').style.display = 'block';
+        Store.presets.forEach(p => {
+            const chip = document.createElement('span');
+            chip.className = 'preset-chip';
+            chip.textContent = p.type;
+            chip.onclick = () => {
+                document.getElementById('editItemType').value = p.type;
+                document.getElementById('editCharSetName').value = p.setName;
+                if (p.targetStr) Store.activeCharList = p.targetStr.split('|').map(t => t.trim());
+                Render.editorGrid();
+            };
+            container.appendChild(chip);
+        });
     },
 
-    applyPreset(type, set, targetStr) {
-        document.getElementById('editItemType').value = type;
-        document.getElementById('editCharSetName').value = set;
-        Store.activeCharList = targetStr.split('|').map(t => t.trim());
-        Render.editorGrid();
+    closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+        if (Store.editorFromMissing) {
+            Store.editorFromMissing = false;
+            Render.missingList();
+        }
     },
 
     changeCharSet(setName) {
@@ -1193,24 +1235,21 @@ const App = {
         Render.editorGrid();
     },
 
-    toggleTarget(char) {
-        if (Store.activeCharList.includes(char)) {
-            Store.activeCharList = Store.activeCharList.filter(c => c !== char);
+    toggleEditorTarget(char) {
+        const idx = Store.activeCharList.indexOf(char);
+        if (idx > -1) Store.activeCharList.splice(idx, 1);
+        else Store.activeCharList.push(char);
+        Render.editorGrid();
+    },
+
+    updateQty(char, type, diff, directVal = null) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        if (directVal !== null) {
+            Store.tempStocks[char][type] = parseInt(directVal) || 0;
         } else {
-            Store.activeCharList.push(char);
+            Store.tempStocks[char][type] += diff;
         }
-        Render.editorGrid();
-    },
-
-    stepQty(char, diff) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        Store.tempStocks[char].own = Math.max(0, (Store.tempStocks[char].own || 0) + diff);
-        Render.editorGrid();
-    },
-
-    setQty(char, val) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        Store.tempStocks[char].own = Math.max(0, parseInt(val) || 0);
+        if (Store.tempStocks[char][type] < 0) Store.tempStocks[char][type] = 0;
         Render.editorGrid();
     },
 
@@ -1220,33 +1259,109 @@ const App = {
         Render.editorGrid();
     },
 
-    // Unboxing
-    openUnboxing(idx) {
-        Store.currentItemIdx = idx;
-        const item = Store.db[Store.currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = `${item.type} を開封`;
-        Store.activeCharList = [...item.targets];
-        Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
-        Render.unboxingGrid();
+    // Unboxing Logic (Tap to count)
+    openUnboxing(itemIdx) {
+        Store.currentItemIdx = itemIdx;
+        const item = Store.db[Store.currentSeriesId].items[itemIdx];
+        document.getElementById('unboxingTitle').textContent = item.type;
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = "";
+
+        item.targets.forEach(char => {
+            const s = item.stocks[char] || {own:0, trade:0};
+            const panel = document.createElement('div');
+            panel.className = 'unboxing-panel';
+            panel.innerHTML = `
+                <div class="ub-char-label c-${char}">${char}</div>
+                <div class="ub-area ub-area-left" id="ub-own-${char}">
+                    <div class="unboxing-count-badge ${s.own > 0 ? 'has-count' : 'is-zero'}">${s.own}</div>
+                </div>
+                <div class="ub-area ub-area-right" id="ub-trade-${char}">
+                    <div class="unboxing-count-badge ${s.trade > 0 ? 'has-count' : 'is-zero'}">${s.trade}</div>
+                </div>
+            `;
+            
+            const setupTap = (el, type) => {
+                let timer;
+                el.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    timer = setTimeout(async () => {
+                        await this.modifyStock(char, type, -1);
+                        timer = null;
+                    }, 600);
+                });
+                el.addEventListener('touchend', async (e) => {
+                    if (timer) {
+                        clearTimeout(timer);
+                        await this.modifyStock(char, type, 1);
+                    }
+                });
+            };
+            setupTap(panel.querySelector('.ub-area-left'), 'own');
+            setupTap(panel.querySelector('.ub-area-right'), 'trade');
+            grid.appendChild(panel);
+        });
+        
+        this.updateUnboxingTotal();
         document.getElementById('unboxingModal').style.display = 'flex';
+    },
+
+    async modifyStock(char, type, diff) {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        if (!item.stocks[char]) item.stocks[char] = {own:0, trade:0, infinite:false};
+        item.stocks[char][type] += diff;
+        if (item.stocks[char][type] < 0) item.stocks[char][type] = 0;
+        
+        // Update UI badge
+        const badge = document.querySelector(`#ub-${type}-${char} .unboxing-count-badge`);
+        badge.textContent = item.stocks[char][type];
+        badge.className = `unboxing-count-badge ${item.stocks[char][type] > 0 ? 'has-count' : 'is-zero'}`;
+        
+        item.status = Utils.autoDetermineStatus(item);
+        this.updateUnboxingTotal();
+        await Store.save();
+    },
+
+    updateUnboxingTotal() {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        const total = Object.values(item.stocks).reduce((a, b) => a + (b.own || 0) + (b.trade || 0), 0);
+        document.getElementById('unboxingTotalCount').textContent = `合計獲得数: ${total}`;
     },
 
     closeUnboxing() {
         document.getElementById('unboxingModal').style.display = 'none';
         Render.itemList();
+        Render.seriesList();
     },
 
-    // UI Misc
-    toggleSettings(open) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        panel.style.right = open ? '0' : '-85%';
-        overlay.style.display = open ? 'block' : 'none';
+    // Trade Text
+    copyTradeText(idx) {
+        const item = Store.db[Store.currentSeriesId].items[idx];
+        const ownList = [], wantList = [];
+        
+        item.targets.forEach(c => {
+            const s = item.stocks[c] || {own:0, trade:0, infinite:false};
+            if (s.trade > 0) ownList.push(`${c}${s.trade > 1 ? '×'+s.trade : ''}`);
+            if ((s.own + s.trade) < 1 && !s.infinite) wantList.push(c);
+            if (s.infinite && Store.tradeConfig.showInf) wantList.push(`${c}(∞)`);
+        });
+
+        const text = `${Store.tradeConfig.prefix}\n【譲】${ownList.join('、')}\n【求】${wantList.join('、')}\n\n${Store.tradeConfig.suffix}`;
+        navigator.clipboard.writeText(text.trim()).then(() => Utils.showToast("募集文をコピーしました"));
+    },
+
+    // Filter/Sort Helpers
+    async setSortMode(m) {
+        Store.sortMode = m;
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('sort-' + m).classList.add('active');
+        await Store.save();
+        Render.seriesList();
     },
 
     toggleDateFilter() {
         const p = document.getElementById('dateFilterPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+        p.style.display = (p.style.display === 'none') ? 'block' : 'none';
     },
 
     clearDateFilter() {
@@ -1255,15 +1370,29 @@ const App = {
         Render.seriesList();
     },
 
+    toggleSettings(show) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        if (show) {
+            overlay.style.display = 'block';
+            setTimeout(() => panel.style.right = '0', 10);
+        } else {
+            panel.style.right = '-85%';
+            setTimeout(() => overlay.style.display = 'none', 300);
+        }
+    },
+
     filterByTag(t) {
         document.getElementById('searchBar').value = t;
         Render.seriesList();
         window.scrollTo({top:0, behavior:'smooth'});
     },
 
+    // Deep Link Logic
     jumpToEditorFromMissing(sId, itemIdx, charName) {
         Store.currentSeriesId = sId;
-        App.openItemEditor(itemIdx, true);
+        Store.editorFromMissing = true;
+        this.openItemEditor(itemIdx);
         setTimeout(() => {
             const rows = document.querySelectorAll('.editor-row');
             for(let row of rows) {
@@ -1275,80 +1404,10 @@ const App = {
                 }
             }
         }, 300);
-    },
-
-    // Bulk Actions in Editor
-    async bulkToggleTargets(select) {
-        const currentSet = Store.charSets[document.getElementById('editCharSetName').value] || [];
-        Store.activeCharList = select ? [...currentSet] : [];
-        Render.editorGrid();
-    },
-
-    async bulkIncrementOwn() {
-        Store.activeCharList.forEach(char => {
-            if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-            Store.tempStocks[char].own = (Store.tempStocks[char].own || 0) + 1;
-        });
-        Render.editorGrid();
-    },
-
-    async bulkResetCounts() {
-        if (!confirm('全ての数値をリセットしますか？')) return;
-        Store.tempStocks = {};
-        Render.editorGrid();
     }
 };
 
-// =========================================
-// 8. Backup & Restore
-// =========================================
-Actions.exportBackup = async function() {
-    const fullData = {
-        db: Store.db,
-        order: Store.order,
-        charSets: Store.charSets,
-        templates: Store.templates,
-        presets: Store.presets,
-        tradeConfig: Store.tradeConfig,
-        sortMode: Store.sortMode
-    };
-    const blob = new Blob([JSON.stringify(fullData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `archive_backup_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-};
-
-Actions.importBackup = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        try {
-            const data = JSON.parse(e.target.result);
-            if (data.db) {
-                Store.db = data.db;
-                Store.order = data.order || Object.keys(data.db);
-                Store.charSets = data.charSets || Store.charSets;
-                Store.templates = data.templates || Store.templates;
-                Store.presets = data.presets || [];
-                Store.tradeConfig = data.tradeConfig || Store.tradeConfig;
-                Store.sortMode = data.sortMode || 'new';
-                await Store.save();
-                alert('バックアップを読み込みました');
-                location.reload();
-            }
-        } catch (err) {
-            alert('ファイルの形式が正しくありません');
-        }
-    };
-    reader.readAsText(file);
-};
-
-// =========================================
-// 9. Browser History Handling
-// =========================================
+// Browser History Handling
 window.onpopstate = function(e) {
     const state = e.state || {};
     const editor = document.getElementById('editorView');
@@ -1365,7 +1424,6 @@ window.onpopstate = function(e) {
         Render.seriesList();
     }
 };
-
 </script>
 </body>
 </html>
