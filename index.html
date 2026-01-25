@@ -711,9 +711,13 @@ const Utils = {
         const targets = item.targets || [];
         if (targets.length === 0) return item.status;
 
-        // 修正点：無限回収(infinite)設定時でも、own + trade が 1つ以上あれば収集済みと判定する
         const isAllCollected = targets.every(char => {
             const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
+            // 修正箇所：無限回収設定(infinite: true)の場合でも、
+            // 合計1つ以上所持(own + trade >= 1)していればコンプ対象として認める
+            if (s.infinite) {
+                return (s.own + s.trade) >= 1;
+            }
             return (s.own + s.trade) >= 1;
         });
 
@@ -1396,3 +1400,4 @@ window.onpopstate = function(e) {
 </script>
 </body>
 </html>
+
