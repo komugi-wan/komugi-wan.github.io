@@ -578,7 +578,6 @@
 </div>
 
 <div id="toast"></div>
-
 <button class="fab" id="mainFab" onclick="App.openSeriesModal()">＋</button>
 
 <script>
@@ -712,8 +711,7 @@ const Utils = {
         const targets = item.targets || [];
         if (targets.length === 0) return item.status;
 
-        // すべての対象キャラクターが1つ以上所持（own + trade >= 1）されているかチェック
-        // 無限回収(infinite: true)設定であっても、1つ以上あればコンプとみなす
+        // 修正点：無限回収(infinite)設定時でも、own + trade が 1つ以上あれば収集済みと判定する
         const isAllCollected = targets.every(char => {
             const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
             return (s.own + s.trade) >= 1;
@@ -723,9 +721,8 @@ const Utils = {
     },
 
     attachSwipe(element, actionCallback, isCustomSort) {
-        let startX = 0, isSwiping = false, currentX = 0;
-        const threshold = 60;
-
+        let startX = 0, isSwiping = false, isTicking = false;
+        
         element.addEventListener('touchstart', (e) => {
             if (isCustomSort) return;
             startX = e.touches[0].clientX;
@@ -735,18 +732,23 @@ const Utils = {
 
         element.addEventListener('touchmove', (e) => {
             if (!isSwiping) return;
-            currentX = e.touches[0].clientX - startX;
-            if (currentX < 0) {
-                const move = Math.max(currentX, -100);
-                element.style.transform = `translateX(${move}px)`;
+            const diff = e.touches[0].clientX - startX;
+            if (diff < -100 || diff > 0) return;
+            if (!isTicking) {
+                window.requestAnimationFrame(() => {
+                    element.style.transform = `translateX(${diff}px)`;
+                    isTicking = false;
+                });
+                isTicking = true;
             }
         }, {passive: true});
 
-        element.addEventListener('touchend', () => {
+        element.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
             isSwiping = false;
             element.classList.remove('swiping');
-            if (currentX < -threshold) {
+            const diff = e.changedTouches[0].clientX - startX;
+            if (diff < -60) {
                 element.style.transform = 'translateX(-100px)';
                 setTimeout(() => {
                     if (confirm("このシリーズを削除しますか？")) actionCallback();
@@ -755,8 +757,12 @@ const Utils = {
             } else {
                 element.style.transform = '';
             }
-            currentX = 0;
         });
+    },
+
+    getCharColorClass(name) {
+        const list = ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+        return list.includes(name) ? `c-${name}` : 'c-default';
     }
 };
 
@@ -766,374 +772,564 @@ const Utils = {
 const Render = {
     seriesList() {
         const container = document.getElementById('seriesListContainer');
-        const q = document.getElementById('searchBar').value.toLowerCase();
-        const start = document.getElementById('filterStart').value;
-        const end = document.getElementById('filterEnd').value;
         container.innerHTML = "";
+        const query = document.getElementById('searchBar').value.toLowerCase();
+        const startFilter = document.getElementById('filterStart').value;
+        const endFilter = document.getElementById('filterEnd').value;
 
-        let list = [...Store.order];
+        let sortedIds = [...Store.order];
         if (Store.sortMode === 'date') {
-            list.sort((a,b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
-        } else if (Store.sortMode === 'new') {
-            // そのまま(登録順)
+            sortedIds.sort((a,b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
         }
 
-        list.forEach(id => {
+        sortedIds.forEach(id => {
             const s = Store.db[id];
-            if (!s) return;
-            const matchesSearch = s.title.toLowerCase().includes(q) || (s.tags || "").toLowerCase().includes(q);
-            const matchesDate = (!start || s.date >= start) && (!end || s.date <= end);
+            const tags = (s.tags || "").toLowerCase();
+            const dateStr = s.date || "";
+            
+            if (query && !s.title.toLowerCase().includes(query) && !tags.includes(query)) return;
+            if (startFilter && dateStr < startFilter) return;
+            if (endFilter && dateStr > endFilter) return;
 
-            if (matchesSearch && matchesDate) {
-                const el = document.createElement('div');
-                el.className = 'swipe-container';
-                if (Store.sortMode === 'custom') el.classList.add('sort-custom');
+            const isAllComp = s.items.length > 0 && s.items.every(i => i.status === 'comp' || i.status === 'none');
+            const compMark = isAllComp ? '<span class="series-comp-mark">✔</span>' : '';
 
-                const isAllComp = s.items.length > 0 && s.items.every(item => item.status === 'comp');
-                const tagHtml = (s.tags || "").split(/[,、]/).filter(t => t.trim()).map(t => `<span class="tag-chip" onclick="event.stopPropagation(); App.filterByTag('${t.trim()}')">#${t.trim()}</span>`).join("");
-
-                el.innerHTML = `
-                    <div class="delete-btn-overlay">削除</div>
-                    <div class="card" onclick="App.openDetail('${id}')">
-                        <div class="flex justify-between align-center">
-                            <div class="handle" draggable="true" ondragstart="Actions.drag(event, '${id}')">☰</div>
-                            <div style="flex:1;">
-                                <div style="font-size:0.65rem; color:var(--text-sub); margin-bottom:4px;">
-                                    ${s.date || "日付未設定"} ${isAllComp ? '<span class="series-comp-mark">✔ COMPLETE</span>' : ''}
-                                </div>
-                                <div style="font-weight:bold; font-size:1rem; color:var(--text-main); margin-bottom:8px;">${s.title}</div>
-                                <div class="flex" style="flex-wrap:wrap;">${tagHtml}</div>
-                            </div>
-                            <button class="fav-btn ${s.isFav ? 'active' : ''}" onclick="event.stopPropagation(); Actions.toggleFav('${id}')">★</button>
+            const div = document.createElement('div');
+            div.className = 'swipe-container' + (Store.sortMode === 'custom' ? ' sort-custom' : '');
+            div.innerHTML = `
+                <div class="delete-btn-overlay">削除</div>
+                <div class="card" onclick="App.openDetail('${id}')">
+                    <div class="flex justify-between align-center mb-15">
+                        <div style="font-size:0.9rem; font-weight:bold; color:var(--text-main); flex:1;">
+                            ${s.title}${compMark}
+                        </div>
+                        <button class="fav-btn ${s.isFav ? 'active' : ''}" onclick="Actions.toggleFav(event, '${id}')">★</button>
+                        <div class="handle">☰</div>
+                    </div>
+                    <div class="flex justify-between align-center">
+                        <div style="font-size:0.65rem; color:var(--text-sub);">${dateStr.replace('-', '/')}</div>
+                        <div class="flex" style="flex-wrap:wrap; justify-content:flex-end;">
+                            ${(s.tags || "").split(',').filter(t => t.trim()).map(t => `<span class="tag-chip" onclick="Actions.filterByTag(event, '${t.trim()}')">${t.trim()}</span>`).join('')}
                         </div>
                     </div>
-                `;
-                Utils.attachSwipe(el.querySelector('.card'), () => Actions.deleteSeries(id), Store.sortMode === 'custom');
-                container.appendChild(el);
+                </div>
+            `;
+            if (Store.sortMode !== 'custom') {
+                Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteSeries(id), false);
             }
+            container.appendChild(div);
         });
+    },
 
-        if (container.innerHTML === "") {
-            container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">シリーズが見つかりません</div>`;
-        }
+    missingList() {
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = '<h2 style="font-size:0.9rem; color:var(--gold); margin-bottom:15px; letter-spacing:2px; text-align:center;">未コンプアイテム</h2>';
+        
+        let hasMissing = false;
+        Store.order.forEach(sId => {
+            const s = Store.db[sId];
+            s.items.forEach((item, idx) => {
+                if (item.status === 'not') {
+                    hasMissing = true;
+                    const missingChars = (item.targets || []).filter(char => {
+                        const stock = item.stocks[char] || {own:0, trade:0, infinite:false};
+                        // 修正点：判定ロジックを Utils と統一（own+trade < 1 の場合に不足と見なす）
+                        return (stock.own + stock.trade) < 1;
+                    });
+
+                    const div = document.createElement('div');
+                    div.className = 'card mb-15';
+                    div.innerHTML = `
+                        <p style="font-size:0.65rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">${s.title}</p>
+                        <p style="font-size:0.85rem; font-weight:bold; margin-bottom:10px;">${item.type}</p>
+                        <div class="flex" style="flex-wrap:wrap;">
+                            ${missingChars.map(c => `<span class="char-chip ${Utils.getCharColorClass(c)}" onclick="Actions.jumpToEditorFromMissing('${sId}', ${idx}, '${c}')">${c}</span>`).join('')}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+        });
+        if(!hasMissing) container.innerHTML += '<p style="text-align:center; color:var(--text-sub); font-size:0.8rem; margin-top:40px;">不足しているアイテムはありません</p>';
     },
 
     itemList() {
         const container = document.getElementById('itemListContainer');
         container.innerHTML = "";
         const series = Store.db[Store.currentSeriesId];
-        if (!series) return;
+        document.getElementById('detailHeaderTitle').textContent = series.title;
 
         series.items.forEach((item, idx) => {
             const statusClass = item.status === 'comp' ? 'st-comp' : (item.status === 'not' ? 'st-not' : 'st-none');
-            const statusText = item.status === 'comp' ? 'COMPLETE' : (item.status === 'not' ? 'INCOMPLETE' : '予定なし');
-
-            const targets = item.targets || [];
-            const infChars = [];
-            const collectedChars = [];
-            const missingChars = [];
-
-            targets.forEach(c => {
-                const stk = item.stocks[c] || {own:0, trade:0, infinite:false};
-                if (stk.infinite) infChars.push({name: c, count: stk.own + stk.trade});
-                if ((stk.own + stk.trade) > 0) collectedChars.push(c);
-                else missingChars.push(c);
-            });
-
-            let infHtml = infChars.map(obj => `
-                <div class="inf-status-chip c-${obj.name}">
-                    <span>∞</span>${obj.name} (${obj.count})
-                </div>
-            `).join("");
-
-            let invHtml = `
-                <div class="inv-box">
-                    <span class="inv-label">所持 (${collectedChars.length})</span>
-                    <div class="inv-content">${collectedChars.map(c => `<span class="char-chip c-${c}">${c}</span>`).join("")}</div>
-                </div>
-                <div class="inv-box">
-                    <span class="inv-label" style="color:#999;">不足 (${missingChars.length})</span>
-                    <div class="inv-content">${missingChars.map(c => `<span class="char-chip c-${c}" style="opacity:0.3;">${c}</span>`).join("")}</div>
-                </div>
-                <div class="inv-box" style="background:var(--trade-bg); border-color:#e1e8ed;">
-                    <span class="inv-label" style="color:var(--trade-text);">譲渡可能</span>
-                    <div class="trade-text-small">${item.tradeNote || "-"}</div>
-                </div>
-            `;
-
-            const card = document.createElement('div');
-            card.className = 'card mb-15';
-            card.style.padding = "15px";
-            card.innerHTML = `
-                <div class="status-tag ${statusClass}">${statusText}</div>
-                <div class="flex justify-between align-center">
-                    <div style="font-weight:bold; color:var(--gold); font-size:0.9rem;">${item.type}</div>
-                    <div class="flex align-center">
-                        <button class="bulk-btn" onclick="App.openUnboxing(${idx})" style="margin-right:8px; padding:4px 8px;">開封</button>
-                        <button style="background:none; border:none; color:var(--text-sub); font-size:1.1rem;" onclick="App.openItemEditor(${idx})">✎</button>
+            const statusLabel = item.status === 'comp' ? 'COMPLETE' : (item.status === 'not' ? 'INCOMPLETE' : 'NONE');
+            
+            const div = document.createElement('div');
+            div.className = 'card mb-15';
+            div.style.paddingTop = "35px";
+            div.innerHTML = `
+                <div class="status-tag ${statusClass}">${statusLabel}</div>
+                <div class="flex justify-between align-center mb-15">
+                    <div style="font-size:1rem; font-weight:bold;">${item.type}</div>
+                    <div class="flex gap-10">
+                        <button onclick="App.openUnboxing(${idx})" style="background:var(--gold-light); border:none; color:var(--gold); border-radius:8px; padding:6px 12px; font-size:0.7rem; font-weight:bold;">開封</button>
+                        <button onclick="App.openItemEditor(${idx})" style="background:none; border:1px solid var(--gold-light); color:var(--gold); border-radius:8px; padding:6px 12px; font-size:0.7rem; font-weight:bold;">編集</button>
                     </div>
                 </div>
-                <div class="inventory-grid" onclick="App.openItemEditor(${idx})">${invHtml}</div>
-                <div class="flex align-center mt-10" style="margin-top:10px;">
-                    <div class="inf-status-container">${infHtml}</div>
-                    <button class="secondary-btn" style="width:auto; margin:0; padding:4px 10px; font-size:0.65rem;" onclick="Actions.copyTradeText(${idx})">募集文コピー</button>
+                
+                <div class="inventory-grid" onclick="App.openItemEditor(${idx})">
+                    <div class="inv-box">
+                        <span class="inv-label">所持 (${(item.targets || []).filter(c => (item.stocks[c]?.own || 0) > 0).length})</span>
+                        <div class="inv-content">${(item.targets || []).filter(c => (item.stocks[c]?.own || 0) > 0).map(c => `<span class="char-chip ${Utils.getCharColorClass(c)}">${c}</span>`).join('')}</div>
+                    </div>
+                    <div class="inv-box">
+                        <span class="inv-label">譲渡 (${(item.targets || []).filter(c => (item.stocks[c]?.trade || 0) > 0).length})</span>
+                        <div class="inv-content">${(item.targets || []).filter(c => (item.stocks[c]?.trade || 0) > 0).map(c => `<span class="char-chip ${Utils.getCharColorClass(c)}">${c}</span>`).join('')}</div>
+                    </div>
+                    <div class="inv-box">
+                        <span class="inv-label">募集・メモ</span>
+                        <div class="inv-content">
+                            <div class="trade-text-small">${this.generateTradeText(item)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inv-summary-row" onclick="App.openItemEditor(${idx})">
+                    <div class="inf-status-container">
+                        ${(item.targets || []).filter(c => item.stocks[c]?.infinite).map(c => `
+                            <div class="inf-status-chip ${Utils.getCharColorClass(c)}">
+                                <span>∞</span>${c}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="summary-item">計<span>${Object.values(item.stocks).reduce((a,b)=>a+(b.own||0)+(b.trade||0), 0)}</span></div>
                 </div>
             `;
-            container.appendChild(card);
+            container.appendChild(div);
         });
     },
 
-    missingList() {
-        const container = document.getElementById('missingListContainer');
-        container.innerHTML = "";
-        let hasMissing = false;
+    generateTradeText(item) {
+        let text = "";
+        const targets = item.targets || [];
+        const config = Store.tradeConfig;
 
-        Store.order.forEach(sId => {
-            const s = Store.db[sId];
-            s.items.forEach((item, itemIdx) => {
-                if (item.status === 'not') {
-                    const missing = (item.targets || []).filter(c => {
-                        const stk = item.stocks[c] || {own:0, trade:0};
-                        return (stk.own + stk.trade) === 0;
-                    });
-
-                    if (missing.length > 0) {
-                        hasMissing = true;
-                        const div = document.createElement('div');
-                        div.className = 'card mb-15';
-                        div.innerHTML = `
-                            <div style="font-size:0.65rem; color:var(--text-sub); margin-bottom:4px;">${s.title}</div>
-                            <div style="font-weight:bold; color:var(--gold); font-size:0.9rem; margin-bottom:8px;">${item.type}</div>
-                            <div class="flex" style="flex-wrap:wrap;">
-                                ${missing.map(c => `<span class="char-chip c-${c}" onclick="App.jumpToEditorFromMissing('${sId}', ${itemIdx}, '${c}')">${c}</span>`).join("")}
-                            </div>
-                        `;
-                        container.appendChild(div);
-                    }
-                }
-            });
+        const want = targets.filter(c => {
+            const s = item.stocks[c] || {own:0, trade:0, infinite:false};
+            // 修正点：無限回収時でも、1つ以上所持していれば募集リストから外す（Utilsと判定を同期）
+            return s.infinite || (s.own + s.trade < 1);
         });
 
-        if (!hasMissing) {
-            container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">不足しているアイテムはありません</div>`;
+        if (want.length > 0) {
+            text += "【求】" + want.map(c => c + (Store.tradeConfig.showInf && item.stocks[c]?.infinite ? '(∞)' : '')).join('、');
         }
+        return text || '<span style="color:#ccc; font-weight:normal;">---</span>';
     },
 
-    editor() {
+    editorGrid() {
         const grid = document.getElementById('editorGrid');
         grid.innerHTML = "";
-        
-        Store.activeCharList.forEach(char => {
-            const stk = Store.tempStocks[char] || { own: 0, trade: 0, target: true, infinite: false };
-            const row = document.createElement('div');
-            row.className = 'editor-row';
-            row.innerHTML = `
-                <div class="flex flex-direction-column align-center">
-                    <div class="char-chip c-${char}" style="margin:0 0 5px 0; width:60px; text-align:center;">${char}</div>
-                    <label style="font-size:0.6rem; color:var(--text-sub); display:flex; align-items:center; gap:2px;">
-                        <input type="checkbox" ${stk.target ? 'checked' : ''} onchange="Store.tempStocks['${char}'].target = this.checked">対象
-                    </label>
+        Store.activeCharList.forEach(name => {
+            const s = Store.tempStocks[name] || { own: 0, trade: 0, infinite: false };
+            const isTarget = (Store.tempTargets || []).includes(name);
+            
+            const div = document.createElement('div');
+            div.className = 'editor-row';
+            if (!isTarget) div.style.opacity = "0.4";
+
+            div.innerHTML = `
+                <div style="text-align:center;">
+                    <div class="char-chip ${Utils.getCharColorClass(name)}" 
+                         style="margin:0 auto 8px; cursor:pointer; width:65px;" 
+                         onclick="Actions.toggleCharTarget('${name}')">
+                         ${name}
+                    </div>
+                    <button class="inf-btn ${s.infinite ? 'active' : ''}" onclick="Actions.toggleInfinite('${name}')">
+                        ${s.infinite ? '∞' : '∞'}
+                    </button>
                 </div>
-                <div class="flex align-center justify-between">
+                <div class="flex align-center justify-between" style="padding-right:10px;">
                     <div class="flex align-center gap-10">
-                        <button class="btn-qty" onclick="Actions.stepQty('${char}', -1)">−</button>
-                        <input type="number" class="qty-display ${stk.own > 0 ? 'qty-has' : 'qty-zero'}" value="${stk.own}" onchange="Actions.updateQty('${char}', this.value)">
-                        <button class="btn-qty" onclick="Actions.stepQty('${char}', 1)">＋</button>
+                        <span class="label-sm" style="margin:0; width:30px;">保管</span>
+                        <button class="btn-qty" onclick="Actions.changeQty('${name}', 'own', -1)">−</button>
+                        <input type="number" class="qty-display ${s.own > 0 ? 'qty-has' : 'qty-zero'}" value="${s.own}" onchange="Actions.updateQtyInput('${name}', 'own', this.value)">
+                        <button class="btn-qty" onclick="Actions.changeQty('${name}', 'own', 1)">＋</button>
                     </div>
                     <div class="flex align-center gap-10">
-                        <div style="text-align:right;">
-                            <div style="font-size:0.6rem; color:var(--text-sub);">譲渡可</div>
-                            <input type="number" class="qty-display" style="width:30px; font-size:0.8rem;" value="${stk.trade}" onchange="Store.tempStocks['${char}'].trade = parseInt(this.value)||0">
-                        </div>
-                        <button class="inf-btn ${stk.infinite ? 'active' : ''}" onclick="Actions.toggleInfinite('${char}')">∞</button>
+                        <span class="label-sm" style="margin:0; width:30px;">譲渡</span>
+                        <button class="btn-qty" onclick="Actions.changeQty('${name}', 'trade', -1)">−</button>
+                        <input type="number" class="qty-display ${s.trade > 0 ? 'qty-has' : 'qty-zero'}" value="${s.trade}" onchange="Actions.updateQtyInput('${name}', 'trade', this.value)">
+                        <button class="btn-qty" onclick="Actions.changeQty('${name}', 'trade', 1)">＋</button>
                     </div>
                 </div>
             `;
-            grid.appendChild(row);
+            grid.appendChild(div);
         });
     }
 };
 
 // =========================================
-// 5. Core Actions
+// 5. Core Applications (Logic & Routing)
+// =========================================
+const App = {
+    async init() {
+        await Store.init();
+        this.renderAll();
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
+        }, 800);
+    },
+
+    renderAll() {
+        Render.seriesList();
+        Render.missingList();
+        this.updateSettingsUI();
+    },
+
+    switchMainTab(tab) {
+        const isList = tab === 'list';
+        document.getElementById('seriesView').style.display = isList ? 'block' : 'none';
+        document.getElementById('missingView').style.display = isList ? 'none' : 'block';
+        document.getElementById('tab-list').className = isList ? 'nav-tab active' : 'nav-tab';
+        document.getElementById('tab-missing').className = isList ? 'nav-tab' : 'nav-tab active';
+        document.getElementById('mainFab').style.display = isList ? 'flex' : 'none';
+        if (isList) Render.seriesList(); else Render.missingList();
+    },
+
+    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
+    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
+
+    openDetail(id) {
+        Store.currentSeriesId = id;
+        Render.itemList();
+        document.getElementById('detailView').style.display = 'block';
+        window.history.pushState({view:'detail'}, "");
+    },
+    closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        Render.seriesList();
+    },
+
+    openItemEditor(idx = null, fromMissing = false) {
+        Store.currentItemIdx = idx;
+        Store.editorFromMissing = fromMissing;
+        const item = idx !== null ? Store.db[Store.currentSeriesId].items[idx] : null;
+
+        document.getElementById('editItemType').value = item ? item.type : "";
+        document.getElementById('editItemStatus').value = item ? item.status : "not";
+        
+        const setSelect = document.getElementById('editCharSetName');
+        setSelect.innerHTML = Object.keys(Store.charSets).map(k => `<option value="${k}">${k}</option>`).join('');
+        setSelect.value = item ? item.charSet : Object.keys(Store.charSets)[0];
+
+        Store.activeCharList = Store.charSets[setSelect.value] || [];
+        Store.tempStocks = item ? JSON.parse(JSON.stringify(item.stocks)) : {};
+        Store.tempTargets = item ? [...item.targets] : [...Store.activeCharList];
+
+        document.getElementById('historyBanner').style.display = (!item && Store.lastItem) ? 'flex' : 'none';
+        
+        const presetArea = document.getElementById('presetArea');
+        const presetChips = document.getElementById('presetChips');
+        if (!item && Store.presets.length > 0) {
+            presetArea.style.display = 'block';
+            presetChips.innerHTML = Store.presets.map((p, i) => `<span class="preset-chip" onclick="App.applyPreset(${i})">${p.name}</span>`).join('');
+        } else {
+            presetArea.style.display = 'none';
+        }
+
+        Render.editorGrid();
+        document.getElementById('editorView').style.display = 'block';
+        window.history.pushState({view:'editor'}, "");
+    },
+
+    closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+        if (Store.editorFromMissing) Render.missingList(); else Render.itemList();
+    },
+
+    changeCharSet(setName) {
+        Store.activeCharList = Store.charSets[setName] || [];
+        Store.tempTargets = [...Store.activeCharList];
+        Render.editorGrid();
+    },
+
+    applyHistory() {
+        if (!Store.lastItem) return;
+        document.getElementById('editItemType').value = Store.lastItem.type;
+        document.getElementById('editCharSetName').value = Store.lastItem.charSet;
+        this.changeCharSet(Store.lastItem.charSet);
+        Store.tempTargets = [...Store.lastItem.targets];
+        Render.editorGrid();
+        Utils.showToast("履歴を適用しました");
+    },
+
+    applyPreset(idx) {
+        const p = Store.presets[idx];
+        document.getElementById('editItemType').value = p.name;
+        document.getElementById('editCharSetName').value = p.setName;
+        this.changeCharSet(p.setName);
+        Store.tempTargets = [...p.targets];
+        Render.editorGrid();
+        Utils.showToast(`プリセット「${p.name}」を適用`);
+    },
+
+    openUnboxing(idx) {
+        Store.currentItemIdx = idx;
+        const item = Store.db[Store.currentSeriesId].items[idx];
+        document.getElementById('unboxingTitle').textContent = item.type;
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = "";
+        
+        item.targets.forEach(name => {
+            const s = item.stocks[name] || {own:0, trade:0};
+            const div = document.createElement('div');
+            div.className = 'unboxing-panel';
+            div.innerHTML = `
+                <div class="ub-char-label ${Utils.getCharColorClass(name)}">${name}</div>
+                <div class="ub-area ub-area-left" id="ub-own-${name}">
+                    <div class="unboxing-count-badge ${s.own > 0 ? 'has-count' : 'is-zero'}">${s.own}</div>
+                </div>
+                <div class="ub-area ub-area-right" id="ub-trade-${name}">
+                    <div class="unboxing-count-badge ${s.trade > 0 ? 'has-count' : 'is-zero'}">${s.trade}</div>
+                </div>
+            `;
+            
+            const bindEvents = (el, type) => {
+                let timer;
+                const change = (delta) => {
+                    s[type] = Math.max(0, s[type] + delta);
+                    const badge = el.querySelector('.unboxing-count-badge');
+                    badge.textContent = s[type];
+                    badge.className = `unboxing-count-badge ${s[type] > 0 ? 'has-count' : 'is-zero'}`;
+                    this.updateUnboxingTotal();
+                };
+                el.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    timer = setTimeout(() => { change(-1); timer = null; }, 600);
+                });
+                el.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    if(timer) { clearTimeout(timer); change(1); }
+                });
+            };
+            bindEvents(div.querySelector('.ub-area-left'), 'own');
+            bindEvents(div.querySelector('.ub-area-right'), 'trade');
+            grid.appendChild(div);
+        });
+        this.updateUnboxingTotal();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    },
+
+    updateUnboxingTotal() {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        const total = item.targets.reduce((a,c) => a + (item.stocks[c]?.own||0) + (item.stocks[c]?.trade||0), 0);
+        document.getElementById('unboxingTotalCount').textContent = `合計獲得数: ${total}`;
+    },
+
+    closeUnboxing() {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        item.status = Utils.autoDetermineStatus(item);
+        Store.save();
+        Render.itemList();
+        document.getElementById('unboxingModal').style.display = 'none';
+    },
+
+    toggleSettings(show) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        panel.style.right = show ? '0' : '-85%';
+        overlay.style.display = show ? 'block' : 'none';
+    },
+
+    updateSettingsUI() {
+        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix;
+        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix;
+        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
+        document.getElementById('charSettingsInput').value = Object.entries(Store.charSets).map(([k,v])=>`${k}:${v.join(',')}`).join('\n');
+        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
+        document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.name},${p.setName},${p.targets.join('|')}`).join('\n');
+    },
+
+    setSortMode(mode) {
+        Store.sortMode = mode;
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`sort-${mode}`).classList.add('active');
+        Store.save();
+        Render.seriesList();
+    },
+
+    toggleDateFilter() {
+        const panel = document.getElementById('dateFilterPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    },
+
+    clearDateFilter() {
+        document.getElementById('filterStart').value = "";
+        document.getElementById('filterEnd').value = "";
+        Render.seriesList();
+    }
+};
+
+// =========================================
+// 6. Action Handlers (UI Events)
 // =========================================
 const Actions = {
     async saveSeriesModal() {
         const title = document.getElementById('msTitle').value.trim();
         if (!title) return alert("シリーズ名を入力してください");
-        const id = 's' + Date.now();
-        const date = document.getElementById('msDate').value;
-        const tags = document.getElementById('msTags').value;
-        const useTemplate = document.getElementById('msUseTemplate').checked;
-
-        const items = [];
-        if (useTemplate) {
-            Store.templates.forEach(t => {
-                items.push({
-                    type: t,
-                    status: "not",
+        const id = "s_" + Date.now();
+        const newSeries = {
+            title,
+            date: document.getElementById('msDate').value,
+            tags: document.getElementById('msTags').value,
+            items: [],
+            isFav: false
+        };
+        if (document.getElementById('msUseTemplate').checked) {
+            Store.templates.forEach(type => {
+                newSeries.items.push({
+                    type,
+                    charSet: "デフォルト",
                     targets: [...Store.charSets["デフォルト"]],
                     stocks: {},
-                    tradeNote: ""
+                    status: "not"
                 });
             });
         }
-
-        Store.db[id] = { title, date, tags, isFav: false, items };
+        Store.db[id] = newSeries;
         Store.order.unshift(id);
         await Store.save();
         App.closeSeriesModal();
+        document.getElementById('msTitle').value = "";
         Render.seriesList();
     },
 
-    async deleteSeries(id) {
+    deleteSeries(id) {
         delete Store.db[id];
-        Store.order = Store.order.filter(x => x !== id);
-        await Store.save();
+        Store.order = Store.order.filter(oid => oid !== id);
+        Store.save();
         Render.seriesList();
     },
 
-    toggleFav(id) {
+    toggleFav(e, id) {
+        e.stopPropagation();
         Store.db[id].isFav = !Store.db[id].isFav;
         Store.save();
         Render.seriesList();
     },
 
-    stepQty(char, delta) {
-        const s = Store.tempStocks[char];
-        s.own = Math.max(0, s.own + delta);
-        Render.editor();
+    toggleCharTarget(name) {
+        if (Store.tempTargets.includes(name)) {
+            Store.tempTargets = Store.tempTargets.filter(n => n !== name);
+        } else {
+            Store.tempTargets.push(name);
+        }
+        Render.editorGrid();
     },
 
-    updateQty(char, val) {
-        Store.tempStocks[char].own = Math.max(0, parseInt(val) || 0);
-        Render.editor();
+    changeQty(name, type, delta) {
+        if (!Store.tempStocks[name]) Store.tempStocks[name] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[name][type] = Math.max(0, (Store.tempStocks[name][type] || 0) + delta);
+        Render.editorGrid();
     },
 
-    toggleInfinite(char) {
-        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
-        Render.editor();
+    updateQtyInput(name, type, val) {
+        if (!Store.tempStocks[name]) Store.tempStocks[name] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[name][type] = Math.max(0, parseInt(val) || 0);
+        Render.editorGrid();
+    },
+
+    toggleInfinite(name) {
+        if (!Store.tempStocks[name]) Store.tempStocks[name] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[name].infinite = !Store.tempStocks[name].infinite;
+        Render.editorGrid();
     },
 
     bulkToggleTargets(bool) {
-        Store.activeCharList.forEach(c => Store.tempStocks[c].target = bool);
-        Render.editor();
+        Store.tempTargets = bool ? [...Store.activeCharList] : [];
+        Render.editorGrid();
     },
 
     bulkIncrementOwn() {
-        Store.activeCharList.forEach(c => {
-            if (Store.tempStocks[c].target) Store.tempStocks[c].own += 1;
+        Store.activeCharList.forEach(name => {
+            if (Store.tempTargets.includes(name)) {
+                if (!Store.tempStocks[name]) Store.tempStocks[name] = { own: 0, trade: 0, infinite: false };
+                Store.tempStocks[name].own++;
+            }
         });
-        Render.editor();
+        Render.editorGrid();
     },
 
     bulkResetCounts() {
-        if (!confirm("すべての個数をリセットしますか？")) return;
-        Store.activeCharList.forEach(c => {
-            Store.tempStocks[c].own = 0;
-            Store.tempStocks[c].trade = 0;
-        });
-        Render.editor();
+        if (!confirm("全ての個数を0にリセットしますか？")) return;
+        Store.tempStocks = {};
+        Render.editorGrid();
     },
 
     async saveItem() {
         const type = document.getElementById('editItemType').value.trim();
         if (!type) return alert("アイテム名を入力してください");
 
-        const targets = Store.activeCharList.filter(c => Store.tempStocks[c].target);
-        const stocks = {};
-        Store.activeCharList.forEach(c => {
-            stocks[c] = {
-                own: Store.tempStocks[c].own,
-                trade: Store.tempStocks[c].trade,
-                infinite: Store.tempStocks[c].infinite
-            };
-        });
-
-        const itemData = {
+        const item = {
             type,
-            status: document.getElementById('editItemStatus').value,
-            targets,
-            stocks,
-            tradeNote: Actions.generateTradeNote(stocks, targets),
-            charSetName: document.getElementById('editCharSetName').value
+            charSet: document.getElementById('editCharSetName').value,
+            targets: Store.tempTargets,
+            stocks: Store.tempStocks,
+            status: document.getElementById('editItemStatus').value
         };
-
-        itemData.status = Utils.autoDetermineStatus(itemData);
+        item.status = Utils.autoDetermineStatus(item);
 
         const series = Store.db[Store.currentSeriesId];
-        if (Store.currentItemIdx === null) series.items.push(itemData);
-        else series.items[Store.currentItemIdx] = itemData;
-
-        Store.lastItem = { type, targets, charSetName: itemData.charSetName };
+        if (Store.currentItemIdx !== null) {
+            series.items[Store.currentItemIdx] = item;
+        } else {
+            series.items.push(item);
+        }
+        
+        Store.lastItem = { type: item.type, charSet: item.charSet, targets: item.targets };
         await Store.save();
         await Store.saveLastItem();
         App.closeEditor();
-        Render.itemList();
+        Utils.showToast("保存しました");
     },
 
-    generateTradeNote(stocks, targets) {
-        const tradeReady = targets.filter(c => stocks[c] && stocks[c].trade > 0);
-        return tradeReady.length > 0 ? tradeReady.join('、') : "";
-    },
-
-    async deleteAllItems() {
-        if (!confirm("このシリーズの全アイテムを削除しますか？")) return;
+    deleteAllItems() {
+        if (!confirm("このシリーズ内の全アイテムを削除しますか？")) return;
         Store.db[Store.currentSeriesId].items = [];
-        await Store.save();
+        Store.save();
         Render.itemList();
     },
 
-    copyTradeText(idx) {
-        const series = Store.db[Store.currentSeriesId];
-        const item = series.items[idx];
-        const missing = item.targets.filter(c => (item.stocks[c].own + item.stocks[c].trade) === 0);
-        const gives = item.targets.filter(c => item.stocks[c].trade > 0).map(c => `${c}${item.stocks[c].trade > 1 ? `(${item.stocks[c].trade})` : ''}`);
-        
-        const infMark = Store.tradeConfig.showInf ? " (∞回収)" : "";
-        const seeks = missing.map(c => `${c}${item.stocks[c].infinite ? infMark : ''}`);
-
-        const text = `${Store.tradeConfig.prefix}\n${series.title} ${item.type}\n\n【譲】${gives.join('、')}\n【求】${seeks.join('、')}\n\n${Store.tradeConfig.suffix}`;
-        
-        navigator.clipboard.writeText(text).then(() => Utils.showToast("募集文をコピーしました"));
-    },
-
-    async saveSettings() {
-        const charInput = document.getElementById('charSettingsInput').value;
-        const newSets = {};
-        charInput.split('\n').forEach(line => {
-            const [name, chars] = line.split(':');
-            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim());
-        });
-        if (Object.keys(newSets).length > 0) Store.charSets = newSets;
-
+    saveSettings() {
         Store.tradeConfig.prefix = document.getElementById('tradePrefixInput').value;
         Store.tradeConfig.suffix = document.getElementById('tradeSuffixInput').value;
         Store.tradeConfig.showInf = document.getElementById('tradeShowInfMark').checked;
 
-        const presetInput = document.getElementById('presetSettingsInput').value;
-        Store.presets = presetInput.split('\n').filter(l => l.trim()).map(l => {
-            const [type, setName, targetStr] = l.split(',');
-            return { type, setName, targets: targetStr ? targetStr.split('|') : [] };
+        const charLines = document.getElementById('charSettingsInput').value.split('\n');
+        const newSets = {};
+        charLines.forEach(l => {
+            const [k, v] = l.split(':');
+            if (k && v) newSets[k.trim()] = v.split(',').map(s => s.trim());
         });
+        if (Object.keys(newSets).length > 0) Store.charSets = newSets;
 
-        const tempInput = document.getElementById('tempSettingsInput').value;
-        Store.templates = tempInput.split(',').map(t => t.trim()).filter(t => t);
+        Store.templates = document.getElementById('tempSettingsInput').value.split(',').map(s => s.trim()).filter(s => s);
 
-        await Store.save();
+        const presetLines = document.getElementById('presetSettingsInput').value.split('\n');
+        Store.presets = presetLines.map(l => {
+            const parts = l.split(',');
+            if (parts.length < 3) return null;
+            return { name: parts[0].trim(), setName: parts[1].trim(), targets: parts[2].split('|').map(s => s.trim()) };
+        }).filter(p => p);
+
+        Store.save();
+        App.toggleSettings(false);
         location.reload();
     },
 
     exportBackup() {
-        const data = {
-            db: Store.db,
-            order: Store.order,
-            charSets: Store.charSets,
-            tradeConfig: Store.tradeConfig,
-            presets: Store.presets,
-            templates: Store.templates
-        };
-        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+        const data = { db: Store.db, order: Store.order, charSets: Store.charSets, templates: Store.templates, presets: Store.presets, tradeConfig: Store.tradeConfig };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -1145,247 +1341,27 @@ const Actions = {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = async (event) => {
+        reader.onload = async (re) => {
             try {
-                const data = JSON.parse(event.target.result);
-                Store.db = data.db || {};
-                Store.order = data.order || [];
-                Store.charSets = data.charSets || {};
-                Store.tradeConfig = data.tradeConfig || Store.tradeConfig;
-                Store.presets = data.presets || [];
-                Store.templates = data.templates || [];
+                const data = JSON.parse(re.target.result);
+                if (data.db) Store.db = data.db;
+                if (data.order) Store.order = data.order;
+                if (data.charSets) Store.charSets = data.charSets;
+                if (data.templates) Store.templates = data.templates;
+                if (data.presets) Store.presets = data.presets;
+                if (data.tradeConfig) Store.tradeConfig = data.tradeConfig;
                 await Store.save();
-                alert("読み込みが完了しました");
+                alert("バックアップを読み込みました");
                 location.reload();
-            } catch(err) { alert("無効なファイルです"); }
+            } catch (err) { alert("無効なファイルです"); }
         };
         reader.readAsText(file);
-    }
-};
-
-// =========================================
-// 6. Application Logic (Navigation & Modal)
-// =========================================
-const App = {
-    async init() {
-        await Store.init();
-        this.renderCharSetOptions();
-        this.renderSettings();
-        Render.seriesList();
-        setTimeout(() => {
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
-        }, 800);
     },
 
-    renderCharSetOptions() {
-        const sel = document.getElementById('editCharSetName');
-        sel.innerHTML = Object.keys(Store.charSets).map(k => `<option value="${k}">${k}</option>`).join("");
-    },
-
-    renderSettings() {
-        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix;
-        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix;
-        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
-        document.getElementById('charSettingsInput').value = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
-        document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.type},${p.setName},${p.targets.join('|')}`).join('\n');
-        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
-    },
-
-    switchMainTab(tab) {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('tab-' + tab).classList.add('active');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
-        if (tab === 'missing') Render.missingList();
-        else Render.seriesList();
-    },
-
-    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
-    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
-
-    openDetail(id) {
-        Store.currentSeriesId = id;
-        document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
-        document.getElementById('detailView').style.display = 'block';
-        Render.itemList();
-        history.pushState({view:'detail'}, "");
-    },
-    closeDetail() {
-        document.getElementById('detailView').style.display = 'none';
-        Render.seriesList();
-    },
-
-    openItemEditor(idx = null, fromMissing = false) {
-        Store.currentItemIdx = idx;
-        Store.editorFromMissing = fromMissing;
-        const grid = document.getElementById('editorGrid');
-        const series = Store.db[Store.currentSeriesId];
-        
-        document.getElementById('historyBanner').style.display = (idx === null && Store.lastItem) ? 'flex' : 'none';
-        document.getElementById('presetArea').style.display = (idx === null && Store.presets.length > 0) ? 'block' : 'none';
-        if (Store.presets.length > 0) {
-            document.getElementById('presetChips').innerHTML = Store.presets.map((p, i) => `<span class="preset-chip" onclick="App.applyPreset(${i})">${p.type}</span>`).join("");
-        }
-
-        if (idx !== null) {
-            const item = series.items[idx];
-            document.getElementById('editItemType').value = item.type;
-            document.getElementById('editItemStatus').value = item.status;
-            document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
-            Store.activeCharList = Store.charSets[item.charSetName || "デフォルト"] || [];
-            Store.tempStocks = {};
-            Store.activeCharList.forEach(c => {
-                const s = item.stocks[c] || {own:0, trade:0, infinite:false};
-                Store.tempStocks[c] = { ...s, target: item.targets.includes(c) };
-            });
-        } else {
-            document.getElementById('editItemType').value = "";
-            document.getElementById('editItemStatus').value = "not";
-            const defaultSetName = Object.keys(Store.charSets)[0];
-            document.getElementById('editCharSetName').value = defaultSetName;
-            this.changeCharSet(defaultSetName);
-        }
-
-        document.getElementById('editorView').style.display = 'block';
-        Render.editor();
-        history.pushState({view:'editor'}, "");
-    },
-
-    closeEditor() {
-        document.getElementById('editorView').style.display = 'none';
-        if (Store.editorFromMissing) Render.missingList();
-    },
-
-    changeCharSet(setName) {
-        Store.activeCharList = Store.charSets[setName] || [];
-        Store.tempStocks = {};
-        Store.activeCharList.forEach(c => {
-            Store.tempStocks[c] = { own: 0, trade: 0, target: true, infinite: false };
-        });
-        Render.editor();
-    },
-
-    applyHistory() {
-        if (!Store.lastItem) return;
-        document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.charSetName || "デフォルト";
-        this.changeCharSet(Store.lastItem.charSetName || "デフォルト");
-        Store.activeCharList.forEach(c => {
-            Store.tempStocks[c].target = Store.lastItem.targets.includes(c);
-        });
-        Render.editor();
-    },
-
-    applyPreset(idx) {
-        const p = Store.presets[idx];
-        document.getElementById('editItemType').value = p.type;
-        document.getElementById('editCharSetName').value = p.setName;
-        this.changeCharSet(p.setName);
-        if (p.targets && p.targets.length > 0) {
-            Store.activeCharList.forEach(c => {
-                Store.tempStocks[c].target = p.targets.includes(c);
-            });
-        }
-        Render.editor();
-    },
-
-    openUnboxing(idx) {
-        Store.currentItemIdx = idx;
-        const item = Store.db[Store.currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = item.type;
-        const grid = document.getElementById('unboxingGrid');
-        grid.innerHTML = "";
-        
-        item.targets.forEach(c => {
-            const stk = item.stocks[c];
-            const area = document.createElement('div');
-            area.className = 'unboxing-panel';
-            area.innerHTML = `
-                <div class="ub-char-label c-${c}">${c}</div>
-                <div class="ub-area ub-area-left" id="ub-own-${c}">
-                    <div class="unboxing-count-badge ${stk.own>0?'has-count':'is-zero'}">${stk.own}</div>
-                    <div style="font-size:0.55rem; color:rgba(0,0,0,0.3);">KEEP</div>
-                </div>
-                <div class="ub-area ub-area-right" id="ub-trd-${c}">
-                    <div class="unboxing-count-badge ${stk.trade>0?'has-count':'is-zero'}">${stk.trade}</div>
-                    <div style="font-size:0.55rem; color:rgba(0,0,0,0.3);">TRADE</div>
-                </div>
-            `;
-
-            const setupEvents = (subEl, key) => {
-                let timer;
-                const change = (delta) => {
-                    item.stocks[c][key] = Math.max(0, item.stocks[c][key] + delta);
-                    const badge = subEl.querySelector('.unboxing-count-badge');
-                    badge.textContent = item.stocks[c][key];
-                    badge.className = `unboxing-count-badge ${item.stocks[c][key]>0?'has-count':'is-zero'}`;
-                    this.updateUnboxingTotal();
-                };
-                subEl.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    timer = setTimeout(() => { change(-1); timer=null; }, 600);
-                });
-                subEl.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    if (timer) { clearTimeout(timer); change(1); }
-                });
-            };
-            setupEvents(area.querySelector('.ub-area-left'), 'own');
-            setupEvents(area.querySelector('.ub-area-right'), 'trade');
-            grid.appendChild(area);
-        });
-        this.updateUnboxingTotal();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    },
-
-    updateUnboxingTotal() {
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        let total = 0;
-        item.targets.forEach(c => {
-            total += (item.stocks[c].own + item.stocks[c].trade);
-        });
-        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total}`;
-    },
-
-    async closeUnboxing() {
-        const series = Store.db[Store.currentSeriesId];
-        const item = series.items[Store.currentItemIdx];
-        item.tradeNote = Actions.generateTradeNote(item.stocks, item.targets);
-        item.status = Utils.autoDetermineStatus(item);
-        await Store.save();
-        document.getElementById('unboxingModal').style.display = 'none';
-        Render.itemList();
-    },
-
-    toggleSettings(show) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        if (show) {
-            overlay.style.display = 'block';
-            panel.style.right = '0';
-        } else {
-            overlay.style.display = 'none';
-            panel.style.right = '-85%';
-        }
-    },
-
-    toggleDateFilter() {
-        const p = document.getElementById('dateFilterPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    },
-
-    clearDateFilter() {
-        document.getElementById('filterStart').value = "";
-        document.getElementById('filterEnd').value = "";
-        Render.seriesList();
-    },
-
-    filterByTag(t) {
+    filterByTag(e, t) {
+        e.stopPropagation();
         document.getElementById('searchBar').value = t;
         Render.seriesList();
-        window.scrollTo({top:0, behavior:'smooth'});
     },
 
     jumpToEditorFromMissing(sId, itemIdx, charName) {
@@ -1402,58 +1378,21 @@ const App = {
                 }
             }
         }, 300);
-    },
-
-    setSortMode(mode) {
-        Store.sortMode = mode;
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('sort-' + mode).classList.add('active');
-        Render.seriesList();
-        Store.save();
     }
 };
 
 // Browser History Handling
 window.onpopstate = function(e) {
-    const state = e.state || {};
     const editor = document.getElementById('editorView');
     const detail = document.getElementById('detailView');
-
     if (editor.style.display === 'block') {
         editor.style.display = 'none';
-        if (Store.editorFromMissing) {
-            Store.editorFromMissing = false;
-            Render.missingList();
-        }
+        if (Store.editorFromMissing) Render.missingList(); else Render.itemList();
     } else if (detail.style.display === 'block') {
         detail.style.display = 'none';
         Render.seriesList();
     }
 };
-
-// Custom Sort Drag & Drop
-Actions.drag = (e, id) => {
-    if (Store.sortMode !== 'custom') return;
-    e.dataTransfer.setData("text", id);
-};
-document.getElementById('seriesListContainer').addEventListener('dragover', e => e.preventDefault());
-document.getElementById('seriesListContainer').addEventListener('drop', async e => {
-    e.preventDefault();
-    if (Store.sortMode !== 'custom') return;
-    const id = e.dataTransfer.getData("text");
-    const target = e.target.closest('.swipe-container');
-    if (!target) return;
-    
-    const children = Array.from(document.getElementById('seriesListContainer').children);
-    const fromIdx = Store.order.indexOf(id);
-    const toId = Store.order[children.indexOf(target)];
-    const toIdx = Store.order.indexOf(toId);
-
-    Store.order.splice(fromIdx, 1);
-    Store.order.splice(toIdx, 0, id);
-    await Store.save();
-    Render.seriesList();
-});
 </script>
 </body>
 </html>
