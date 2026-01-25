@@ -175,7 +175,7 @@
         /* Character Colors */
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
-        .c-是国 { background: #000000 !important; color: #ffffff !important; }
+        .c-はるひ { background: #000000 !important; color: #ffffff !important; }
         .c-金城 { background: #9e9e9e !important; color: #fff !important; }
         .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
         .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
@@ -250,8 +250,7 @@
             margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
         }
         .btn-qty {
-            width: 36px;
-            height: 36px; border-radius: 50%;
+            width: 36px; height: 36px; border-radius: 50%;
             border: 1px solid var(--gold-light); background: #fff;
             font-size: 1.2rem; color: var(--gold); display: flex;
             align-items: center; justify-content: center;
@@ -297,38 +296,33 @@
         .unboxing-panel {
             display: grid;
             grid-template-columns: 1fr 1fr; padding: 0;
-            border-radius: 12px; position: relative; font-weight: bold;
-            font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            user-select: none; -webkit-user-select: none; touch-action: none;
-            height: 54px; overflow: visible; margin-bottom: 6px; background: #eee;
+            border-radius: 12px; position: relative;
+            font-weight: bold; font-size: 0.9rem; text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none; -webkit-user-select: none;
+            touch-action: none; height: 54px; overflow: visible;
+            margin-bottom: 6px; background: #eee;
         }
         .ub-area {
-            display: flex;
-            flex-direction: column; justify-content: center;
+            display: flex; flex-direction: column; justify-content: center;
             align-items: center; position: relative; transition: all 0.1s;
             touch-action: none; -webkit-touch-callout: none; z-index: 1;
         }
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
-        .ub-area:active {
-            background: rgba(0,0,0,0.1);
-            transform: scale(0.96);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2;
-        }
+        .ub-area:active { background: rgba(0,0,0,0.1); transform: scale(0.96); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
         .ub-char-label {
-            position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: white; padding: 1px 6px; border-radius: 6px;
-            font-size: 0.6rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none;
         }
         .unboxing-count-badge {
-            min-width: 24px;
-            height: 24px; padding: 0 6px; border-radius: 12px;
-            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 2px; font-weight: 800;
-            transition: all 0.15s; pointer-events: none;
+            min-width: 24px; height: 24px; padding: 0 6px;
+            border-radius: 12px; font-size: 0.85rem;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 2px; font-weight: 800; transition: all 0.15s;
+            pointer-events: none;
         }
         .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
         .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
@@ -338,806 +332,660 @@
            ========================================= */
         input[type="text"], input[type="month"], select {
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px; font-size: 16px !important; background: #fff;
-            color: var(--text-main); width: 100%;
+            border-radius: 12px; padding: 14px; font-size: 16px !important;
+            background: #fff; color: var(--text-main); width: 100%;
         }
         .primary-btn {
-            width: 100%;
-            padding: 16px; border: none; border-radius: 14px;
-            background: var(--gold); color: white; font-weight: bold;
-            font-size: 1rem; margin-top: 10px;
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            background: var(--gold); color: white; font-weight: bold; font-size: 1rem;
+            margin-top: 10px;
         }
-        .danger-btn {
-            color: var(--danger);
-            background: none; border: none; font-size: 0.8rem;
-        }
+        .danger-btn { color: var(--danger); background: none; border: none; font-size: 0.8rem; }
         .secondary-btn {
-            width: 100%;
-            padding: 12px; border: 1px solid var(--gold);
-            border-radius: 14px; background: white; color: var(--gold);
-            font-weight: bold; font-size: 0.9rem; margin-top: 10px;
+            width: 100%; padding: 12px; border: 1px solid var(--gold); border-radius: 14px;
+            background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem;
+            margin-top: 10px;
         }
         .fab {
-            position: fixed;
-            bottom: calc(30px + var(--safe-bottom)); right: 20px;
-            width: 64px; height: 64px; border-radius: 50%; background: var(--gold);
-            color: white; border: none; font-size: 2rem;
+            position: fixed; bottom: calc(30px + var(--safe-bottom));
+            right: 20px; width: 64px; height: 64px; border-radius: 50%;
+            background: var(--gold); color: white; border: none; font-size: 2rem;
             box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150;
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
         }
-        #toast {
-            position: fixed;
-            bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.8); color: white; padding: 12px 24px;
-            border-radius: 25px; font-size: 0.85rem; z-index: 2000;
-            display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: white; border-top: 1px solid var(--border-color);
+            display: flex; padding-bottom: var(--safe-bottom); z-index: 160;
         }
-        #splash-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
+        .nav-item {
+            flex: 1; padding: 12px 0; text-align: center;
+            font-size: 0.65rem; color: var(--text-sub); display: flex;
+            flex-direction: column; align-items: center; gap: 4px;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .nav-item.active { color: var(--gold); font-weight: bold; }
+        .nav-icon { font-size: 1.4rem; }
 
         /* =========================================
-           10. Sorting & Filtering
+           10. Utilities & Animations
            ========================================= */
-        .sort-controls {
-            display: flex;
-            gap: 8px; margin-bottom: 15px; overflow-x: auto;
-            padding-bottom: 5px; -webkit-overflow-scrolling: touch;
-        }
-        .sort-btn {
-            white-space: nowrap;
-            padding: 6px 12px; border-radius: 20px;
-            border: 1px solid var(--gold-light); background: #fff;
-            color: var(--gold); font-size: 0.7rem; font-weight: bold;
-        }
-        .sort-btn.active { background: var(--gold); color: #fff; }
-        .handle {
-            color: var(--gold-light);
-            cursor: grab; padding: 10px;
-            font-size: 1.2rem; display: none;
-        }
-        .sort-custom .handle { display: block; }
-        .fav-btn {
-            background: none;
-            border: none; font-size: 1.2rem;
-            color: #ddd; padding: 0 5px; transition: 0.2s;
-        }
-        .fav-btn.active { color: #fbc02d; }
-        .series-comp-mark {
-            color: var(--gold);
-            font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
-        }
-        
-        /* Utility */
-        .flex { display: flex; }
-        .align-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-10 { gap: 10px; }
         .mb-15 { margin-bottom: 15px; }
-        .text-bold { font-weight: bold; }
-        .text-gold { color: var(--gold); }
-        .label-sm { font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
+        .mt-20 { margin-top: 20px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .search-container { position: sticky; top: 108px; z-index: 80; background: var(--bg-color); padding: 10px 15px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     </style>
 </head>
-<body onload="App.init()">
-
-<div id="splash-screen">
-    <div style="color:var(--gold); font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
-    <div style="width:24px; height:24px; border:2px solid var(--gold-light); border-top:2px solid var(--gold); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
-</div>
+<body>
 
 <header>
-    <button onclick="App.toggleSettings(true)" class="header-btn-right">⚙</button>
-    <h1>COLLECTION ARCHIVE v1.0</h1>
+    <h1>COLLECTION ARCHIVE</h1>
+    <button class="header-btn-right" onclick="Actions.showSettings()">⚙</button>
 </header>
 
-<div class="nav-tabs">
-    <div class="nav-tab active" id="tab-list" onclick="App.switchMainTab('list')">SERIES</div>
-    <div class="nav-tab" id="tab-missing" onclick="App.switchMainTab('missing')">MISSING</div>
+<div class="nav-tabs" id="mainTabs">
+    <div class="nav-tab active" onclick="App.switchTab('all')">ARCHIVE</div>
+    <div class="nav-tab" onclick="App.switchTab('missing')">MISSING</div>
+    <div class="nav-tab" onclick="App.switchTab('unboxing')">UNBOXING</div>
 </div>
 
-<div id="seriesView" class="container">
-    <div class="flex align-center gap-10 mb-15">
-        <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="Render.seriesList()" style="flex:1;">
-        <button id="btnToggleDate" onclick="App.toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
-    </div>
-
-    <div class="sort-controls">
-        <button class="sort-btn active" id="sort-new" onclick="App.setSortMode('new')">登録順</button>
-        <button class="sort-btn" id="sort-date" onclick="App.setSortMode('date')">日付順</button>
-        <button class="sort-btn" id="sort-custom" onclick="App.setSortMode('custom')">カスタム順</button>
-    </div>
-
-    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
-        <p class="label-sm">表示期間を指定</p>
-        <div class="flex align-center gap-10">
-            <input type="month" id="filterStart" onchange="Render.seriesList()" style="padding:8px; font-size:0.85rem;">
-            <span style="color:var(--text-sub)">〜</span>
-            <input type="month" id="filterEnd" onchange="Render.seriesList()" style="padding:8px; font-size:0.85rem;">
-            <button onclick="App.clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem; min-width:50px;">クリア</button>
-        </div>
-    </div>
-    <div id="seriesListContainer"></div>
+<div id="searchSection" class="search-container">
+    <input type="text" id="searchBar" placeholder="作品名やタグで検索..." oninput="Render.seriesList()">
 </div>
 
-<div id="missingView" class="container" style="display:none;">
-    <div id="missingListContainer"></div>
+<div class="container" id="listView">
+    <div id="seriesContainer"></div>
 </div>
 
-<div id="detailView" class="full-view">
-    <div class="view-header">
-        <button onclick="App.closeDetail()" style="background:none; border:none; font-size:1.6rem; color:var(--gold); padding: 0 10px;">✕</button>
-        <div id="detailHeaderTitle" class="view-header-title"></div>
-        <button onclick="Actions.deleteAllItems()" class="danger-btn">全削除</button>
-    </div>
-    <div id="itemListContainer" class="container"></div>
-    <button class="fab" onclick="App.openItemEditor()" style="background:var(--dark-pink);">＋</button>
+<div id="detailView" class="full-view"></div>
+<div id="editorView" class="full-view"></div>
+
+<div id="modalOverlay" class="modal-overlay" onclick="App.closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()" id="modalBody"></div>
 </div>
 
-<div id="editorView" class="full-view" style="z-index:300;">
-    <div class="view-header">
-        <button id="editorBackBtn" onclick="App.closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
-        <div class="view-header-title">アイテム編集</div>
-        <button onclick="Actions.saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold; font-size: 1rem;">保存</button>
+<button class="fab" onclick="Actions.showSeriesAdd()">+</button>
+
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="App.switchTab('all')">
+        <span class="nav-icon">📚</span><span>Archive</span>
     </div>
-    <div class="container">
-        <div id="historyBanner" class="history-banner" style="display:none;">
-            <span style="font-size:0.7rem; color:var(--gold); font-weight:bold;">前回の設定を復元できます</span>
-            <button onclick="App.applyHistory()" style="background:var(--gold); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:0.65rem; font-weight:bold;">履歴から作成</button>
-        </div>
-        
-        <div id="presetArea" class="mb-15" style="display:none;">
-            <p class="label-sm">プリセットから選択</p>
-            <div id="presetChips"></div>
-        </div>
-
-        <p class="label-sm">アイテム名</p>
-        <input type="text" id="editItemType" placeholder="例: 缶バッジ" class="mb-15">
-        <p class="label-sm">キャラセット</p>
-        <select id="editCharSetName" onchange="App.changeCharSet(this.value)" class="mb-15"></select>
-        <p class="label-sm">ステータス</p>
-        <select id="editItemStatus" style="margin-bottom:20px;">
-            <option value="not">未コンプ</option>
-            <option value="comp">コンプ済</option>
-            <option value="none">予定なし</option>
-        </select>
-        <div class="editor-bulk-actions">
-            <div class="bulk-group-left">
-                <button class="bulk-btn" onclick="Actions.bulkToggleTargets(true)">ALL SELECT</button>
-                <button class="bulk-btn" onclick="Actions.bulkToggleTargets(false)">CANCEL</button>
-                <button class="bulk-btn" onclick="Actions.bulkIncrementOwn()">ALL +1</button>
-            </div>
-            <button class="bulk-btn bulk-btn-danger" onclick="Actions.bulkResetCounts()">RESET ALL</button>
-        </div>
-        <div id="editorGrid"></div>
+    <div class="nav-item" onclick="App.switchTab('missing')">
+        <span class="nav-icon">🔍</span><span>Missing</span>
     </div>
-</div>
-
-<div id="seriesModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3 style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;">NEW SERIES</h3>
-        <input type="text" id="msTitle" placeholder="シリーズ名" class="mb-15">
-        <div class="flex gap-10 mb-15">
-            <input type="month" id="msDate" style="flex:1.2;">
-            <input type="text" id="msTags" placeholder="タグ" style="flex:1;">
-        </div>
-        <label style="font-size: 0.9rem; color: var(--text-main); display:flex; align-items:center; gap:8px; margin-bottom:20px;">
-            <input type="checkbox" id="msUseTemplate" checked style="width:20px; height:20px;"> テンプレートを適用
-        </label>
-        <button class="primary-btn" onclick="Actions.saveSeriesModal()">登録する</button>
-        <button onclick="App.closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub);">キャンセル</button>
+    <div class="nav-item" onclick="App.switchTab('unboxing')">
+        <span class="nav-icon">📦</span><span>Unboxing</span>
     </div>
-</div>
-
-<div id="unboxingModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="flex justify-between align-center mb-15">
-            <div id="unboxingTitle" class="text-gold text-bold" style="font-size:0.95rem;"></div>
-            <p style="font-size: 0.6rem; color: var(--text-sub); margin: 0;">左:保管 / 右:譲渡<br>長押しでマイナス</p>
-        </div>
-        <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
-        <div id="unboxingTotalCount" style="text-align:center; margin-top:12px; font-size:0.8rem; color:var(--gold); background:var(--bg-color); padding:8px; border-radius:12px; border:1px solid var(--gold-light);"></div>
-        <button onclick="App.closeUnboxing()" class="primary-btn">完了</button>
-    </div>
-</div>
-
-<div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="App.toggleSettings(false)"></div>
-<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: var(--safe-top);">
-    <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
-    <label class="label-sm" style="margin-top:20px;">募集文カスタマイズ</label>
-    <input type="text" id="tradePrefixInput" placeholder="【交換】" style="margin-top:5px; font-size: 0.8rem !important; margin-bottom:5px;">
-    <input type="text" id="tradeSuffixInput" placeholder="郵送希望です。検索からお気軽にどうぞ。" style="font-size: 0.8rem !important; margin-bottom:10px;">
-    
-    <label style="font-size:0.7rem; color:var(--text-sub); display:flex; align-items:center; gap:5px; margin-bottom:15px;">
-        <input type="checkbox" id="tradeShowInfMark" style="width:16px; height:16px;"> 無限回収に(∞)を表示する
-    </label>
-
-    <label class="label-sm" style="margin-top:20px;">キャラクターセット（セット名:名,名...）</label>
-    <textarea id="charSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;"></textarea>
-    
-    <label class="label-sm" style="margin-top:20px;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
-    <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
-
-    <label class="label-sm" style="margin-top:20px;">新規登録テンプレート</label>
-    <textarea id="tempSettingsInput" rows="3" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; padding:10px;"></textarea>
-
-    <button class="primary-btn" onclick="Actions.saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
-
-    <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:20px;">
-        <button class="secondary-btn" onclick="Actions.exportBackup()">バックアップを書き出し</button>
-        <button class="secondary-btn" onclick="document.getElementById('importFile').click()">バックアップを読み込み</button>
-        <input type="file" id="importFile" style="display:none" accept=".json" onchange="Actions.importBackup(event)">
-    </div>
-</div>
-
-<div id="toast"></div>
-
-<button class="fab" id="mainFab" onclick="App.openSeriesModal()">＋</button>
+</nav>
 
 <script>
-/**
- * COLLECTION ARCHIVE v1.0 - IndexedDB Migrated Version
- */
+/* =========================================
+   1. Data Store (IndexedDB & State)
+   ========================================= */
+const DB_NAME = 'CollectionArchiveDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'appData';
 
-// =========================================
-// 1. Constants & Configuration
-// =========================================
-const CONSTANTS = {
-    KEYS: {
-        DB: 'gap_db',
-        ORDER: 'gap_order',
-        SETS: 'gap_char_sets',
-        TEMPLATES: 'gap_temps',
-        PRESETS: 'gap_presets',
-        TRADE: 'gap_trade_config',
-        SORT: 'gap_sort_mode',
-        LAST_ITEM: 'gap_last_item'
-    },
-    DEFAULT_CHARS: ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"],
-    DEFAULT_TEMPLATES: ["缶バッジ", "アクスタ", "ブロマイド"],
-};
-
-// =========================================
-// 2. IndexedDB Manager (Native API)
-// =========================================
-const DBManager = {
-    dbName: 'CollectionArchiveDB',
-    dbVersion: 1,
-    storeName: 'appData',
-    db: null,
-
-    async init() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, this.dbVersion);
-            request.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains(this.storeName)) {
-                    db.createObjectStore(this.storeName);
-                }
-            };
-            request.onsuccess = (e) => {
-                this.db = e.target.result;
-                resolve();
-            };
-            request.onerror = (e) => reject(e.target.error);
-        });
-    },
-
-    async get(key) {
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readonly');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.get(key);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = (e) => reject(e.target.error);
-        });
-    },
-
-    async set(key, value) {
-        return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([this.storeName], 'readwrite');
-            const store = transaction.objectStore(this.storeName);
-            const request = store.put(value, key);
-            request.onsuccess = () => resolve();
-            request.onerror = (e) => reject(e.target.error);
-        });
-    }
-};
-
-// =========================================
-// 3. State Management (Store)
-// =========================================
 const Store = {
     db: {},
     order: [],
     charSets: {},
     templates: [],
-    presets: [],
-    tradeConfig: { prefix: "", suffix: "", showInf: true },
-    sortMode: 'new',
-    lastItem: null,
+    presets: ["北門","是国","金城","阿修","愛染","増長","音済","王茶利","野目","釈村","遙日","唯月","不動","殿"],
+    tradeConfig: {},
 
-    // Temp State
+    currentTab: 'all',
     currentSeriesId: null,
-    currentItemIdx: null,
-    activeCharList: [],
-    tempStocks: {},
     editorFromMissing: false,
 
     async init() {
-        await DBManager.init();
-        
-        this.db = await DBManager.get(CONSTANTS.KEYS.DB) || {};
-        this.order = await DBManager.get(CONSTANTS.KEYS.ORDER) || [];
-        this.charSets = await DBManager.get(CONSTANTS.KEYS.SETS) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-        this.templates = await DBManager.get(CONSTANTS.KEYS.TEMPLATES) || CONSTANTS.DEFAULT_TEMPLATES;
-        this.presets = await DBManager.get(CONSTANTS.KEYS.PRESETS) || [];
-        this.tradeConfig = await DBManager.get(CONSTANTS.KEYS.TRADE) || { prefix: "", suffix: "", showInf: true };
-        this.sortMode = await DBManager.get(CONSTANTS.KEYS.SORT) || 'new';
-        this.lastItem = await DBManager.get(CONSTANTS.KEYS.LAST_ITEM) || null;
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME);
+                }
+            };
+            request.onsuccess = async (e) => {
+                this._idb = e.target.result;
+                await this.load();
+                resolve();
+            };
+            request.onerror = () => reject();
+        });
+    },
+
+    async load() {
+        return new Promise((resolve) => {
+            const transaction = this._idb.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.get('mainData');
+            request.onsuccess = (e) => {
+                const data = e.target.result;
+                if (data) {
+                    this.db = data.db || {};
+                    this.order = data.order || [];
+                    this.charSets = data.charSets || {};
+                    this.templates = data.templates || [];
+                    this.presets = data.presets || this.presets;
+                    this.tradeConfig = data.tradeConfig || {};
+                }
+                resolve();
+            };
+        });
     },
 
     async save() {
-        await DBManager.set(CONSTANTS.KEYS.DB, this.db);
-        await DBManager.set(CONSTANTS.KEYS.ORDER, this.order);
-        await DBManager.set(CONSTANTS.KEYS.SETS, this.charSets);
-        await DBManager.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
-        await DBManager.set(CONSTANTS.KEYS.SORT, this.sortMode);
-        await DBManager.set(CONSTANTS.KEYS.PRESETS, this.presets);
-        await DBManager.set(CONSTANTS.KEYS.TEMPLATES, this.templates);
-    },
-
-    async saveLastItem() {
-        await DBManager.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
-    }
-};
-
-// =========================================
-// 4. Utilities
-// =========================================
-const Utils = {
-    showToast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 2000);
-    },
-    autoDetermineStatus(item) {
-        if (item.status === "none") return "none";
-        const targets = item.targets || [];
-        if (targets.length === 0) return item.status;
-        const isAllCollected = targets.every(char => {
-            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
-            if (s.infinite) return false;
-            return (s.own + s.trade) >= 1;
-        });
-        return isAllCollected ? "comp" : "not";
-    },
-    attachSwipe(element, actionCallback, isCustomSort) {
-        let startX = 0, isSwiping = false;
-        element.addEventListener('touchstart', (e) => {
-            if (Store.sortMode === 'custom' && isCustomSort) return;
-            const rect = element.getBoundingClientRect();
-            const touchX = e.touches[0].clientX;
-            if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
-            startX = touchX;
-            isSwiping = true;
-            element.classList.add('swiping');
-        }, {passive: true});
-        element.addEventListener('touchmove', (e) => {
-            if (!isSwiping) return;
-            let diff = e.touches[0].clientX - startX;
-            if (diff > 0) diff = 0;
-            if (diff < -100) diff = -100;
-            element.style.transform = `translateX(${diff}px)`;
-        }, {passive: true});
-        element.addEventListener('touchend', (e) => {
-            if (!isSwiping) return;
-            element.classList.remove('swiping');
-            const diff = e.changedTouches[0].clientX - startX;
-            if (diff < -50) {
-                element.style.transform = 'translateX(-100px)';
-                setTimeout(() => { if(confirm('削除しますか？')) actionCallback(); else element.style.transform = ''; }, 10);
-            } else {
-                element.style.transform = '';
-            }
-            isSwiping = false;
-        }, {passive: true});
-    }
-};
-
-// =========================================
-// 5. Rendering Logic
-// =========================================
-const Render = {
-    seriesList() {
-        const container = document.getElementById('seriesListContainer');
-        container.innerHTML = '';
-        const search = document.getElementById('searchBar').value.toLowerCase();
-        const start = document.getElementById('filterStart').value;
-        const end = document.getElementById('filterEnd').value;
-
-        let list = [...Store.order];
-        if (Store.sortMode === 'date') {
-            list.sort((a,b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
-        } else if (Store.sortMode === 'new') {
-            list.reverse();
-        }
-
-        list.forEach(id => {
-            const s = Store.db[id];
-            if (!s) return;
-            const matchSearch = s.title.toLowerCase().includes(search) || (s.tags || "").toLowerCase().includes(search);
-            let matchDate = true;
-            if (start && s.date < start) matchDate = false;
-            if (end && s.date > end) matchDate = false;
-
-            if (matchSearch && matchDate) {
-                const div = document.createElement('div');
-                div.className = 'swipe-container';
-                if (Store.sortMode === 'custom') div.classList.add('sort-custom');
-                
-                const isComp = s.items.length > 0 && s.items.every(it => it.status === 'comp' || it.status === 'none');
-
-                div.innerHTML = `
-                    <div class="delete-btn-overlay">削除</div>
-                    <div class="card" onclick="App.openDetail('${id}')">
-                        <div class="flex justify-between align-center">
-                            <div style="font-size:0.75rem; color:var(--gold); font-weight:bold;">
-                                ${s.date || '日付未設定'}
-                                ${isComp ? '<span class="series-comp-mark">✔ COMP</span>' : ''}
-                            </div>
-                            <div class="flex align-center">
-                                <button class="fav-btn ${s.fav ? 'active' : ''}" onclick="event.stopPropagation(); Actions.toggleFav('${id}')">★</button>
-                                <div class="handle">☰</div>
-                            </div>
-                        </div>
-                        <div style="font-size:1.1rem; font-weight:bold; margin:8px 0; color:var(--text-main);">${s.title}</div>
-                        <div>${(s.tags || "").split(/[,，\s]+/).filter(t => t).map(t => `<span class="tag-chip" onclick="event.stopPropagation(); App.filterByTag('${t}')">#${t}</span>`).join('')}</div>
-                    </div>
-                `;
-                Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteSeries(id), true);
-                container.appendChild(div);
-            }
-        });
-    },
-
-    itemList() {
-        const container = document.getElementById('itemListContainer');
-        container.innerHTML = '';
-        const s = Store.db[Store.currentSeriesId];
-        if (!s) return;
-
-        s.items.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'swipe-container';
-            
-            const tradeText = Actions.generateTradeText(item);
-            const statusClass = item.status === 'comp' ? 'st-comp' : (item.status === 'none' ? 'st-none' : 'st-not');
-            const statusLabel = item.status === 'comp' ? 'COMP' : (item.status === 'none' ? '非対象' : '未コンプ');
-
-            div.innerHTML = `
-                <div class="delete-btn-overlay">削除</div>
-                <div class="card" onclick="App.openItemEditor(${idx})">
-                    <div class="status-tag ${statusClass}">${statusLabel}</div>
-                    <div style="font-weight:bold; color:var(--text-main); font-size:1rem; margin-bottom:10px;">${item.type}</div>
-                    <div class="inventory-grid" onclick="event.stopPropagation(); App.openUnboxing(${idx})">
-                        <div class="inv-box">
-                            <span class="inv-label">TARGETS</span>
-                            <div class="inv-content">${item.targets.map(c => `<span class="char-chip c-${c}">${c}</span>`).join('')}</div>
-                        </div>
-                        <div class="inv-box">
-                            <span class="inv-label">OWN / TRADE</span>
-                            <div class="inv-content">
-                                ${Object.entries(item.stocks).map(([c, st]) => (st.own > 0 || st.trade > 0) ? `<span class="char-chip c-${c} ${st.infinite ? 'is-infinite-collected' : ''}">${c}${st.infinite && Store.tradeConfig.showInf ? '∞' : ''}</span>` : '').join('')}
-                            </div>
-                        </div>
-                        <div class="inv-box">
-                            <span class="inv-label">TRADE REQ</span>
-                            <div class="inv-content"><div class="trade-text-small">${tradeText || '---'}</div></div>
-                        </div>
-                    </div>
-                    <div class="inv-summary-row">
-                        <div class="summary-item">求<span>${Object.values(item.stocks).filter(st => st.trade < 0).length}</span></div>
-                        <div class="summary-item">譲<span>${Object.values(item.stocks).filter(st => st.trade > 0).length}</span></div>
-                        <div class="summary-item">所持<span>${Object.values(item.stocks).reduce((sum, st) => sum + (st.own || 0), 0)}</span></div>
-                    </div>
-                </div>
-            `;
-            Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteItem(idx), false);
-            container.appendChild(div);
-        });
-    },
-
-    editorGrid() {
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = '';
-        Store.activeCharList.forEach(char => {
-            const st = Store.tempStocks[char] || { own: 0, trade: 0, infinite: false };
-            const row = document.createElement('div');
-            row.className = 'editor-row';
-            row.innerHTML = `
-                <div class="char-chip c-${char}" style="margin:0; text-align:center; font-size:0.85rem; padding:8px 0; border-radius:12px;">${char}</div>
-                <div class="flex align-center justify-between">
-                    <div class="flex align-center gap-10">
-                        <button class="btn-qty" onclick="Actions.stepQty('${char}', -1)">−</button>
-                        <input type="number" class="qty-display ${st.own > 0 ? 'qty-has' : 'qty-zero'}" value="${st.own}" onchange="Actions.updateQty('${char}', this.value)">
-                        <button class="btn-qty" onclick="Actions.stepQty('${char}', 1)">＋</button>
-                    </div>
-                    <div class="flex align-center gap-10">
-                        <button class="inf-btn ${st.infinite ? 'active' : ''}" onclick="Actions.toggleInf('${char}')">∞</button>
-                        <input type="checkbox" class="target-chk" ${Store.tempTargets.includes(char) ? 'checked' : ''} onchange="Actions.toggleTarget('${char}')" style="width:22px; height:22px;">
-                    </div>
-                </div>
-            `;
-            grid.appendChild(row);
-        });
-    },
-
-    missingList() {
-        const container = document.getElementById('missingListContainer');
-        container.innerHTML = '';
-        const missingMap = {};
-
-        Object.keys(Store.db).forEach(sId => {
-            Store.db[sId].items.forEach((item, itemIdx) => {
-                if (item.status === 'not') {
-                    item.targets.forEach(char => {
-                        const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
-                        if (!s.infinite && (s.own + s.trade) < 1) {
-                            if (!missingMap[char]) missingMap[char] = [];
-                            missingMap[char].push({ sId, title: Store.db[sId].title, type: item.type, itemIdx });
-                        }
-                    });
-                }
-            });
-        });
-
-        const sortedChars = Object.keys(missingMap).sort();
-        if (sortedChars.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足しているアイテムはありません</div>';
-            return;
-        }
-
-        sortedChars.forEach(char => {
-            const group = document.createElement('div');
-            group.className = 'card';
-            group.style.marginBottom = '15px';
-            group.innerHTML = `
-                <div class="char-chip c-${char}" style="font-size:0.9rem; padding:6px 15px; margin-bottom:12px;">${char}</div>
-                ${missingMap[char].map(m => `
-                    <div style="padding:10px; border-bottom:1px solid var(--border-color); font-size:0.85rem;" onclick="App.jumpToEditorFromMissing('${m.sId}', ${m.itemIdx}, '${char}')">
-                        <div style="color:var(--gold); font-size:0.65rem; font-weight:bold;">${m.title}</div>
-                        <div style="color:var(--text-main); font-weight:bold; margin-top:2px;">${m.type}</div>
-                    </div>
-                `).join('')}
-            `;
-            container.appendChild(group);
+        return new Promise((resolve, reject) => {
+            const transaction = this._idb.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const data = {
+                db: this.db,
+                order: this.order,
+                charSets: this.charSets,
+                templates: this.templates,
+                presets: this.presets,
+                tradeConfig: this.tradeConfig
+            };
+            const request = store.put(data, 'mainData');
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject();
         });
     }
 };
 
-// =========================================
-// 6. Application Logic (App)
-// =========================================
+/* =========================================
+   2. App Core Logic
+   ========================================= */
 const App = {
     async init() {
-        await Store.init();
-        this.applySettingsToUI();
-        Render.seriesList();
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 500);
+        await Store.init(); [cite_start]// DB初期化完了を待機 [cite: 7]
+        this.bindEvents();
+        Render.seriesList(); // メモリにロードされたStore.dbを基に描画
     },
 
-    applySettingsToUI() {
-        const select = document.getElementById('editCharSetName');
-        select.innerHTML = '';
-        Object.keys(Store.charSets).forEach(name => {
-            const opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
-            select.appendChild(opt);
-        });
+    bindEvents() {
+        // Popstate for navigation
+        window.onpopstate = (e) => {
+            const editor = document.getElementById('editorView');
+            const detail = document.getElementById('detailView');
 
-        document.getElementById('charSettingsInput').value = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
-        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
-        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
-        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
-        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
-        document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.type},${p.setName},${p.targets.join('|')}`).join('\n');
+            if (editor.style.display === 'block') {
+                editor.style.display = 'none';
+                if (Store.editorFromMissing) {
+                    Store.editorFromMissing = false;
+                    Render.missingList();
+                }
+            } else if (detail.style.display === 'block') {
+                detail.style.display = 'none';
+            }
+        };
     },
 
-    switchMainTab(tab) {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+    switchTab(tab) {
+        Store.currentTab = tab;
+        document.querySelectorAll('.nav-tab, .nav-item').forEach(el => el.classList.remove('active'));
+        const tabIdx = tab === 'all' ? 0 : (tab === 'missing' ? 1 : 2);
+        document.querySelectorAll('.nav-tab')[tabIdx].classList.add('active');
+        document.querySelectorAll('.nav-item')[tabIdx].classList.add('active');
+
+        const search = document.getElementById('searchSection');
+        search.style.display = (tab === 'all') ? 'block' : 'none';
+
+        if (tab === 'all') Render.seriesList();
         if (tab === 'missing') Render.missingList();
-        else Render.seriesList();
+        if (tab === 'unboxing') Render.unboxingList();
     },
-
-    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
-    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
 
     openDetail(id) {
         Store.currentSeriesId = id;
-        document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
-        Render.itemList();
+        Render.seriesDetail();
         document.getElementById('detailView').style.display = 'block';
-        window.history.pushState({view:'detail'}, "");
+        history.pushState({view:'detail'}, '');
     },
-    closeDetail() {
+
+    openItemEditor(idx, fromMissing = false) {
+        Store.editorFromMissing = fromMissing;
+        Render.itemEditor(idx);
+        document.getElementById('editorView').style.display = 'block';
+        history.pushState({view:'editor'}, '');
+    },
+
+    showModal(html) {
+        document.getElementById('modalBody').innerHTML = html;
+        document.getElementById('modalOverlay').style.display = 'flex';
+    },
+
+    closeModal() {
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+};
+
+/* =========================================
+   3. Rendering Logic (UI完全維持)
+   ========================================= */
+const Render = {
+    // アーカイブ一覧
+    seriesList() {
+        const container = document.getElementById('seriesContainer');
+        const query = document.getElementById('searchBar').value.trim().toLowerCase();
+        container.innerHTML = '';
+
+        Store.order.forEach(id => {
+            const s = Store.db[id];
+            if (!s) return;
+
+            // 検索・絞り込みロジック (3の仕様を100%継承)
+            const tags = (s.tags || []).join(' ').toLowerCase();
+            const match = s.title.toLowerCase().includes(query) || tags.includes(query);
+            if (query && !match) return;
+
+            // 進捗計算
+            let total = 0, collected = 0;
+            s.items.forEach(it => {
+                it.chars.forEach(c => {
+                    total++;
+                    if (c.qty > 0) collected++;
+                });
+            });
+            const isComp = (total > 0 && total === collected);
+
+            const card = document.createElement('div');
+            card.className = 'swipe-container fade-in';
+            card.innerHTML = `
+                <div class="delete-btn-overlay" onclick="Actions.deleteSeries('${id}')">削除</div>
+                <div class="card" onclick="App.openDetail('${id}')" 
+                     ontouchstart="UI.handleTouchStart(event)" 
+                     ontouchmove="UI.handleTouchMove(event)" 
+                     ontouchend="UI.handleTouchEnd(event)">
+                    <div class="status-tag ${isComp ? 'st-comp' : (collected > 0 ? 'st-not' : 'st-none')}">
+                        ${isComp ? 'COMPLETE' : (collected > 0 ? `COLLECTED ${collected}/${total}` : 'NOT YET')}
+                    </div>
+                    <div style="font-size:0.7rem; color:var(--text-sub); margin-bottom:4px;">${s.date || ''}</div>
+                    <div style="font-weight:bold; font-size:1rem; margin-bottom:8px; padding-right:60px;">${s.title}</div>
+                    <div id="tags-${id}">
+                        ${(s.tags || []).map(t => `<span class="tag-chip" onclick="event.stopPropagation(); Actions.filterByTag('${t}')">#${t}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    },
+
+    // シリーズ詳細
+    seriesDetail() {
+        const s = Store.db[Store.currentSeriesId];
+        const view = document.getElementById('detailView');
+        if (!s) return;
+
+        let itemsHtml = s.items.map((it, idx) => {
+            // 在庫数に応じたチップ表示 (3のロジック)
+            const collectedChars = it.chars.filter(c => c.qty > 0);
+            const infiniteChars = it.chars.filter(c => c.isInfinite);
+            
+            return `
+                <div class="card mb-15 fade-in" onclick="App.openItemEditor(${idx})">
+                    <div style="font-weight:bold; font-size:0.9rem; margin-bottom:10px; display:flex; justify-content:space-between;">
+                        <span>${it.name}</span>
+                        <span style="color:var(--gold); font-size:0.75rem;">編集 ＞</span>
+                    </div>
+                    
+                    <div class="inventory-grid">
+                        <div class="inv-box">
+                            <span class="inv-label">所持</span>
+                            <div class="inv-content">
+                                ${collectedChars.length ? collectedChars.map(c => `<span class="char-chip ${UI.getCharClass(c.name)}">${c.name}${c.qty > 1 ? ' x'+c.qty : ''}</span>`).join('') : '<span style="color:#ccc; font-size:0.6rem;">なし</span>'}
+                            </div>
+                        </div>
+                        <div class="inv-box">
+                            <span class="inv-label">無限回収</span>
+                            <div class="inv-content">
+                                ${infiniteChars.length ? infiniteChars.map(c => `<span class="char-chip ${UI.getCharClass(c.name)} ${c.qty > 0 ? 'is-infinite-collected' : ''}">${c.name}</span>`).join('') : '<span style="color:#ccc; font-size:0.6rem;">設定なし</span>'}
+                            </div>
+                        </div>
+                        <div class="inv-box" style="background:var(--trade-bg); border-color:#e1e8ed;">
+                            <span class="inv-label" style="color:var(--trade-text)">譲渡・メモ</span>
+                            <div class="inv-content">
+                                <span class="trade-text-small">${it.memo || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inv-summary-row">
+                        <div class="summary-item">Total<span>${it.chars.reduce((a,b)=>a+b.qty, 0)}</span></div>
+                        <div class="summary-item">種類<span>${collectedChars.length}/${it.chars.length}</span></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        view.innerHTML = `
+            <div class="view-header">
+                <button class="danger-btn" onclick="history.back()">＜ 戻る</button>
+                <div class="view-header-title">${s.title}</div>
+                <button class="danger-btn" onclick="Actions.showItemAdd()">追加</button>
+            </div>
+            <div class="container">
+                <div class="card mb-15" style="border-style:dashed;">
+                    <div class="flex-between" style="margin-bottom:10px;">
+                        <span style="font-weight:bold; font-size:0.8rem;">シリーズ設定</span>
+                        <button class="bulk-btn" onclick="Actions.showSeriesEdit()">タイトル・タグ編集</button>
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-sub);">
+                        タグ: ${(s.tags || []).map(t => '#' + t).join(' ')}
+                    </div>
+                </div>
+                ${itemsHtml}
+                <button class="secondary-btn" style="margin-bottom:100px;" onclick="Actions.deleteSeries('${Store.currentSeriesId}')">このシリーズを削除</button>
+            </div>
+        `;
+    },
+
+    // アイテム編集（個数調整）
+    itemEditor(idx) {
+        const s = Store.db[Store.currentSeriesId];
+        const it = s.items[idx];
+        const view = document.getElementById('editorView');
+
+        const rows = it.chars.map((c, cIdx) => `
+            <div class="editor-row">
+                <div style="font-weight:bold; font-size:0.85rem; text-align:center;">
+                    <div class="char-chip ${UI.getCharClass(c.name)}" style="margin:0 0 5px 0; width:100%; display:block;">${c.name}</div>
+                    <button class="inf-btn ${c.isInfinite ? 'active' : ''}" onclick="Actions.toggleInfinite(${idx}, ${cIdx})">
+                        ${c.isInfinite ? '♾️ 無限中' : '♾️'}
+                    </button>
+                </div>
+                <div class="flex-between" style="padding-left:10px;">
+                    <button class="btn-qty" onclick="Actions.updateQty(${idx}, ${cIdx}, -1)">-</button>
+                    <input type="number" class="qty-display ${c.qty === 0 ? 'qty-zero' : 'qty-has'}" 
+                           value="${c.qty}" onchange="Actions.setQty(${idx}, ${cIdx}, this.value)">
+                    <button class="btn-qty" onclick="Actions.updateQty(${idx}, ${cIdx}, 1)">+</button>
+                </div>
+            </div>
+        `).join('');
+
+        view.innerHTML = `
+            <div class="view-header">
+                <button class="danger-btn" onclick="history.back()">完了</button>
+                <div class="view-header-title">${it.name}</div>
+                <button class="danger-btn" onclick="Actions.deleteItem(${idx})">削除</button>
+            </div>
+            <div class="container">
+                <div class="editor-bulk-actions">
+                    <div class="bulk-group-left">
+                        <button class="bulk-btn" onclick="Actions.bulkSetQty(${idx}, 1)">全1</button>
+                        <button class="bulk-btn" onclick="Actions.bulkSetQty(${idx}, 0)">全0</button>
+                    </div>
+                    <button class="bulk-btn" onclick="Actions.renameItem(${idx})">名称変更</button>
+                </div>
+                <div class="mb-15">
+                    <textarea id="itemMemo" placeholder="譲渡可能キャラ、交換条件などのメモ..." 
+                              style="width:100%; border-radius:12px; border:1px solid var(--border-color); padding:10px; font-size:0.85rem; height:60px;"
+                              oninput="Actions.updateMemo(${idx}, this.value)">${it.memo || ''}</textarea>
+                </div>
+                <div id="editorGrid">${rows}</div>
+                <div style="height:100px;"></div>
+            </div>
+        `;
+    },
+
+    // 未所持リスト (MISSING)
+    missingList() {
+        const container = document.getElementById('seriesContainer');
+        container.innerHTML = '';
+        let hasAny = false;
+
+        Store.order.forEach(id => {
+            const s = Store.db[id];
+            let missingInSeries = [];
+
+            s.items.forEach((it, itIdx) => {
+                const missing = it.chars.filter(c => c.qty === 0);
+                if (missing.length > 0) {
+                    missingInSeries.push({ it, itIdx, missing });
+                }
+            });
+
+            if (missingInSeries.length > 0) {
+                hasAny = true;
+                const section = document.createElement('div');
+                section.className = 'card mb-15 fade-in';
+                section.innerHTML = `
+                    <div style="font-weight:bold; font-size:0.85rem; color:var(--gold); margin-bottom:10px; border-bottom:1px solid var(--gold-light); padding-bottom:5px;">
+                        ${s.title}
+                    </div>
+                    ${missingInSeries.map(m => `
+                        <div style="margin-bottom:12px;">
+                            <div style="font-size:0.75rem; font-weight:bold; margin-bottom:5px; color:var(--text-main);">${m.it.name}</div>
+                            <div>
+                                ${m.missing.map(c => `<span class="char-chip ${UI.getCharClass(c.name)}" style="opacity:0.6;" onclick="Actions.jumpToEditorFromMissing('${id}', ${m.itIdx}, '${c.name}')">${c.name}</span>`).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                container.appendChild(section);
+            }
+        });
+
+        if (!hasAny) {
+            container.innerHTML = '<div style="text-align:center; padding:50px; color:var(--text-sub); font-size:0.8rem;">未所持のアイテムはありません ✨</div>';
+        }
+    },
+
+    // 開封シミュレーター (UNBOXING)
+    unboxingList() {
+        const container = document.getElementById('seriesContainer');
+        container.innerHTML = `
+            <div class="history-banner">
+                <span style="font-size:0.75rem; font-weight:bold;">直近の開封履歴</span>
+                <button class="bulk-btn" onclick="Actions.clearUnboxingHistory()">履歴クリア</button>
+            </div>
+            <div id="unboxingLog" style="margin-bottom:20px;"></div>
+        `;
+        
+        const logArea = document.getElementById('unboxingLog');
+        Store.order.slice().reverse().forEach(id => {
+            const s = Store.db[id];
+            s.items.forEach((it, itIdx) => {
+                const panel = document.createElement('div');
+                panel.className = 'card mb-15 fade-in';
+                panel.style.padding = '12px';
+                
+                panel.innerHTML = `
+                    <div style="font-size:0.7rem; color:var(--text-sub); margin-bottom:6px;">${s.title}</div>
+                    <div style="font-weight:bold; font-size:0.85rem; margin-bottom:10px;">${it.name}</div>
+                    <div class="unboxing-panel">
+                        <div class="ub-area ub-area-left" onclick="Actions.doUnboxing('${id}', ${itIdx}, -1)">
+                            <div class="unboxing-count-badge is-zero">－</div>
+                            <span style="font-size:0.6rem; opacity:0.6;">戻す</span>
+                        </div>
+                        <div class="ub-area ub-area-right" onclick="Actions.doUnboxing('${id}', ${itIdx}, 1)">
+                            <div class="unboxing-count-badge has-count">＋</div>
+                            <span style="font-size:0.6rem; opacity:0.8;">開封！</span>
+                        </div>
+                        <div class="ub-char-label" id="last-unboxed-${id}-${itIdx}">待機中...</div>
+                    </div>
+                `;
+                logArea.appendChild(panel);
+            });
+        });
+    }
+};
+
+/* =========================================
+   4. Actions & Logic
+   ========================================= */
+const Actions = {
+    // シリーズ追加
+    showSeriesAdd() {
+        const html = `
+            <div style="font-weight:bold; margin-bottom:15px; text-align:center;">新しいアーカイブ</div>
+            <input type="text" id="newSTitle" placeholder="作品名・シリーズ名" class="mb-15">
+            <input type="text" id="newSTags" placeholder="タグ (スペース区切り)" class="mb-15">
+            <button class="primary-btn" onclick="Actions.addSeries()">作成する</button>
+        `;
+        App.showModal(html);
+    },
+
+    async addSeries() {
+        const title = document.getElementById('newSTitle').value.trim();
+        const tags = document.getElementById('newSTags').value.trim().split(/\s+/).filter(t => t);
+        if (!title) return;
+
+        const id = 's' + Date.now();
+        Store.db[id] = { title, tags, date: new Date().toLocaleDateString(), items: [] };
+        Store.order.unshift(id);
+        await Store.save();
+        App.closeModal();
+        Render.seriesList();
+    },
+
+    // アイテム追加
+    showItemAdd() {
+        const html = `
+            <div style="font-weight:bold; margin-bottom:15px; text-align:center;">アイテム追加</div>
+            <input type="text" id="newITitle" placeholder="アイテム名 (例: 缶バッジA)" class="mb-15">
+            <div style="font-size:0.75rem; color:var(--text-sub); margin-bottom:8px;">キャラセット選択</div>
+            <div id="presetArea" style="margin-bottom:15px;">
+                ${Store.presets.map(p => `<span class="preset-chip" onclick="UI.togglePreset(this)">${p}</span>`).join('')}
+            </div>
+            <button class="primary-btn" onclick="Actions.addItem()">追加する</button>
+        `;
+        App.showModal(html);
+    },
+
+    async addItem() {
+        const name = document.getElementById('newITitle').value.trim();
+        const selected = Array.from(document.querySelectorAll('.preset-chip.active')).map(el => el.innerText);
+        if (!name || selected.length === 0) return;
+
+        const newItem = {
+            name,
+            chars: selected.map(n => ({ name: n, qty: 0, isInfinite: false })),
+            memo: ""
+        };
+
+        Store.db[Store.currentSeriesId].items.push(newItem);
+        await Store.save();
+        App.closeModal();
+        Render.seriesDetail();
+    },
+
+    // 個数更新
+    async updateQty(itIdx, cIdx, delta) {
+        const c = Store.db[Store.currentSeriesId].items[itIdx].chars[cIdx];
+        c.qty = Math.max(0, (c.qty || 0) + delta);
+        await Store.save();
+        Render.itemEditor(itIdx);
+    },
+
+    async setQty(itIdx, cIdx, val) {
+        const c = Store.db[Store.currentSeriesId].items[itIdx].chars[cIdx];
+        c.qty = Math.max(0, parseInt(val) || 0);
+        await Store.save();
+        Render.itemEditor(itIdx);
+    },
+
+    async bulkSetQty(itIdx, val) {
+        Store.db[Store.currentSeriesId].items[itIdx].chars.forEach(c => c.qty = val);
+        await Store.save();
+        Render.itemEditor(itIdx);
+    },
+
+    async toggleInfinite(itIdx, cIdx) {
+        const c = Store.db[Store.currentSeriesId].items[itIdx].chars[cIdx];
+        c.isInfinite = !c.isInfinite;
+        await Store.save();
+        Render.itemEditor(itIdx);
+    },
+
+    async updateMemo(itIdx, val) {
+        Store.db[Store.currentSeriesId].items[itIdx].memo = val;
+        await Store.save();
+    },
+
+    // 削除系
+    async deleteSeries(id) {
+        if (!confirm('このシリーズを完全に削除しますか？')) return;
+        delete Store.db[id];
+        Store.order = Store.order.filter(oid => oid !== id);
+        await Store.save();
         document.getElementById('detailView').style.display = 'none';
         Render.seriesList();
     },
 
-    openItemEditor(idx = null, fromMissing = false) {
-        Store.currentItemIdx = idx;
-        Store.editorFromMissing = fromMissing;
-        const editor = document.getElementById('editorView');
-        const s = Store.db[Store.currentSeriesId];
-
-        if (idx !== null) {
-            const it = s.items[idx];
-            document.getElementById('editItemType').value = it.type;
-            document.getElementById('editCharSetName').value = it.charSetName || "デフォルト";
-            document.getElementById('editItemStatus').value = it.status;
-            Store.activeCharList = Store.charSets[it.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
-            Store.tempStocks = JSON.parse(JSON.stringify(it.stocks));
-            Store.tempTargets = [...it.targets];
-            document.getElementById('historyBanner').style.display = 'none';
-        } else {
-            document.getElementById('editItemType').value = '';
-            document.getElementById('editItemStatus').value = 'not';
-            const lastSet = Store.lastItem ? Store.lastItem.charSetName : "デフォルト";
-            document.getElementById('editCharSetName').value = lastSet;
-            Store.activeCharList = Store.charSets[lastSet] || CONSTANTS.DEFAULT_CHARS;
-            Store.tempStocks = {};
-            Store.tempTargets = [...Store.activeCharList];
-            document.getElementById('historyBanner').style.display = Store.lastItem ? 'flex' : 'none';
-        }
-        
-        this.updatePresetChips();
-        Render.editorGrid();
-        editor.style.display = 'block';
-        window.history.pushState({view:'editor'}, "");
+    async deleteItem(idx) {
+        if (!confirm('このアイテムを削除しますか？')) return;
+        Store.db[Store.currentSeriesId].items.splice(idx, 1);
+        await Store.save();
+        history.back();
+        Render.seriesDetail();
     },
 
-    closeEditor() {
-        document.getElementById('editorView').style.display = 'none';
-        if (Store.editorFromMissing) {
-            Store.editorFromMissing = false;
-            Render.missingList();
-        } else {
-            Render.itemList();
-        }
+    // 設定
+    showSettings() {
+        const html = `
+            <div style="font-weight:bold; margin-bottom:15px; text-align:center;">設定・バックアップ</div>
+            <button class="secondary-btn" onclick="Actions.exportBackup()">データを書き出す (JSON)</button>
+            <div style="margin-top:15px;">
+                <label class="secondary-btn" style="display:block; text-align:center;">
+                    データを取り込む
+                    <input type="file" style="display:none;" onchange="Actions.importBackup(event)">
+                </label>
+            </div>
+            <button class="danger-btn" style="width:100%; margin-top:30px;" onclick="Actions.resetAll()">全データ初期化</button>
+        `;
+        App.showModal(html);
     },
 
-    applyHistory() {
-        if (!Store.lastItem) return;
-        document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
-        Store.activeCharList = Store.charSets[Store.lastItem.charSetName] || CONSTANTS.DEFAULT_CHARS;
-        Store.tempTargets = [...Store.lastItem.targets];
-        Store.tempStocks = {};
-        Render.editorGrid();
-        document.getElementById('historyBanner').style.display = 'none';
+    exportBackup() {
+        const data = JSON.stringify({
+            db: Store.db, order: Store.order, charSets: Store.charSets, 
+            templates: Store.templates, presets: Store.presets, tradeConfig: Store.tradeConfig
+        });
+        const blob = new Blob([data], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `collection_archive_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
     },
 
-    updatePresetChips() {
-        const container = document.getElementById('presetChips');
-        container.innerHTML = '';
-        if (Store.presets.length > 0) {
-            document.getElementById('presetArea').style.display = 'block';
-            Store.presets.forEach(p => {
-                const span = document.createElement('span');
-                span.className = 'preset-chip';
-                span.textContent = p.type;
-                span.onclick = () => {
-                    document.getElementById('editItemType').value = p.type;
-                    document.getElementById('editCharSetName').value = p.setName;
-                    Store.activeCharList = Store.charSets[p.setName] || CONSTANTS.DEFAULT_CHARS;
-                    Store.tempTargets = [...p.targets];
-                    Render.editorGrid();
-                };
-                container.appendChild(span);
-            });
-        } else {
-            document.getElementById('presetArea').style.display = 'none';
+    async importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                Store.db = data.db || {};
+                Store.order = data.order || [];
+                Store.presets = data.presets || Store.presets;
+                await Store.save();
+                alert('読み込みが完了しました');
+                location.reload();
+            } catch (err) { alert('不正なファイル形式です'); }
+        };
+        reader.readAsText(file);
+    },
+
+    async resetAll() {
+        if (confirm('全てのデータが消去されます。本当によろしいですか？')) {
+            Store.db = {}; Store.order = [];
+            await Store.save();
+            location.reload();
         }
     },
 
-    changeCharSet(setName) {
-        Store.activeCharList = Store.charSets[setName] || CONSTANTS.DEFAULT_CHARS;
-        Store.tempTargets = [...Store.activeCharList];
-        Render.editorGrid();
-    },
-
-    toggleSettings(show) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        panel.style.right = show ? '0' : '-85%';
-        overlay.style.display = show ? 'block' : 'none';
-    },
-
-    setSortMode(mode) {
-        Store.sortMode = mode;
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`sort-${mode}`).classList.add('active');
-        Store.save();
-        Render.seriesList();
-    },
-
-    toggleDateFilter() {
-        const p = document.getElementById('dateFilterPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    },
-    clearDateFilter() {
-        document.getElementById('filterStart').value = '';
-        document.getElementById('filterEnd').value = '';
-        Render.seriesList();
-    },
+    // ユーティリティ
     filterByTag(t) {
         document.getElementById('searchBar').value = t;
         Render.seriesList();
         window.scrollTo({top:0, behavior:'smooth'});
     },
-
-    openUnboxing(idx) {
-        Store.currentItemIdx = idx;
-        const item = Store.db[Store.currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = item.type;
-        this.renderUnboxingGrid();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    },
-
-    renderUnboxingGrid() {
-        const grid = document.getElementById('unboxingGrid');
-        grid.innerHTML = '';
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        let total = 0;
-
-        item.targets.forEach(char => {
-            const st = item.stocks[char] || { own: 0, trade: 0, infinite: false };
-            total += st.own;
-            const panel = document.createElement('div');
-            panel.className = 'unboxing-panel';
-            panel.innerHTML = `
-                <div class="ub-char-label">${char}</div>
-                <div class="ub-area ub-area-left" id="ub-own-${char}">
-                    <div class="unboxing-count-badge ${st.own > 0 ? 'has-count' : 'is-zero'}">${st.own}</div>
-                </div>
-                <div class="ub-area ub-area-right" id="ub-trd-${char}">
-                    <div class="unboxing-count-badge ${st.trade !== 0 ? 'has-count' : 'is-zero'}">${st.trade > 0 ? '+'+st.trade : st.trade}</div>
-                </div>
-            `;
-            
-            const bindLongPress = (el, action) => {
-                let timer;
-                el.ontouchstart = () => { timer = setTimeout(() => { action(-1); timer = null; }, 600); };
-                el.ontouchend = () => { if(timer){ clearTimeout(timer); action(1); } };
-            };
-
-            bindLongPress(panel.querySelector('.ub-area-left'), (v) => Actions.quickStock(char, 'own', v));
-            bindLongPress(panel.querySelector('.ub-area-right'), (v) => Actions.quickStock(char, 'trade', v));
-
-            grid.appendChild(panel);
-        });
-        document.getElementById('unboxingTotalCount').textContent = `合計所持数: ${total}点`;
-    },
-
-    closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; Render.itemList(); },
 
     jumpToEditorFromMissing(sId, itemIdx, charName) {
         Store.currentSeriesId = sId;
@@ -1153,234 +1001,74 @@ const App = {
                 }
             }
         }, 300);
+    },
+
+    // 開封実行
+    async doUnboxing(sId, itIdx, delta) {
+        const it = Store.db[sId].items[itIdx];
+        const label = document.getElementById(`last-unboxed-${sId}-${itIdx}`);
+        
+        if (delta > 0) {
+            const randIdx = Math.floor(Math.random() * it.chars.length);
+            const char = it.chars[randIdx];
+            char.qty++;
+            label.innerText = `🎉 ${char.name}！`;
+            label.style.color = 'var(--gold)';
+        } else {
+            label.innerText = `1つ戻しました`;
+            label.style.color = 'var(--text-sub)';
+        }
+        await Store.save();
     }
 };
 
-// =========================================
-// 7. Actions (Data Mutation)
-// =========================================
-const Actions = {
-    async saveSeriesModal() {
-        const title = document.getElementById('msTitle').value;
-        if (!title) return;
-        const id = 's_' + Date.now();
-        const newSeries = {
-            id, title,
-            date: document.getElementById('msDate').value || "",
-            tags: document.getElementById('msTags').value,
-            items: [],
-            fav: false
-        };
+/* =========================================
+   5. UI Helpers (Swipe, Colors)
+   ========================================= */
+const UI = {
+    startX: 0,
+    currentX: 0,
+    activeCard: null,
 
-        if (document.getElementById('msUseTemplate').checked) {
-            Store.templates.forEach(t => {
-                newSeries.items.push({
-                    type: t, charSetName: "デフォルト", status: "not",
-                    targets: [...CONSTANTS.DEFAULT_CHARS], stocks: {}
-                });
-            });
-        }
-
-        Store.db[id] = newSeries;
-        Store.order.push(id);
-        await Store.save();
-        App.closeSeriesModal();
-        Render.seriesList();
-        document.getElementById('msTitle').value = '';
+    handleTouchStart(e) {
+        this.startX = e.touches[0].clientX;
+        this.activeCard = e.currentTarget;
+        this.activeCard.classList.add('swiping');
     },
 
-    async deleteSeries(id) {
-        delete Store.db[id];
-        Store.order = Store.order.filter(oid => oid !== id);
-        await Store.save();
-        Render.seriesList();
-    },
-
-    async toggleFav(id) {
-        Store.db[id].fav = !Store.db[id].fav;
-        await Store.save();
-        Render.seriesList();
-    },
-
-    async saveItem() {
-        const type = document.getElementById('editItemType').value;
-        if (!type) return;
-        const setName = document.getElementById('editCharSetName').value;
-        const status = document.getElementById('editItemStatus').value;
-
-        const itemData = {
-            type, charSetName: setName, status,
-            targets: [...Store.tempTargets],
-            stocks: JSON.parse(JSON.stringify(Store.tempStocks))
-        };
-        itemData.status = Utils.autoDetermineStatus(itemData);
-
-        const s = Store.db[Store.currentSeriesId];
-        if (Store.currentItemIdx !== null) s.items[Store.currentItemIdx] = itemData;
-        else s.items.push(itemData);
-
-        Store.lastItem = { type, charSetName: setName, targets: [...Store.tempTargets] };
-        await Store.save();
-        await Store.saveLastItem();
-        App.closeEditor();
-    },
-
-    async deleteItem(idx) {
-        Store.db[Store.currentSeriesId].items.splice(idx, 1);
-        await Store.save();
-        Render.itemList();
-    },
-
-    async deleteAllItems() {
-        if(confirm('全てのアイテムを削除しますか？')) {
-            Store.db[Store.currentSeriesId].items = [];
-            await Store.save();
-            Render.itemList();
+    handleTouchMove(e) {
+        this.currentX = e.touches[0].clientX;
+        const diff = this.currentX - this.startX;
+        if (diff < 0 && diff > -100) {
+            this.activeCard.style.transform = `translateX(${diff}px)`;
         }
     },
 
-    stepQty(char, val) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        Store.tempStocks[char].own = Math.max(0, (Store.tempStocks[char].own || 0) + val);
-        Render.editorGrid();
-    },
-
-    updateQty(char, val) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        Store.tempStocks[char].own = Math.max(0, parseInt(val) || 0);
-        Render.editorGrid();
-    },
-
-    toggleInf(char) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
-        Render.editorGrid();
-    },
-
-    toggleTarget(char) {
-        if (Store.tempTargets.includes(char)) Store.tempTargets = Store.tempTargets.filter(c => c !== char);
-        else Store.tempTargets.push(char);
-    },
-
-    bulkToggleTargets(bool) {
-        Store.tempTargets = bool ? [...Store.activeCharList] : [];
-        Render.editorGrid();
-    },
-
-    bulkIncrementOwn() {
-        Store.activeCharList.forEach(char => {
-            if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-            Store.tempStocks[char].own++;
-        });
-        Render.editorGrid();
-    },
-
-    bulkResetCounts() {
-        if(confirm('全ての個数を0にしますか？')) {
-            Store.tempStocks = {};
-            Render.editorGrid();
+    handleTouchEnd(e) {
+        this.activeCard.classList.remove('swiping');
+        const diff = this.currentX - this.startX;
+        if (diff < -50) {
+            this.activeCard.style.transform = `translateX(-100px)`;
+        } else {
+            this.activeCard.style.transform = `translateX(0)`;
         }
     },
 
-    async quickStock(char, field, val) {
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        if (!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false };
-        item.stocks[char][field] += val;
-        if (field === 'own' && item.stocks[char].own < 0) item.stocks[char].own = 0;
-        item.status = Utils.autoDetermineStatus(item);
-        await Store.save();
-        App.renderUnboxingGrid();
+    getCharClass(name) {
+        const presets = ["北門","是国","金城","阿修","愛染","増長","音済","王茶利","野目","釈村","遙日","唯月","不動","殿"];
+        return presets.includes(name) ? `c-${name}` : 'c-default';
     },
 
-    generateTradeText(item) {
-        const want = [], give = [];
-        Object.entries(item.stocks).forEach(([char, st]) => {
-            if (st.trade < 0) want.push(char + (Math.abs(st.trade) > 1 ? Math.abs(st.trade) : ''));
-            if (st.trade > 0) give.push(char + (st.trade > 1 ? st.trade : ''));
-        });
-        if (want.length === 0 && give.length === 0) return "";
-        return `${Store.tradeConfig.prefix || ""}求：${want.join('、') || '定価'} 譲：${give.join('、')} ${Store.tradeConfig.suffix || ""}`;
-    },
-
-    async saveSettings() {
-        const charInput = document.getElementById('charSettingsInput').value;
-        const newSets = {};
-        charInput.split('\n').forEach(line => {
-            const [name, chars] = line.split(':');
-            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim());
-        });
-        Store.charSets = newSets;
-        Store.templates = document.getElementById('tempSettingsInput').value.split(',').map(t => t.trim());
-        Store.tradeConfig = {
-            prefix: document.getElementById('tradePrefixInput').value,
-            suffix: document.getElementById('tradeSuffixInput').value,
-            showInf: document.getElementById('tradeShowInfMark').checked
-        };
-        const presetInput = document.getElementById('presetSettingsInput').value;
-        Store.presets = presetInput.split('\n').filter(l => l).map(line => {
-            const [type, setName, targets] = line.split(',');
-            return { type: type.trim(), setName: setName.trim(), targets: targets.split('|').map(t => t.trim()) };
-        });
-
-        await Store.save();
-        location.reload();
-    },
-
-    async exportBackup() {
-        const data = {
-            db: Store.db, order: Store.order, charSets: Store.charSets,
-            templates: Store.templates, presets: Store.presets, tradeConfig: Store.tradeConfig
-        };
-        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `collection_archive_backup_${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-    },
-
-    async importBackup(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                Store.db = data.db || {};
-                Store.order = data.order || [];
-                Store.charSets = data.charSets || {};
-                Store.templates = data.templates || [];
-                Store.presets = data.presets || [];
-                Store.tradeConfig = data.tradeConfig || {};
-                await Store.save();
-                alert('読み込みが完了しました');
-                location.reload();
-            } catch (err) { alert('不正なファイル形式です'); }
-        };
-        reader.readAsText(file);
+    togglePreset(el) {
+        el.classList.toggle('active');
+        el.style.background = el.classList.contains('active') ? 'var(--gold)' : 'var(--gold-light)';
+        el.style.color = el.classList.contains('active') ? 'white' : 'var(--gold)';
     }
 };
 
-// =========================================
-// 8. Event Handlers
-// =========================================
-window.onpopstate = function(e) {
-    const state = e.state || {};
-    const editor = document.getElementById('editorView');
-    const detail = document.getElementById('detailView');
-
-    if (editor.style.display === 'block') {
-        editor.style.display = 'none';
-        if (Store.editorFromMissing) {
-            Store.editorFromMissing = false;
-            Render.missingList();
-        }
-    } else if (detail.style.display === 'block') {
-        detail.style.display = 'none';
-        Render.seriesList();
-    }
-};
+// Start App
+App.init();
 </script>
+
 </body>
 </html>
-
