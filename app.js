@@ -1,17 +1,15 @@
 /**
- * COLLECTION ARCHIVE v1.0
- * 保守性を高めるため、ロジック・表示・データを整理
+ * COLLECTION ARCHIVE v1.0 - IndexedDB Migrated Version
  */
 
 // =========================================
-// 1. IndexedDB Manager (データ永続化)
+// 0. IndexedDB Manager (Native API Wrapper)
 // =========================================
 const IDB = {
     dbName: "CollectionArchiveDB",
     storeName: "appData",
     db: null,
 
-    /** DBの初期化 */
     init() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, 1);
@@ -29,7 +27,6 @@ const IDB = {
         });
     },
 
-    /** 値の保存 */
     async set(key, value) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], "readwrite");
@@ -40,7 +37,6 @@ const IDB = {
         });
     },
 
-    /** 値の取得 */
     async get(key) {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], "readonly");
@@ -53,878 +49,885 @@ const IDB = {
 };
 
 // =========================================
-// 2. State & Constants (状態管理)
+// 1. Constants & Configuration
 // =========================================
-const CONFIG = {
+const CONSTANTS = {
     KEYS: {
-        DB: 'gap_db', ORDER: 'gap_order', SETS: 'gap_char_sets', 
-        TEMPLATES: 'gap_temps', PRESETS: 'gap_presets', 
-        TRADE: 'gap_trade_config', SORT: 'gap_sort_mode', LAST_ITEM: 'gap_last_item'
+        DB: 'gap_db',
+        ORDER: 'gap_order',
+        SETS: 'gap_char_sets',
+        TEMPLATES: 'gap_temps',
+        PRESETS: 'gap_presets',
+        TRADE: 'gap_trade_config',
+        SORT: 'gap_sort_mode',
+        LAST_ITEM: 'gap_last_item'
     },
     DEFAULT_CHARS: ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"],
     DEFAULT_TEMPLATES: ["缶バッジ", "アクスタ", "ブロマイド"],
 };
 
+// =========================================
+// 2. State Management (Store)
+// =========================================
 const Store = {
-    db: {}, // 全データ
-    order: [], // シリーズの並び順
-    charSets: {}, // キャラクターセット定義
-    templates: [], // 新規登録時のテンプレート
-    presets: [], // 編集時のショートカット
+    db: {},
+    order: [],
+    charSets: {},
+    templates: [],
+    presets: [],
     tradeConfig: { prefix: "", suffix: "", showInf: true },
     sortMode: 'new',
     lastItem: null,
-    
-    // 一時的な状態
+
+    // Temp State
     currentSeriesId: null,
     currentItemIdx: null,
     activeCharList: [],
     tempStocks: {},
     editorFromMissing: false,
 
-    /** ストレージからデータを読み込む */
-    async load() {
+    async init() {
         await IDB.init();
-        this.db = await IDB.get(CONFIG.KEYS.DB) || {};
-        this.order = await IDB.get(CONFIG.KEYS.ORDER) || [];
-        this.charSets = await IDB.get(CONFIG.KEYS.SETS) || { "デフォルト": CONFIG.DEFAULT_CHARS };
-        this.templates = await IDB.get(CONFIG.KEYS.TEMPLATES) || CONFIG.DEFAULT_TEMPLATES;
-        this.presets = await IDB.get(CONFIG.KEYS.PRESETS) || [];
-        this.tradeConfig = await IDB.get(CONFIG.KEYS.TRADE) || { prefix: "", suffix: "", showInf: true };
-        this.sortMode = await IDB.get(CONFIG.KEYS.SORT) || 'new';
-        this.lastItem = await IDB.get(CONFIG.KEYS.LAST_ITEM) || null;
+        this.db = await IDB.get(CONSTANTS.KEYS.DB) || {};
+        this.order = await IDB.get(CONSTANTS.KEYS.ORDER) || [];
+        this.charSets = await IDB.get(CONSTANTS.KEYS.SETS) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+        this.templates = await IDB.get(CONSTANTS.KEYS.TEMPLATES) || CONSTANTS.DEFAULT_TEMPLATES;
+        this.presets = await IDB.get(CONSTANTS.KEYS.PRESETS) || [];
+        this.tradeConfig = await IDB.get(CONSTANTS.KEYS.TRADE) || { prefix: "", suffix: "", showInf: true };
+        this.sortMode = await IDB.get(CONSTANTS.KEYS.SORT) || 'new';
+        this.lastItem = await IDB.get(CONSTANTS.KEYS.LAST_ITEM) || null;
     },
 
-    /** データを永続化する */
     async save() {
-        await IDB.set(CONFIG.KEYS.DB, this.db);
-        await IDB.set(CONFIG.KEYS.ORDER, this.order);
-        await IDB.set(CONFIG.KEYS.SETS, this.charSets);
-        await IDB.set(CONFIG.KEYS.TRADE, this.tradeConfig);
-        await IDB.set(CONFIG.KEYS.SORT, this.sortMode);
-        await IDB.set(CONFIG.KEYS.PRESETS, this.presets);
+        await IDB.set(CONSTANTS.KEYS.DB, this.db);
+        await IDB.set(CONSTANTS.KEYS.ORDER, this.order);
+        await IDB.set(CONSTANTS.KEYS.SETS, this.charSets);
+        await IDB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
+        await IDB.set(CONSTANTS.KEYS.SORT, this.sortMode);
+        await IDB.set(CONSTANTS.KEYS.PRESETS, this.presets);
+    },
+
+    async saveLastItem() {
+        await IDB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
     }
 };
 
 // =========================================
-// 3. Application Controller (全体制御)
+// 3. Utilities
 // =========================================
-const App = {
-    /** 初期起動 */
-    async init() {
-        await Store.load();
-        this.bindEvents();
-        Render.seriesList();
-        
-        // スプラッシュ画面を消す
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 800);
+const Utils = {
+    showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2000);
+    },
+    
+    autoDetermineStatus(item) {
+        if (item.status === "none") return "none";
+        const targets = item.targets || [];
+        if (targets.length === 0) return item.status;
+        const isAllCollected = targets.every(char => {
+            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
+            if (s.infinite) return false;
+            return (s.own + s.trade) >= 1;
+        });
+        return isAllCollected ? "comp" : "not";
     },
 
-    /** イベントリスナーの登録（インラインonclickの代わり） */
-    bindEvents() {
-        // メインタブ
-        document.getElementById('tab-list').addEventListener('click', () => this.switchMainTab('list'));
-        document.getElementById('tab-missing').addEventListener('click', () => this.switchMainTab('missing'));
-        
-        // 検索・フィルタ
-        document.getElementById('searchBar').addEventListener('input', () => Render.seriesList());
-        document.getElementById('btnToggleDate').addEventListener('click', () => this.toggleDateFilter());
-        document.getElementById('filterStart').addEventListener('change', () => Render.seriesList());
-        document.getElementById('filterEnd').addEventListener('change', () => Render.seriesList());
-        document.getElementById('btnClearDate').addEventListener('click', () => this.clearDateFilter());
+    attachSwipe(element, actionCallback, isCustomSort) {
+        let startX = 0, isSwiping = false, isTicking = false;
+        element.addEventListener('touchstart', (e) => {
+            if (Store.sortMode === 'custom' && isCustomSort) return;
+            const rect = element.getBoundingClientRect();
+            const touchX = e.touches[0].clientX;
+            if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
+            startX = touchX;
+            isSwiping = true;
+            element.classList.add('swiping');
+        }, {passive: true});
 
-        // ソート
-        document.getElementById('sort-new').addEventListener('click', () => this.setSortMode('new'));
-        document.getElementById('sort-date').addEventListener('click', () => this.setSortMode('date'));
-        document.getElementById('sort-custom').addEventListener('click', () => this.setSortMode('custom'));
+        element.addEventListener('touchmove', (e) => {
+            if (!isSwiping || (Store.sortMode === 'custom' && isCustomSort)) return;
+            let currentX = e.touches[0].clientX - startX;
+            if (currentX < 0) {
+                if (currentX < -120) currentX = -120;
+                if (!isTicking) {
+                    window.requestAnimationFrame(() => {
+                        element.style.transform = `translateX(${currentX}px)`;
+                        isTicking = false;
+                    });
+                    isTicking = true;
+                }
+            }
+        }, {passive: true});
 
-        // ヘッダー・FAB
-        document.getElementById('btn-open-settings').addEventListener('click', () => this.toggleSettings(true));
-        document.getElementById('mainFab').addEventListener('click', () => this.openSeriesModal());
-        
-        // モーダル・ビュー操作
-        document.getElementById('btn-close-detail').addEventListener('click', () => this.closeDetail());
-        document.getElementById('btn-add-item').addEventListener('click', () => this.openItemEditor());
-        document.getElementById('editorBackBtn').addEventListener('click', () => this.closeEditor());
-        document.getElementById('btn-save-item').addEventListener('click', () => Actions.saveItem());
-        document.getElementById('btn-confirm-series').addEventListener('click', () => Actions.saveSeriesModal());
-        document.getElementById('btn-close-series-modal').addEventListener('click', () => this.closeSeriesModal());
-        document.getElementById('btn-close-unboxing').addEventListener('click', () => this.closeUnboxing());
-        document.getElementById('btn-delete-all-items').addEventListener('click', () => Actions.deleteAllItems());
-        
-        // 編集機能
-        document.getElementById('btn-apply-history').addEventListener('click', () => this.applyHistory());
-        document.getElementById('btn-bulk-select').addEventListener('click', () => Actions.bulkToggleTargets(true));
-        document.getElementById('btn-bulk-cancel').addEventListener('click', () => Actions.bulkToggleTargets(false));
-        document.getElementById('btn-bulk-inc').addEventListener('click', () => Actions.bulkIncrementOwn());
-        document.getElementById('btn-bulk-reset').addEventListener('click', () => Actions.bulkResetCounts());
-        document.getElementById('editCharSetName').addEventListener('change', (e) => this.changeCharSet(e.target.value));
+        element.addEventListener('touchend', (e) => {
+            if (!isSwiping || (Store.sortMode === 'custom' && isCustomSort)) return;
+            isSwiping = false;
+            element.classList.remove('swiping');
+            const finalX = e.changedTouches[0].clientX - startX;
+            if (finalX < -50) {
+                element.style.transform = 'translateX(-100px)';
+            } else {
+                element.style.transform = 'translateX(0)';
+            }
+        }, {passive: true});
 
-        // 設定
-        document.getElementById('settingsOverlay').addEventListener('click', () => this.toggleSettings(false));
-        document.getElementById('btn-save-settings').addEventListener('click', () => Actions.saveSettings());
-        document.getElementById('btn-export-backup').addEventListener('click', () => Actions.exportBackup());
-        document.getElementById('btn-import-trigger').addEventListener('click', () => document.getElementById('importFile').click());
-        document.getElementById('importFile').addEventListener('change', (e) => Actions.importBackup(e));
+        const originalOnClick = element.onclick;
+        element.onclick = (e) => {
+            if (element.style.transform === 'translateX(-100px)') {
+                element.style.transform = 'translateX(0)';
+                e.stopPropagation();
+            } else if (originalOnClick) { originalOnClick(e); }
+        };
+    }
+};
+
+// =========================================
+// 4. Rendering Logic (View)
+// =========================================
+const Render = {
+    seriesList() {
+        const container = document.getElementById('seriesListContainer');
+        container.innerHTML = "";
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        const start = document.getElementById('filterStart').value;
+        const end = document.getElementById('filterEnd').value;
+        container.className = Store.sortMode === 'custom' ? 'sort-custom' : '';
+        let displayOrder = [...Store.order];
+
+        if (Store.sortMode === 'date') {
+            displayOrder.sort((a, b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
+        }
+        displayOrder.sort((a, b) => (Store.db[b].fav ? 1 : 0) - (Store.db[a].fav ? 1 : 0));
+
+        displayOrder.forEach((id) => {
+            const s = Store.db[id];
+            if (!s) return;
+            
+            const titleMatch = s.title.toLowerCase().includes(term);
+            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
+            let dateMatch = true;
+            if (start || end) {
+                if (!s.date) dateMatch = false;
+                else {
+                    if (start && s.date < start) dateMatch = false;
+                    if (end && s.date > end) dateMatch = false;
+                }
+            }
+
+            if ((titleMatch || tagsMatch) && dateMatch) {
+                const items = s.items || [];
+                const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
+                const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
+                const favActive = s.fav ? 'active' : '';
+
+                const swipeWrapper = document.createElement('div');
+                swipeWrapper.className = 'swipe-container';
+                if (Store.sortMode === 'custom') {
+                    swipeWrapper.draggable = true;
+                    swipeWrapper.ondragstart = (e) => Actions.handleDragStart(e, id);
+                    swipeWrapper.ondragover = Actions.handleDragOver;
+                    swipeWrapper.ondrop = (e) => Actions.handleDrop(e, id);
+                }
+
+                const deleteBtn = document.createElement('div');
+                deleteBtn.className = 'delete-btn-overlay';
+                deleteBtn.textContent = '削除';
+                deleteBtn.onclick = (e) => { e.stopPropagation(); Actions.deleteSeries(id); };
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => 
+                    `<span onclick="event.stopPropagation(); App.filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`
+                ).join('') : '';
+
+                card.innerHTML = `
+                    <div style="display:flex; align-items:flex-start;">
+                        <div class="handle">⋮⋮</div>
+                        <div style="flex:1;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
+                                    <button class="fav-btn ${favActive}" onclick="Actions.toggleFavorite('${id}', event)">★</button>
+                                </div>
+                            </div>
+                            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>
+                        </div>
+                    </div>`;
+                card.onclick = (e) => {
+                    if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') App.openDetail(id);
+                };
+
+                Utils.attachSwipe(card, null, true);
+                swipeWrapper.appendChild(deleteBtn);
+                swipeWrapper.appendChild(card);
+                container.appendChild(swipeWrapper);
+            }
+        });
     },
 
-    /** タブ切り替え */
-    switchMainTab(tab) {
-        const isList = tab === 'list';
-        document.getElementById('seriesView').style.display = isList ? 'block' : 'none';
-        document.getElementById('missingView').style.display = isList ? 'none' : 'block';
-        document.getElementById('tab-list').classList.toggle('active', isList);
-        document.getElementById('tab-missing').classList.toggle('active', !isList);
-        document.getElementById('mainFab').style.display = isList ? 'flex' : 'none';
-        
-        if (isList) Render.seriesList();
-        else Render.missingList();
+    itemList() {
+        const container = document.getElementById('itemListContainer');
+        container.innerHTML = "";
+        const items = Store.db[Store.currentSeriesId].items || [];
+        const seriesTitle = Store.db[Store.currentSeriesId].title;
+        items.forEach((item, idx) => {
+            const swipeWrapper = document.createElement('div');
+            swipeWrapper.className = 'swipe-container';
+            swipeWrapper.style.marginBottom = "15px";
+
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'delete-btn-overlay';
+            deleteBtn.textContent = '削除';
+            deleteBtn.onclick = (e) => { e.stopPropagation(); Actions.deleteItem(idx); };
+
+            const card = document.createElement('div');
+            card.className = 'card item-card';
+            Utils.attachSwipe(card, null, false);
+
+            const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
+            
+            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
+            let totalOwn = 0, totalTrade = 0;
+            const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
+
+            list.forEach(c => {
+                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
+                const isTarget = (item.targets || list).includes(c);
+                totalOwn += s.own;
+                totalTrade += s.trade;
+
+                if (s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
+                if (s.trade > 0) {
+                    tradeTextArr.push(`${c}${s.trade}`);
+                    tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`);
+                }
+                if (s.infinite) {
+                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
+                }
+                if (isTarget) {
+                    const isMissing = (s.own === 0 && s.trade === 0);
+                    if (isMissing || s.infinite) {
+                        const displayInf = s.infinite && Store.tradeConfig.showInf;
+                        targetNamesArr.push(`${c}${displayInf ? '(∞)' : ''}`);
+                    }
+                }
+            });
+
+            const prefix = Store.tradeConfig.prefix ? Store.tradeConfig.prefix + "\n" : "";
+            const suffix = Store.tradeConfig.suffix ? "\n" + Store.tradeConfig.suffix : "";
+            const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
+
+            const missingChips = list.filter(c => 
+                (item.targets || list).includes(c) && 
+                ((item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0) === 0 || item.stocks[c]?.infinite)
+            ).map(c => {
+                const isInf = item.stocks[c]?.infinite;
+                const isMissing = !item.stocks[c] || (item.stocks[c].own + item.stocks[c].trade === 0);
+                return `<span class="char-chip c-${c.trim()} ${isMissing ? '' : 'is-infinite-collected'}">${c}</span>`;
+            }).join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>';
+
+            card.innerHTML = `
+                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
+                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="Actions.duplicateItem(${idx}, event)" style="background:#f0f0f0; border:none; color:var(--text-main); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">複製</button>
+                        <button onclick="event.stopPropagation(); Actions.copyTradeText(\`${copyStr}\`)" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
+                    </div>
+                </div>
+                <div class="inventory-grid" onclick="App.openItemEditor(${idx})">
+                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
+                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
+                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missingChips}</div></div>
+                </div>
+                <div class="inv-summary-row">
+                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
+                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
+                    <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
+                </div>
+                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div class="inf-status-container">${infiniteStatusChips.join('')}</div>
+                    <span onclick="event.stopPropagation(); App.openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
+                </div>`;
+            swipeWrapper.appendChild(deleteBtn);
+            swipeWrapper.appendChild(card);
+            container.appendChild(swipeWrapper);
+        });
     },
 
-    /** ソートモード変更 */
-    setSortMode(mode) {
-        Store.sortMode = mode;
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`sort-${mode}`).classList.add('active');
-        Render.seriesList();
-        Store.save();
+    editorGrid(targets) {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = "";
+        Store.activeCharList.forEach(c => {
+            if (!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
+            const isTarget = targets.includes(c);
+            const { own, trade, infinite } = Store.tempStocks[c];
+            const ownClass = own > 0 ? 'qty-has' : 'qty-zero';
+            const tradeClass = trade > 0 ? 'qty-has' : 'qty-zero';
+
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            row.style.opacity = isTarget ? "1" : "0.5";
+            row.innerHTML = `
+                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
+                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="Actions.refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
+                    <button class="inf-btn ${infinite ? 'active' : ''}" onclick="Actions.toggleInfinite('${c}')" style="display:block; margin:5px auto 0;">∞</button>
+                </div>
+                <div style="display:flex; justify-content:space-around;">
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">保管</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','own',-1)">-</button>
+                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${own}" onchange="Actions.directInputQty('${c}','own',this.value)" onclick="this.select()">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','own',1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','trade',-1)">-</button>
+                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${trade}" onchange="Actions.directInputQty('${c}','trade',this.value)" onclick="this.select()">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','trade',1)">+</button>
+                        </div>
+                    </div>
+                </div>`;
+            grid.appendChild(row);
+        });
     },
 
-    /** 設定パネルの開閉 */
-    toggleSettings(open) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        if (open) {
-            this.fillSettingsFields();
-            panel.style.right = '0';
-            overlay.style.display = 'block';
-        } else {
-            panel.style.right = '-85%';
-            overlay.style.display = 'none';
+    missingList() {
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = "";
+        let found = false;
+        let allChars = new Set();
+        Object.values(Store.charSets).forEach(list => list.forEach(c => allChars.add(c)));
+
+        Array.from(allChars).forEach(char => {
+            let list = [];
+            Store.order.forEach(sId => {
+                (Store.db[sId].items || []).forEach((item, itemIdx) => {
+                    const charList = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
+                    if (!charList.includes(char)) return;
+                    if (!(item.targets || charList).includes(char)) return;
+
+                    const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
+                    const isMissing = (s.own === 0 && s.trade === 0);
+                    if (item.status === 'not' && (isMissing || s.infinite)) {
+                        list.push({
+                            series: Store.db[sId].title,
+                            seriesId: sId,
+                            type: item.type,
+                            itemIdx: itemIdx,
+                            isInf: s.infinite,
+                            isOwn: !isMissing
+                        });
+                    }
+                });
+            });
+
+            if (list.length > 0) {
+                found = true;
+                const group = document.createElement('div');
+                group.className = 'card';
+                group.style.marginBottom = "15px";
+                group.innerHTML = `
+                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
+                        <span style="color:var(--gold-light);">▼</span>
+                    </div>
+                    <div style="display:none; margin-top:10px;">
+                        ${list.map(li => `
+                            <div onclick="App.jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
+                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
+                                </div>
+                            </div>`).join('')}
+                    </div>`;
+                container.appendChild(group);
+            }
+        });
+        if (!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
+    },
+
+    unboxingGrid() {
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = "";
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
+        let tOwn = 0, tTrade = 0;
+
+        list.forEach(c => {
+            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false };
+            tOwn += s.own; tTrade += s.trade;
+            const panel = document.createElement('div');
+            panel.className = `unboxing-panel c-${c.trim()}`;
+            panel.innerHTML = `
+                <div class="ub-char-label">${c}</div>
+                <div class="ub-area ub-area-left"><span class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
+                <div class="ub-area ub-area-right"><span class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`;
+
+            const attachHandler = (area, type) => {
+                let timer;
+                area.onpointerdown = (e) => { e.preventDefault(); timer = setTimeout(() => { Actions.updateUnboxingCount(c, type, -1); timer = null; }, 500); };
+                area.onpointerup = (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); Actions.updateUnboxingCount(c, type, 1); } };
+                area.oncontextmenu = (e) => e.preventDefault();
+            };
+            attachHandler(panel.querySelector('.ub-area-left'), 'own');
+            attachHandler(panel.querySelector('.ub-area-right'), 'trade');
+            grid.appendChild(panel);
+        });
+        document.getElementById('unboxingTotalCount').innerHTML = `保管: ${tOwn} / 譲渡: ${tTrade} / 合計: ${tOwn+tTrade}`;
+    }
+};
+
+// =========================================
+// 5. App Actions (Logic)
+// =========================================
+const Actions = {
+    async saveSeriesModal() {
+        const title = document.getElementById('msTitle').value.trim();
+        if(!title) return;
+        const id = "s" + Date.now();
+        const useTemp = document.getElementById('msUseTemplate').checked;
+        let items = [];
+        if(useTemp) Store.templates.forEach(t => items.push({ type: t, stocks: {}, targets: [...CONSTANTS.DEFAULT_CHARS], status: "not", charSetName: "デフォルト" }));
+        Store.db[id] = { 
+            title, 
+            date: document.getElementById('msDate').value, 
+            tags: document.getElementById('msTags').value, 
+            items: items, 
+            fav: false 
+        };
+        Store.order.unshift(id);
+        await Store.save();
+        App.closeSeriesModal();
+        App.openDetail(id);
+    },
+
+    async deleteSeries(id) {
+        if(confirm("削除しますか？")) {
+            delete Store.db[id];
+            Store.order = Store.order.filter(oid => oid !== id);
+            await Store.save();
+            Render.seriesList();
         }
     },
 
-    /** 設定項目の反映 */
-    fillSettingsFields() {
-        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
-        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
-        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
-        
-        const setsText = Object.entries(Store.charSets)
-            .map(([k, v]) => `${k}:${v.join(',')}`).join('\n');
-        document.getElementById('charSettingsInput').value = setsText;
-
-        const presetsText = Store.presets
-            .map(p => `${p.type},${p.setName},${p.targets.join('|')}`).join('\n');
-        document.getElementById('presetSettingsInput').value = presetsText;
-
-        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
+    async toggleFavorite(id, e) {
+        e.stopPropagation();
+        Store.db[id].fav = !Store.db[id].fav;
+        await Store.save();
+        Render.seriesList();
     },
 
-    // --- 各種モーダル・ビュー制御 ---
-    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
-    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
-    
+    async saveItem() {
+        const type = document.getElementById('editItemType').value.trim();
+        if (!type) return alert("名前を入力してください");
+        
+        let data = {
+            type,
+            stocks: Store.tempStocks,
+            targets: Actions.getSelectedTargets(),
+            status: document.getElementById('editItemStatus').value,
+            charSetName: document.getElementById('editCharSetName').value
+        };
+        data.status = Utils.autoDetermineStatus(data);
+        Store.lastItem = { type: data.type, charSetName: data.charSetName, targets: data.targets };
+        await Store.saveLastItem();
+
+        if (Store.currentItemIdx === null) Store.db[Store.currentSeriesId].items.push(data);
+        else Store.db[Store.currentSeriesId].items[Store.currentItemIdx] = data;
+
+        await Store.save();
+        Utils.showToast("保存しました");
+        history.back();
+        document.getElementById('editorView').style.display = 'none';
+        
+        if (!Store.editorFromMissing) Render.itemList();
+        else { Store.editorFromMissing = false; Render.missingList(); }
+    },
+
+    async deleteItem(idx) {
+        if(confirm("削除しますか？")) {
+            Store.db[Store.currentSeriesId].items.splice(idx,1);
+            await Store.save();
+            Render.itemList();
+        }
+    },
+
+    async deleteAllItems() {
+        if(confirm("全削除しますか？")) {
+            Store.db[Store.currentSeriesId].items = [];
+            await Store.save();
+            Render.itemList();
+        }
+    },
+
+    async duplicateItem(idx, e) {
+        e.stopPropagation();
+        const base = Store.db[Store.currentSeriesId].items[idx];
+        const newItem = {
+            type: base.type,
+            charSetName: base.charSetName || "デフォルト",
+            targets: JSON.parse(JSON.stringify(base.targets)),
+            stocks: {},
+            status: "not"
+        };
+        Store.db[Store.currentSeriesId].items.push(newItem);
+        await Store.save();
+        Render.itemList();
+        Utils.showToast("複製しました");
+    },
+
+    updateQty(char, key, delta) {
+        Store.tempStocks[char][key] = Math.max(0, Store.tempStocks[char][key] + delta);
+        Render.editorGrid(Actions.getSelectedTargets());
+    },
+
+    directInputQty(char, key, val) {
+        let n = parseInt(val);
+        if(isNaN(n) || n < 0) n = 0;
+        Store.tempStocks[char][key] = n;
+        Render.editorGrid(Actions.getSelectedTargets());
+    },
+
+    toggleInfinite(char) {
+        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
+        Render.editorGrid(Actions.getSelectedTargets());
+    },
+
+    getSelectedTargets() {
+        const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]');
+        let selected = [];
+        cbs.forEach((cb, i) => { if(cb.checked) selected.push(Store.activeCharList[i]); });
+        return selected;
+    },
+
+    refreshEditorTargets() { Render.editorGrid(Actions.getSelectedTargets()); },
+    bulkToggleTargets(s) { Render.editorGrid(s ? [...Store.activeCharList] : []); },
+
+    bulkIncrementOwn() {
+        Store.activeCharList.forEach(c => {
+            if(!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
+            Store.tempStocks[c].own += 1;
+        });
+        Render.editorGrid(Actions.getSelectedTargets());
+        Utils.showToast("保管を+1しました");
+    },
+
+    bulkResetCounts() {
+        if(confirm("カウントをすべて削除しますがよろしいですか？")) {
+            Object.keys(Store.tempStocks).forEach(c => { Store.tempStocks[c].own = 0; Store.tempStocks[c].trade = 0; Store.tempStocks[c].infinite = false; });
+            Render.editorGrid(Actions.getSelectedTargets());
+            Utils.showToast("リセットしました");
+        }
+    },
+
+    async updateUnboxingCount(char, type, delta) {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false };
+        item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta);
+        const oldStatus = item.status;
+        item.status = Utils.autoDetermineStatus(item);
+        if (oldStatus !== item.status) Utils.showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました");
+        
+        await Store.save();
+        Render.unboxingGrid();
+    },
+
+    dragSrcId: null,
+    handleDragStart(e, id) {
+        if(Store.sortMode !== 'custom') return;
+        Actions.dragSrcId = id;
+        e.target.classList.add('dragging');
+    },
+
+    handleDragOver(e) { e.preventDefault(); },
+
+    async handleDrop(e, targetId) {
+        e.preventDefault();
+        if(!Actions.dragSrcId || Actions.dragSrcId === targetId) return;
+        let newOrder = [...Store.order];
+        const srcIdx = newOrder.indexOf(Actions.dragSrcId);
+        const targetIdx = newOrder.indexOf(targetId);
+        newOrder.splice(srcIdx, 1);
+        newOrder.splice(targetIdx, 0, Actions.dragSrcId);
+        Store.order = newOrder;
+        await Store.save();
+        Render.seriesList();
+    },
+
+    async saveSettings() {
+        const lines = document.getElementById('charSettingsInput').value.split('\n');
+        let newSets = {};
+        lines.forEach(line => {
+            const p = line.split(':');
+            if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c);
+        });
+        Store.charSets = Object.keys(newSets).length ? newSets : { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+        Store.templates = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
+        const pLines = document.getElementById('presetSettingsInput').value.split('\n');
+        let newPresets = [];
+        pLines.forEach(l => {
+            const p = l.split(',');
+            if(p.length >= 3) newPresets.push({ name: p[0].trim(), charSet: p[1].trim(), targets: p[2].split('|').map(c => c.trim()) });
+        });
+        Store.presets = newPresets;
+        Store.tradeConfig = {
+            prefix: document.getElementById('tradePrefixInput').value,
+            suffix: document.getElementById('tradeSuffixInput').value,
+            showInf: document.getElementById('tradeShowInfMark').checked
+        };
+        await Store.save();
+        location.reload();
+    },
+
+    exportBackup() {
+        const data = {
+            [CONSTANTS.KEYS.DB]: Store.db,
+            [CONSTANTS.KEYS.ORDER]: Store.order,
+            [CONSTANTS.KEYS.SETS]: Store.charSets,
+            [CONSTANTS.KEYS.TEMPLATES]: Store.templates,
+            [CONSTANTS.KEYS.SORT]: Store.sortMode,
+            [CONSTANTS.KEYS.TRADE]: Store.tradeConfig,
+            [CONSTANTS.KEYS.PRESETS]: Store.presets
+        };
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'}));
+        a.download=`backup.json`;
+        a.click();
+    },
+
+    async importBackup(e) {
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if(confirm("上書きしますか？")) {
+                    await IDB.set(CONSTANTS.KEYS.DB, data[CONSTANTS.KEYS.DB]);
+                    await IDB.set(CONSTANTS.KEYS.ORDER, data[CONSTANTS.KEYS.ORDER]);
+                    await IDB.set(CONSTANTS.KEYS.SETS, data[CONSTANTS.KEYS.SETS] || { "デフォルト": CONSTANTS.DEFAULT_CHARS });
+                    await IDB.set(CONSTANTS.KEYS.TRADE, data[CONSTANTS.KEYS.TRADE] || { prefix: "", suffix: "", showInf: true });
+                    await IDB.set(CONSTANTS.KEYS.SORT, data[CONSTANTS.KEYS.SORT] || 'new');
+                    await IDB.set(CONSTANTS.KEYS.PRESETS, data[CONSTANTS.KEYS.PRESETS] || []);
+                    location.reload();
+                }
+            } catch(e) { alert("無効なファイルです"); }
+        };
+        reader.readAsText(e.target.files[0]);
+    },
+
+    copyTradeText(text) {
+        navigator.clipboard.writeText(text).then(() => Utils.showToast("コピーしました"));
+    }
+};
+
+// =========================================
+// 6. Main App Controller
+// =========================================
+const App = {
+    async init() {
+        await Store.init();
+        Render.seriesList();
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail', err));
+        }
+
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 500);
+            }
+        }, 600);
+    },
+
+    switchMainTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if (tab === 'missing') Render.missingList();
+    },
+
     openDetail(id) {
         Store.currentSeriesId = id;
+        document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
         document.getElementById('detailView').style.display = 'block';
+        history.pushState({view: 'detail', seriesId: id}, '');
         Render.itemList();
-        window.history.pushState({view:'detail'}, "");
     },
+
     closeDetail() {
         document.getElementById('detailView').style.display = 'none';
+        if (history.state && history.state.view === 'detail') history.back();
         Render.seriesList();
     },
 
     openItemEditor(idx = null, fromMissing = false) {
         Store.currentItemIdx = idx;
         Store.editorFromMissing = fromMissing;
-        const editor = document.getElementById('editorView');
-        editor.style.display = 'block';
         
-        Render.editorInit();
-        window.history.pushState({view:'editor'}, "");
+        const presetArea = document.getElementById('presetArea');
+        const historyBanner = document.getElementById('historyBanner');
+        
+        historyBanner.style.display = (idx === null && Store.lastItem) ? 'flex' : 'none';
+        if (idx === null && Store.presets.length > 0) {
+            presetArea.style.display = 'block';
+            document.getElementById('presetChips').innerHTML = Store.presets.map((p, i) => 
+                `<span class="preset-chip" onclick="App.applyPreset(${i})">${p.name}</span>`
+            ).join('');
+        } else {
+            presetArea.style.display = 'none';
+        }
+
+        const setSelect = document.getElementById('editCharSetName');
+        setSelect.innerHTML = Object.keys(Store.charSets).map(n => `<option value="${n}">${n}</option>`).join('');
+        
+        const item = idx !== null ? Store.db[Store.currentSeriesId].items[idx] : 
+            { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
+        
+        document.getElementById('editItemType').value = item.type;
+        document.getElementById('editItemStatus').value = item.status || "not";
+        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
+        
+        Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        Store.activeCharList = Store.charSets[document.getElementById('editCharSetName').value] || CONSTANTS.DEFAULT_CHARS;
+        
+        Render.editorGrid(item.targets && item.targets.length > 0 ? item.targets : [...Store.activeCharList]);
+        
+        document.getElementById('editorView').style.display = 'block';
+        history.pushState({view: 'editor'}, '');
     },
+
     closeEditor() {
         document.getElementById('editorView').style.display = 'none';
-        if (Store.editorFromMissing) {
-            Store.editorFromMissing = false;
-            Render.missingList();
+        if (history.state && history.state.view === 'editor') history.back();
+        if (Store.editorFromMissing) { Store.editorFromMissing = false; Render.missingList(); }
+    },
+
+    applyHistory() {
+        if (!Store.lastItem) return;
+        document.getElementById('editItemType').value = Store.lastItem.type;
+        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
+        Store.activeCharList = Store.charSets[Store.lastItem.charSetName] || CONSTANTS.DEFAULT_CHARS;
+        Store.tempStocks = {};
+        Render.editorGrid(Store.lastItem.targets);
+        Utils.showToast("履歴を適用しました");
+    },
+
+    applyPreset(idx) {
+        const p = Store.presets[idx];
+        document.getElementById('editItemType').value = p.name;
+        document.getElementById('editCharSetName').value = p.charSet;
+        Store.activeCharList = Store.charSets[p.charSet] || CONSTANTS.DEFAULT_CHARS;
+        Store.tempStocks = {};
+        Render.editorGrid(p.targets);
+        Utils.showToast(`プリセット: ${p.name} を適用`);
+    },
+
+    changeCharSet(setName) {
+        Store.activeCharList = Store.charSets[setName] || CONSTANTS.DEFAULT_CHARS;
+        Render.editorGrid([...Store.activeCharList]);
+    },
+    
+    openSeriesModal() {
+        document.getElementById('msTitle').value = "";
+        document.getElementById('seriesModal').style.display = 'flex';
+    },
+
+    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
+    
+    openUnboxing(idx) {
+        Store.currentItemIdx = idx;
+        document.getElementById('unboxingTitle').textContent = Store.db[Store.currentSeriesId].items[idx].type;
+        Render.unboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    },
+
+    closeUnboxing() {
+        document.getElementById('unboxingModal').style.display = 'none';
+        Render.itemList();
+    },
+
+    toggleSettings(s) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        overlay.style.display = s ? 'block' : 'none';
+        panel.style.right = s ? '0' : '-85%';
+        if(s) {
+            document.getElementById('charSettingsInput').value = Object.keys(Store.charSets).map(n => `${n}:${Store.charSets[n].join(',')}`).join('\n');
+            document.getElementById('tempSettingsInput').value = Store.templates.join('\n');
+            document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
+            document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
+            document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf !== false;
+            document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
         }
     },
 
-    /** 日付フィルタ */
+    async setSortMode(mode) {
+        Store.sortMode = mode;
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`sort-${mode}`).classList.add('active');
+        await Store.save();
+        Render.seriesList();
+    },
+
     toggleDateFilter() {
         const p = document.getElementById('dateFilterPanel');
         p.style.display = p.style.display === 'none' ? 'block' : 'none';
     },
+
     clearDateFilter() {
         document.getElementById('filterStart').value = "";
         document.getElementById('filterEnd').value = "";
         Render.seriesList();
     },
 
-    /** 編集中のキャラセット変更 */
-    changeCharSet(setName) {
-        Store.activeCharList = Store.charSets[setName] || [];
-        Render.editorGrid();
-    },
-
-    /** 履歴から復元 */
-    applyHistory() {
-        if (!Store.lastItem) return;
-        document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.setName;
-        this.changeCharSet(Store.lastItem.setName);
-        Utils.showToast("履歴を適用しました");
-    },
-
-    closeUnboxing() {
-        document.getElementById('unboxingModal').style.display = 'none';
-        Render.itemList();
-    }
-};
-
-// =========================================
-// 4. Render Engine (表示処理)
-// =========================================
-const Render = {
-    /** シリーズ一覧の描画 */
-    seriesList() {
-        const container = document.getElementById('seriesListContainer');
-        const query = document.getElementById('searchBar').value.toLowerCase();
-        const start = document.getElementById('filterStart').value;
-        const end = document.getElementById('filterEnd').value;
-
-        // 並び替えロジック
-        let list = [...Store.order];
-        if (Store.sortMode === 'date') {
-            list.sort((a, b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
-        } else if (Store.sortMode === 'new') {
-            list.reverse();
-        }
-
-        // フィルタリング
-        const filtered = list.filter(id => {
-            const s = Store.db[id];
-            const matchQuery = s.title.toLowerCase().includes(query) || (s.tags || "").toLowerCase().includes(query);
-            const sDate = s.date || "";
-            const matchStart = !start || sDate >= start;
-            const matchEnd = !end || sDate <= end;
-            return matchQuery && matchStart && matchEnd;
-        });
-
-        container.innerHTML = filtered.map(id => this.createSeriesCard(id)).join('');
-        
-        // カードにイベント付与
-        filtered.forEach(id => {
-            const card = document.getElementById(`card-${id}`);
-            card.addEventListener('click', () => App.openDetail(id));
-            Utils.setupSwipeToDelete(card, id, () => Actions.deleteSeries(id));
-        });
-    },
-
-    /** シリーズカードのHTML生成 */
-    createSeriesCard(id) {
-        const s = Store.db[id];
-        const tags = (s.tags || "").split(/[,，\s]+/).filter(t => t);
-        const isComp = (s.items || []).length > 0 && s.items.every(i => i.status === 'comp');
-
-        return `
-            <div class="swipe-container" id="card-${id}">
-                <div class="delete-btn-overlay">削除</div>
-                <div class="card">
-                    ${isComp ? '<span class="status-tag st-comp">COMPLETE</span>' : ''}
-                    <div class="text-bold mb-5" style="font-size:0.95rem;">${Utils.escapeHtml(s.title)}</div>
-                    <div class="flex align-center mb-10" style="font-size:0.7rem; color:var(--text-sub);">
-                        <span>${s.date || '日付未設定'}</span>
-                        <div style="margin-left:10px;">
-                            ${tags.map(t => `<span class="tag-chip">${Utils.escapeHtml(t)}</span>`).join('')}
-                        </div>
-                    </div>
-                    ${this.createInventoryPreview(s.items || [])}
-                </div>
-            </div>
-        `;
-    },
-
-    /** カード内の所有状況プレビュー */
-    createInventoryPreview(items) {
-        if (items.length === 0) return `<div style="font-size:0.7rem; color:var(--text-sub); border-top:1px solid #f9f9f9; padding-top:10px;">アイテム未登録</div>`;
-        
-        return items.map(item => {
-            const ownCount = Object.values(item.own || {}).reduce((a, b) => a + b, 0);
-            return `
-                <div style="border-top:1px solid #f9f9f9; padding-top:8px; margin-top:8px;">
-                    <div class="flex justify-between align-center mb-5">
-                        <span class="text-bold" style="font-size:0.75rem; color:var(--gold);">${Utils.escapeHtml(item.type)}</span>
-                        <span style="font-size:0.7rem; color:var(--text-sub);">所有: ${ownCount}</span>
-                    </div>
-                    <div class="flex flex-wrap">
-                        ${(item.targets || []).map(name => {
-                            const count = (item.own || {})[name] || 0;
-                            const isInf = (item.inf || {})[name];
-                            if (count === 0 && !isInf) return '';
-                            return `<span class="char-chip c-${name}">${name}${count > 1 ? `×${count}` : ''}${isInf ? '∞' : ''}</span>`;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }).join('');
-    },
-
-    /** 詳細画面：アイテムリストの描画 */
-    itemList() {
-        const container = document.getElementById('itemListContainer');
-        const series = Store.db[Store.currentSeriesId];
-        document.getElementById('detailHeaderTitle').textContent = series.title;
-
-        if (!series.items || series.items.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:50px 20px; color:var(--text-sub); font-size:0.8rem;">アイテムがありません。<br>右下の＋ボタンから追加してください。</div>`;
-            return;
-        }
-
-        container.innerHTML = series.items.map((item, idx) => this.createItemRow(item, idx)).join('');
-        
-        // アイテム行にイベント付与
-        series.items.forEach((item, idx) => {
-            document.getElementById(`item-edit-${idx}`).addEventListener('click', () => App.openItemEditor(idx));
-            document.getElementById(`item-unbox-${idx}`).addEventListener('click', () => Actions.openUnboxing(idx));
-            Utils.setupSwipeToDelete(document.getElementById(`item-row-${idx}`), idx, () => Actions.deleteItem(idx));
-        });
-    },
-
-    /** アイテム行のHTML生成 */
-    createItemRow(item, idx) {
-        const statusClass = item.status === 'comp' ? 'st-comp' : (item.status === 'none' ? 'st-none' : 'st-not');
-        const statusText = item.status === 'comp' ? 'COMP' : (item.status === 'none' ? '予定なし' : '未コンプ');
-        
-        const tradeInfo = Utils.generateTradeText(item);
-
-        return `
-            <div class="swipe-container" id="item-row-${idx}">
-                <div class="delete-btn-overlay">削除</div>
-                <div class="card" style="padding:15px;">
-                    <span class="status-tag ${statusClass}">${statusText}</span>
-                    <div class="flex justify-between mb-10">
-                        <div class="text-bold text-gold" style="font-size:0.9rem;">${Utils.escapeHtml(item.type)}</div>
-                        <button class="bulk-btn" id="item-edit-${idx}" style="padding:2px 8px;">編集</button>
-                    </div>
-                    
-                    <div class="inventory-grid" id="item-unbox-${idx}">
-                        <div class="inv-box">
-                            <span class="inv-label">所有</span>
-                            <div class="inv-content">
-                                ${this.createCharChips(item, 'own')}
-                            </div>
-                        </div>
-                        <div class="inv-box">
-                            <span class="inv-label">譲渡可</span>
-                            <div class="inv-content">
-                                ${this.createCharChips(item, 'stock')}
-                            </div>
-                        </div>
-                        <div class="inv-box" style="background:var(--trade-bg);">
-                            <span class="inv-label" style="color:var(--trade-text);">募集文</span>
-                            <div class="trade-text-small">${Utils.escapeHtml(tradeInfo.text)}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    },
-
-    /** キャラクターチップの生成 */
-    createCharChips(item, type) {
-        const data = item[type] || {};
-        return (item.targets || []).map(name => {
-            const count = data[name] || 0;
-            const isInf = type === 'own' && (item.inf || {})[name];
-            if (count === 0 && !isInf) return '';
-            return `<span class="char-chip c-${name}">${name}${count > 1 ? `×${count}` : ''}${isInf ? '∞' : ''}</span>`;
-        }).join('');
-    },
-
-    /** 編集画面の初期化 */
-    editorInit() {
-        const isEdit = Store.currentItemIdx !== null;
-        const series = Store.db[Store.currentSeriesId];
-        const item = isEdit ? series.items[Store.currentItemIdx] : null;
-
-        // キャラセットのセレクトボックス生成
-        const charSel = document.getElementById('editCharSetName');
-        charSel.innerHTML = Object.keys(Store.charSets).map(k => `<option value="${k}">${k}</option>`).join('');
-
-        // プリセットの描画
-        const presetDiv = document.getElementById('presetChips');
-        if (Store.presets.length > 0) {
-            document.getElementById('presetArea').style.display = 'block';
-            presetDiv.innerHTML = Store.presets.map((p, i) => 
-                `<span class="preset-chip" id="preset-${i}">${p.type}</span>`
-            ).join('');
-            Store.presets.forEach((p, i) => {
-                document.getElementById(`preset-${i}`).addEventListener('click', () => Actions.applyPreset(p));
-            });
-        } else {
-            document.getElementById('presetArea').style.display = 'none';
-        }
-
-        // 値のセット
-        if (isEdit) {
-            document.getElementById('editItemType').value = item.type;
-            document.getElementById('editCharSetName').value = item.setName || "デフォルト";
-            document.getElementById('editItemStatus').value = item.status;
-            Store.activeCharList = item.targets || [];
-            Store.tempStocks = JSON.parse(JSON.stringify(item.own || {}));
-            Store.tempInf = JSON.parse(JSON.stringify(item.inf || {}));
-            document.getElementById('historyBanner').style.display = 'none';
-        } else {
-            document.getElementById('editItemType').value = "";
-            document.getElementById('editCharSetName').value = "デフォルト";
-            document.getElementById('editItemStatus').value = "not";
-            Store.activeCharList = Store.charSets["デフォルト"];
-            Store.tempStocks = {};
-            Store.tempInf = {};
-            document.getElementById('historyBanner').style.display = Store.lastItem ? 'flex' : 'none';
-        }
-
-        this.editorGrid();
-    },
-
-    /** 編集画面のグリッド描画 */
-    editorGrid() {
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = Store.activeCharList.map(name => {
-            const count = Store.tempStocks[name] || 0;
-            const isInf = Store.tempInf[name] || false;
-            return `
-                <div class="editor-row">
-                    <div class="char-chip c-${name}" style="margin:0; text-align:center; width:100%;">${name}</div>
-                    <div class="flex align-center justify-between">
-                        <div class="flex align-center gap-10">
-                            <button class="btn-qty" id="qty-minus-${name}">−</button>
-                            <input type="number" class="qty-display ${count > 0 ? 'qty-has' : 'qty-zero'}" 
-                                id="qty-input-${name}" value="${count}" readonly>
-                            <button class="btn-qty" id="qty-plus-${name}">＋</button>
-                        </div>
-                        <button class="inf-btn ${isInf ? 'active' : ''}" id="inf-btn-${name}">∞</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // 各ボタンにイベント付与
-        Store.activeCharList.forEach(name => {
-            document.getElementById(`qty-minus-${name}`).addEventListener('click', () => Actions.updateEditorQty(name, -1));
-            document.getElementById(`qty-plus-${name}`).addEventListener('click', () => Actions.updateEditorQty(name, 1));
-            document.getElementById(`inf-btn-${name}`).addEventListener('click', () => Actions.toggleEditorInf(name));
-        });
-    },
-
-    /** ミッシング（未所有）リストの描画 */
-    missingList() {
-        const container = document.getElementById('missingListContainer');
-        let html = '';
-        let hasMissing = false;
-
-        Store.order.forEach(sId => {
-            const series = Store.db[sId];
-            const missingInSeries = (series.items || []).map((item, idx) => {
-                const missingChars = (item.targets || []).filter(name => !item.own?.[name]);
-                if (missingChars.length === 0 || item.status === 'none') return null;
-                return { item, idx, missingChars };
-            }).filter(Boolean);
-
-            if (missingInSeries.length > 0) {
-                hasMissing = true;
-                html += `
-                    <div class="card mb-15">
-                        <div class="text-gold text-bold mb-10" style="font-size:0.8rem; border-bottom:1px solid var(--gold-light); padding-bottom:5px;">
-                            ${Utils.escapeHtml(series.title)}
-                        </div>
-                        ${missingInSeries.map(m => `
-                            <div class="mb-10">
-                                <div class="flex justify-between align-center">
-                                    <span style="font-size:0.75rem; font-weight:800;">${Utils.escapeHtml(m.item.type)}</span>
-                                    <button class="bulk-btn" id="missing-jump-${sId}-${m.idx}" style="font-size:0.6rem;">編集へ</button>
-                                </div>
-                                <div class="flex flex-wrap mt-5">
-                                    ${m.missingChars.map(c => `<span class="char-chip c-default" style="opacity:0.6;">${c}</span>`).join('')}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-        });
-
-        container.innerHTML = hasMissing ? html : `<div style="text-align:center; padding:100px 20px; color:var(--text-sub);">すべてのアイテムが揃っています！</div>`;
-        
-        // ジャンプボタンにイベント付与
-        if (hasMissing) {
-            Store.order.forEach(sId => {
-                const series = Store.db[sId];
-                (series.items || []).forEach((_, idx) => {
-                    const btn = document.getElementById(`missing-jump-${sId}-${idx}`);
-                    if (btn) btn.addEventListener('click', () => {
-                        Store.currentSeriesId = sId;
-                        App.openItemEditor(idx, true);
-                    });
-                });
-            });
-        }
-    }
-};
-
-// =========================================
-// 5. Action Logic (データ操作)
-// =========================================
-const Actions = {
-    /** シリーズの新規保存 */
-    async saveSeriesModal() {
-        const title = document.getElementById('msTitle').value.trim();
-        if (!title) return Utils.showToast("タイトルを入力してください");
-
-        const id = "s" + Date.now();
-        const date = document.getElementById('msDate').value;
-        const tags = document.getElementById('msTags').value;
-        const useTemp = document.getElementById('msUseTemplate').checked;
-
-        const newSeries = { id, title, date, tags, items: [] };
-
-        if (useTemp && Store.templates.length > 0) {
-            newSeries.items = Store.templates.map(type => ({
-                type, status: 'not', targets: Store.charSets["デフォルト"] || [], 
-                setName: "デフォルト", own: {}, stock: {}, inf: {}
-            }));
-        }
-
-        Store.db[id] = newSeries;
-        Store.order.push(id);
-        await Store.save();
-
-        document.getElementById('msTitle').value = "";
-        App.closeSeriesModal();
+    filterByTag(t) {
+        document.getElementById('searchBar').value = t;
         Render.seriesList();
-        Utils.showToast("シリーズを登録しました");
+        window.scrollTo({top:0, behavior:'smooth'});
     },
 
-    /** アイテムの保存 */
-    async saveItem() {
-        const type = document.getElementById('editItemType').value.trim();
-        if (!type) return Utils.showToast("アイテム名を入力してください");
-
-        const isEdit = Store.currentItemIdx !== null;
-        const series = Store.db[Store.currentSeriesId];
-        const setName = document.getElementById('editCharSetName').value;
-        
-        const itemData = {
-            type,
-            setName,
-            targets: Store.activeCharList,
-            own: Store.tempStocks,
-            inf: Store.tempInf,
-            status: document.getElementById('editItemStatus').value,
-            stock: isEdit ? series.items[Store.currentItemIdx].stock : {}
-        };
-
-        // ステータスの自動判定
-        if (itemData.status !== 'none') {
-            const isComp = itemData.targets.every(name => itemData.own[name] > 0);
-            itemData.status = isComp ? 'comp' : 'not';
-        }
-
-        if (isEdit) {
-            series.items[Store.currentItemIdx] = itemData;
-        } else {
-            series.items.push(itemData);
-        }
-
-        // 履歴保存
-        Store.lastItem = { type, setName };
-        
-        await Store.save();
-        App.closeEditor();
-        Render.itemList();
-        Utils.showToast("保存しました");
-    },
-
-    /** 開封（Unboxing）画面を開く */
-    openUnboxing(idx) {
-        const item = Store.db[Store.currentSeriesId].items[idx];
-        Store.currentItemIdx = idx;
-        
-        document.getElementById('unboxingTitle').textContent = item.type;
-        const grid = document.getElementById('unboxingGrid');
-        
-        grid.innerHTML = (item.targets || []).map(name => {
-            const own = item.own?.[name] || 0;
-            const stock = item.stock?.[name] || 0;
-            return `
-                <div class="unboxing-panel">
-                    <div class="ub-char-label">${name}</div>
-                    <div class="ub-area ub-area-left" id="ub-left-${name}">
-                        <div class="unboxing-count-badge ${own > 0 ? 'has-count' : 'is-zero'}" id="ub-own-val-${name}">${own}</div>
-                        <div style="font-size:0.5rem; opacity:0.6;">保管</div>
-                    </div>
-                    <div class="ub-area ub-area-right" id="ub-right-${name}">
-                        <div class="unboxing-count-badge ${stock > 0 ? 'has-count' : 'is-zero'}" id="ub-stock-val-${name}">${stock}</div>
-                        <div style="font-size:0.5rem; opacity:0.6;">譲渡</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // イベント付与（クリックで＋、長押しでー）
-        item.targets.forEach(name => {
-            this.bindUnboxingEvents(name, 'own', 'left');
-            this.bindUnboxingEvents(name, 'stock', 'right');
-        });
-
-        this.updateUnboxingTotal();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    },
-
-    /** Unboxing用イベントバインド */
-    bindUnboxingEvents(name, type, side) {
-        const el = document.getElementById(`ub-${side}-${name}`);
-        let timer;
-        
-        const handleAdd = (e) => {
-            e.preventDefault();
-            this.updateUnboxingQty(name, type, 1);
-            timer = setTimeout(() => { // 長押し検知
-                this.updateUnboxingQty(name, type, -2); // ＋1分を相殺してー1
-            }, 600);
-        };
-        
-        const handleEnd = () => clearTimeout(timer);
-
-        el.addEventListener('touchstart', handleAdd);
-        el.addEventListener('touchend', handleEnd);
-        el.addEventListener('mousedown', handleAdd);
-        el.addEventListener('mouseup', handleEnd);
-    },
-
-    /** 個数更新：Unboxing */
-    updateUnboxingQty(name, type, delta) {
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        if (!item[type]) item[type] = {};
-        
-        item[type][name] = Math.max(0, (item[type][name] || 0) + delta);
-        
-        // 表示更新
-        const badge = document.getElementById(`ub-${type}-val-${name}`);
-        badge.textContent = item[type][name];
-        badge.className = `unboxing-count-badge ${item[type][name] > 0 ? 'has-count' : 'is-zero'}`;
-        
-        this.updateUnboxingTotal();
-        Store.save();
-    },
-
-    updateUnboxingTotal() {
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        const total = [...Object.values(item.own || {}), ...Object.values(item.stock || {})].reduce((a, b) => a + b, 0);
-        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total}`;
-    },
-
-    /** 設定の保存 */
-    async saveSettings() {
-        Store.tradeConfig.prefix = document.getElementById('tradePrefixInput').value;
-        Store.tradeConfig.suffix = document.getElementById('tradeSuffixInput').value;
-        Store.tradeConfig.showInf = document.getElementById('tradeShowInfMark').checked;
-
-        // キャラセット解析
-        const setsLines = document.getElementById('charSettingsInput').value.split('\n');
-        const newSets = {};
-        setsLines.forEach(line => {
-            const [name, chars] = line.split(':');
-            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim());
-        });
-        if (Object.keys(newSets).length > 0) Store.charSets = newSets;
-
-        // プリセット解析
-        const presetLines = document.getElementById('presetSettingsInput').value.split('\n');
-        Store.presets = presetLines.map(line => {
-            const [type, setName, targets] = line.split(',');
-            if (!type || !setName || !targets) return null;
-            return { type: type.trim(), setName: setName.trim(), targets: targets.split('|').map(t => t.trim()) };
-        }).filter(Boolean);
-
-        // テンプレート解析
-        Store.templates = document.getElementById('tempSettingsInput').value.split(',').map(t => t.trim()).filter(Boolean);
-
-        await Store.save();
-        App.toggleSettings(false);
-        Render.seriesList();
-        Utils.showToast("設定を保存しました");
-    },
-
-    // --- その他編集操作 ---
-    updateEditorQty(name, delta) {
-        Store.tempStocks[name] = Math.max(0, (Store.tempStocks[name] || 0) + delta);
-        const input = document.getElementById(`qty-input-${name}`);
-        input.value = Store.tempStocks[name];
-        input.className = `qty-display ${Store.tempStocks[name] > 0 ? 'qty-has' : 'qty-zero'}`;
-    },
-
-    toggleEditorInf(name) {
-        Store.tempInf[name] = !Store.tempInf[name];
-        document.getElementById(`inf-btn-${name}`).classList.toggle('active', Store.tempInf[name]);
-    },
-
-    applyPreset(preset) {
-        document.getElementById('editItemType').value = preset.type;
-        document.getElementById('editCharSetName').value = preset.setName;
-        Store.activeCharList = preset.targets;
-        Render.editorGrid();
-    },
-
-    bulkToggleTargets(val) {
-        Store.activeCharList.forEach(name => {
-            Store.tempStocks[name] = val ? 1 : 0;
-        });
-        Render.editorGrid();
-    },
-
-    bulkIncrementOwn() {
-        Store.activeCharList.forEach(name => {
-            Store.tempStocks[name] = (Store.tempStocks[name] || 0) + 1;
-        });
-        Render.editorGrid();
-    },
-
-    bulkResetCounts() {
-        if (!confirm("すべての個数を0にしますか？")) return;
-        Store.tempStocks = {};
-        Store.tempInf = {};
-        Render.editorGrid();
-    },
-
-    async deleteSeries(id) {
-        if (!confirm("このシリーズを削除しますか？")) return;
-        delete Store.db[id];
-        Store.order = Store.order.filter(oid => oid !== id);
-        await Store.save();
-        Render.seriesList();
-    },
-
-    async deleteItem(idx) {
-        if (!confirm("このアイテムを削除しますか？")) return;
-        Store.db[Store.currentSeriesId].items.splice(idx, 1);
-        await Store.save();
-        Render.itemList();
-    },
-
-    async deleteAllItems() {
-        if (!confirm("このシリーズのアイテムをすべて削除しますか？")) return;
-        Store.db[Store.currentSeriesId].items = [];
-        await Store.save();
-        Render.itemList();
-    },
-
-    /** バックアップ出力 */
-    exportBackup() {
-        const data = { db: Store.db, order: Store.order, charSets: Store.charSets, presets: Store.presets, templates: Store.templates };
-        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `collection_archive_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-    },
-
-    /** バックアップ読込 */
-    importBackup(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                Store.db = data.db || {};
-                Store.order = data.order || [];
-                Store.charSets = data.charSets || Store.charSets;
-                Store.presets = data.presets || [];
-                Store.templates = data.templates || Store.templates;
-                await Store.save();
-                location.reload();
-            } catch (err) {
-                alert("バックアップファイルの形式が正しくありません");
+    jumpToEditorFromMissing(sId, itemIdx, charName) {
+        Store.currentSeriesId = sId;
+        App.openItemEditor(itemIdx, true);
+        setTimeout(() => {
+            const rows = document.querySelectorAll('.editor-row');
+            for(let row of rows) {
+                if(row.innerText.includes(charName)) {
+                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    row.style.outline = "2px solid var(--gold)";
+                    setTimeout(() => row.style.outline = "none", 2000);
+                    break;
+                }
             }
-        };
-        reader.readAsText(file);
+        }, 300);
     }
 };
 
-// =========================================
-// 6. Utility Helper (補助機能)
-// =========================================
-const Utils = {
-    /** HTMLエスケープ（XSS対策） */
-    escapeHtml(str) {
-        if (!str) return "";
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-        return str.replace(/[&<>"']/g, m => map[m]);
-    },
+// Browser History Handling
+window.onpopstate = function(e) {
+    const state = e.state || {};
+    const editor = document.getElementById('editorView');
+    const detail = document.getElementById('detailView');
 
-    /** トースト通知の表示 */
-    showToast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 2000);
-    },
-
-    /** 募集文の自動生成 */
-    generateTradeText(item) {
-        const config = Store.tradeConfig;
-        const stocks = (item.targets || []).filter(name => (item.stock?.[name] || 0) > 0);
-        const needs = (item.targets || []).filter(name => !item.own?.[name] || (item.inf?.[name]));
-
-        if (stocks.length === 0 && needs.length === 0) return { text: "交換情報なし" };
-
-        let text = `${config.prefix}${item.type} 交換\n`;
-        text += `譲：${stocks.map(n => n + (item.stock[n] > 1 ? `(${item.stock[n]})` : '')).join('、')}\n`;
-        text += `求：${needs.map(n => n + (item.inf?.[name] && config.showInf ? '(∞)' : '')).join('、')}\n`;
-        text += config.suffix;
-
-        return { text };
-    },
-
-    /** スワイプで削除のUI実装 */
-    setupSwipeToDelete(el, id, onDelete) {
-        let startX = 0;
-        let currentX = 0;
-        const card = el.querySelector('.card');
-        
-        el.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            card.style.transition = 'none';
-        }, {passive: true});
-
-        el.addEventListener('touchmove', (e) => {
-            currentX = e.touches[0].clientX - startX;
-            if (currentX < 0) {
-                const x = Math.max(currentX, -100);
-                card.style.transform = `translateX(${x}px)`;
-            }
-        }, {passive: true});
-
-        el.addEventListener('touchend', () => {
-            card.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)';
-            if (currentX < -70) {
-                onDelete();
-            }
-            card.style.transform = 'translateX(0)';
-            currentX = 0;
-        });
+    if (editor.style.display === 'block') {
+        editor.style.display = 'none';
+        if (Store.editorFromMissing) {
+            Store.editorFromMissing = false;
+            Render.missingList();
+        }
+    } else if (detail.style.display === 'block' && state.view !== 'detail') {
+        detail.style.display = 'none';
+        Render.seriesList();
     }
 };
-
-// 起動
-document.addEventListener('DOMContentLoaded', () => App.init());
