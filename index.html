@@ -126,11 +126,9 @@
             position: relative;
             margin-bottom: 15px; overflow: hidden;
             border-radius: 20px;
-            /* 重要: ブラウザのネイティブスクロール(Y軸)を優先させる */
             touch-action: pan-y;
             background: transparent;
-            /* ハードウェアアクセラレーションを有効化 */
-            transform: translateZ(0); 
+            transform: translateZ(0);
         }
         .swipe-container.dragging { opacity: 0.5; }
         
@@ -141,13 +139,11 @@
             border: 1px solid rgba(197, 160, 89, 0.1);
             position: relative;
             z-index: 2; width: 100%; border-radius: 20px;
-            transition: transform 0.2s ease-out; /* スムーズさを調整 */
+            transition: transform 0.2s ease-out;
             will-change: transform;
-            /* カード自体はタッチアクションを許可 */
             touch-action: pan-y; 
             min-height: 80px;
         }
-        /* スワイプ中はtransitionを切って追従性を上げる */
         .card.swiping { transition: none; }
         
         .delete-btn-overlay {
@@ -158,25 +154,14 @@
             font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0;
         }
 
-        /* シリーズカード用レイアウト */
-        .series-card-content {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
+        .series-card-content { display: flex; align-items: flex-start; gap: 12px; }
         .series-thumb {
-            width: 70px;
-            height: 70px;
-            border-radius: 12px;
-            object-fit: cover;
-            background-color: #f5f5f5;
-            border: 1px solid var(--border-color);
+            width: 70px; height: 70px;
+            border-radius: 12px; object-fit: cover;
+            background-color: #f5f5f5; border: 1px solid var(--border-color);
             flex-shrink: 0;
         }
-        .series-info {
-            flex: 1;
-            min-width: 0; /* フレックスアイテムの縮小許可 */
-        }
+        .series-info { flex: 1; min-width: 0; }
 
         /* =========================================
            V. Chips & Status Tags
@@ -293,7 +278,8 @@
             margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
         }
         .btn-qty {
-            width: 36px; height: 36px; border-radius: 50%;
+            width: 36px;
+            height: 36px; border-radius: 50%;
             border: 1px solid var(--gold-light); background: #fff;
             font-size: 1.2rem; color: var(--gold); display: flex;
             align-items: center; justify-content: center;
@@ -482,6 +468,28 @@
             color: var(--gold);
             font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
         }
+
+        /* Chara View Specifics */
+        .chara-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); gap: 10px;
+        }
+        .chara-stat-card {
+            background: #fff; border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 10px; display: flex; flex-direction: column;
+            align-items: center; cursor: pointer; position: relative;
+        }
+        .chara-stat-name {
+            font-weight: bold; font-size: 0.9rem; margin: 5px 0;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .chara-stat-row {
+            display: flex; width: 100%; justify-content: space-around;
+            margin-top: 5px; font-size: 0.75rem; color: var(--text-sub);
+        }
+        .chara-stat-val {
+            font-weight: bold; color: var(--text-main); font-size: 0.9rem;
+        }
         
         /* Utility */
         .flex { display: flex; }
@@ -495,7 +503,8 @@
         
         /* ローディングインジケータ */
         .loading-sentinel {
-            height: 50px; width: 100%;
+            height: 50px;
+            width: 100%;
             display: flex; align-items: center; justify-content: center;
             color: var(--gold-light);
             font-size: 0.8rem;
@@ -511,11 +520,12 @@
 
 <header>
     <button onclick="App.toggleSettings(true)" class="header-btn-right">⚙</button>
-    <h1>COLLECTION ARCHIVE v1.1</h1>
+    <h1>COLLECTION ARCHIVE v1.2</h1>
 </header>
 
 <div class="nav-tabs">
     <div class="nav-tab active" id="tab-list" onclick="App.switchMainTab('list')">SERIES</div>
+    <div class="nav-tab" id="tab-chara" onclick="App.switchMainTab('chara')">CHARA</div>
     <div class="nav-tab" id="tab-missing" onclick="App.switchMainTab('missing')">MISSING</div>
 </div>
 
@@ -542,6 +552,30 @@
     </div>
     <div id="seriesListContainer"></div>
     <div id="loadingSentinel" class="loading-sentinel" style="display:none;">Loading...</div>
+</div>
+
+<div id="charaView" class="container" style="display:none;">
+    <div id="charaListContainer"></div>
+    <div id="charaDetailContainer" style="display:none;">
+        <div class="flex align-center mb-15">
+            <button onclick="App.closeCharaDetail()" style="background:none; border:none; color:var(--text-sub); margin-right:10px;">◀ 戻る</button>
+            <h3 id="charaDetailTitle" style="margin:0; font-size:1rem; color:var(--gold);"></h3>
+        </div>
+        <div class="sort-controls">
+            <button class="sort-btn active">譲渡可能</button>
+            <button class="sort-btn" onclick="Utils.showToast('現在開発中です')" style="color:#ccc; border-color:#eee;">保管アイテム</button>
+        </div>
+        <input type="text" id="charaSearchInput" placeholder="アイテム・シリーズを検索..." oninput="Render.charaTradeList()" class="mb-15">
+        
+        <div style="background:#fff9f0; padding:10px; border-radius:12px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+             <label style="font-size:0.8rem; font-weight:bold; display:flex; align-items:center; gap:5px;">
+                 <input type="checkbox" onchange="Actions.tradeCheckAll(this.checked)" style="width:18px; height:18px;"> 全選択
+             </label>
+             <button onclick="Actions.executeCharaBulkTrade()" style="background:var(--gold); color:white; border:none; padding:6px 12px; border-radius:8px; font-size:0.75rem; font-weight:bold;">選択したものを譲渡済にする</button>
+        </div>
+
+        <div id="charaTradeListContainer"></div>
+    </div>
 </div>
 
 <div id="missingView" class="container" style="display:none;">
@@ -675,8 +709,9 @@
 
 <script>
 /**
- * COLLECTION ARCHIVE v1.1
+ * COLLECTION ARCHIVE v1.2
  * Refactored for Rendering Performance & Swipe UX
+ * Added Character Summary & Trade Management
  */
 
 // =========================================
@@ -762,7 +797,9 @@ const Store = {
   currentItemIdx: null,
   activeCharList: [],
   tempStocks: {},
-  editorFromMissing: false,
+  
+  editorReturnTo: null, // 'missing', 'chara', or null
+  selectedChar: null,   // Character selected in Chara tab
   
   // Modal Temp
   tempImage: null,
@@ -831,7 +868,7 @@ const Utils = {
     // 定数: スワイプとみなす閾値
     const SWIPE_THRESHOLD = 50;
     const MAX_SWIPE = -100;
-    
+
     element.addEventListener('touchstart', (e) => {
       if (Store.sortMode === 'custom' && isCustomSort) return;
       const touch = e.touches[0];
@@ -894,7 +931,7 @@ const Utils = {
               }
           }
       }
-    }, {passive: false}); // preventDefaultを使うためfalse推奨だが、パフォーマンス重視なら構成見直し
+    }, {passive: false});
 
     element.addEventListener('touchend', (e) => {
       if (!isSwiping) return;
@@ -1022,7 +1059,6 @@ const Render = {
                 this.renderNextBatch();
             }
         }, { rootMargin: '200px' });
-        
         this.observer.observe(loading);
     }
     
@@ -1073,7 +1109,6 @@ const Render = {
           const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
           const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
           const favActive = s.fav ? 'active' : '';
-
           let tagsHtml = '';
           if (s.tags) {
               tagsHtml = s.tags.split(/[、, ]/).filter(t => t).map(t => 
@@ -1095,7 +1130,7 @@ const Render = {
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                   <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
+                      <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
                     <button class="fav-btn ${favActive}" data-action="fav" data-id="${id}">★</button>
                   </div>
                 </div>
@@ -1124,7 +1159,6 @@ const Render = {
 
       container.appendChild(fragment);
       this.renderedCount = end;
-
       if (this.renderedCount >= total) {
           loading.style.display = 'none';
       }
@@ -1155,7 +1189,7 @@ const Render = {
 
       const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
       
-      let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
+      let ownTextElems = [], tradeChipElems = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
       let totalOwn = 0, totalTrade = 0;
       const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
 
@@ -1165,11 +1199,27 @@ const Render = {
         totalOwn += s.own;
         totalTrade += s.trade;
 
-        if (s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
+        // 保管 (Stock) -> Text logic
+        if (s.own > 0) {
+            if (s.own === 1) {
+                // 通常表示
+                ownTextElems.push(`<span class="trade-text-small" style="margin-right:4px;">${c}</span>`);
+            } else {
+                // 2以上で強調表示
+                ownTextElems.push(`<span class="trade-text-small" style="color:var(--gold); font-weight:800; margin-right:4px;">${c}×${s.own}</span>`);
+            }
+        }
+
+        // 譲渡 (Trade) -> Chip logic
         if (s.trade > 0) {
-          tradeTextArr.push(`${c}${s.trade}`);
+          // チップ表示
+          const countLabel = s.trade > 1 ? `<span style="font-size:0.85em; margin-left:1px;">×${s.trade}</span>` : '';
+          tradeChipElems.push(`<span class="char-chip c-${c.trim()}">${c}${countLabel}</span>`);
+          
+          // コピー用テキストは維持
           tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`);
         }
+
         if (s.infinite) {
           infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
         }
@@ -1181,7 +1231,6 @@ const Render = {
           }
         }
       });
-
       const prefix = Store.tradeConfig.prefix ? Store.tradeConfig.prefix + "\n" : "";
       const suffix = Store.tradeConfig.suffix ? "\n" + Store.tradeConfig.suffix : "";
       const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
@@ -1204,8 +1253,8 @@ const Render = {
           </div>
         </div>
         <div class="inventory-grid" onclick="App.openItemEditor(${idx})">
-          <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
-          <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
+          <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownTextElems.join(' ') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
+          <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content">${tradeChipElems.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
           <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missingChips}</div></div>
         </div>
         <div class="inv-summary-row">
@@ -1217,7 +1266,6 @@ const Render = {
           <div class="inf-status-container">${infiniteStatusChips.join('')}</div>
           <span onclick="event.stopPropagation(); App.openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
         </div>`;
-      
       swipeWrapper.appendChild(deleteBtn);
       swipeWrapper.appendChild(card);
       fragment.appendChild(swipeWrapper);
@@ -1297,7 +1345,6 @@ const Render = {
           }
         });
       });
-
       if (list.length > 0) {
         found = true;
         const group = document.createElement('div');
@@ -1321,6 +1368,104 @@ const Render = {
       }
     });
     if (!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
+  },
+
+  // Render Chara Stats List
+  charaStats() {
+    const container = document.getElementById('charaListContainer');
+    container.innerHTML = "";
+    
+    // 全キャラの集計
+    let allChars = new Set();
+    Object.values(Store.charSets).forEach(list => list.forEach(c => allChars.add(c)));
+    let stats = {};
+    Array.from(allChars).forEach(c => stats[c] = { own: 0, trade: 0 });
+    
+    // 全データを走査
+    Store.order.forEach(id => {
+        const s = Store.db[id];
+        (s.items || []).forEach(item => {
+            Object.keys(item.stocks || {}).forEach(charName => {
+                if (stats[charName]) {
+                    stats[charName].own += (item.stocks[charName].own || 0);
+                    stats[charName].trade += (item.stocks[charName].trade || 0);
+                }
+            });
+        });
+    });
+
+    const grid = document.createElement('div');
+    grid.className = 'chara-grid';
+    
+    Array.from(allChars).forEach(c => {
+        const d = stats[c];
+        const card = document.createElement('div');
+        card.className = `chara-stat-card c-${c.trim()}`;
+        card.onclick = () => App.openCharaDetail(c);
+        
+        card.innerHTML = `
+            <div class="chara-stat-name">${c}</div>
+            <div class="chara-stat-row">
+                <div style="text-align:center;">保管<br><span class="chara-stat-val">${d.own}</span></div>
+                <div style="text-align:center;">譲渡<br><span class="chara-stat-val" style="color:${d.trade>0?'var(--gold)':'inherit'}">${d.trade}</span></div>
+            </div>`;
+        grid.appendChild(card);
+    });
+    container.appendChild(grid);
+  },
+
+  // Render Chara Trade List (Extraction View)
+  charaTradeList() {
+      const container = document.getElementById('charaTradeListContainer');
+      container.innerHTML = "";
+      const char = Store.selectedChar;
+      const term = document.getElementById('charaSearchInput').value.toLowerCase();
+      
+      let list = [];
+      Store.order.forEach(sId => {
+          const s = Store.db[sId];
+          (s.items || []).forEach((item, itemIdx) => {
+              const stock = item.stocks && item.stocks[char];
+              if (stock && stock.trade > 0) {
+                  // 検索フィルタ
+                  if (term && !s.title.toLowerCase().includes(term) && !item.type.toLowerCase().includes(term)) return;
+                  
+                  list.push({
+                      seriesId: sId,
+                      seriesTitle: s.title,
+                      itemIdx: itemIdx,
+                      itemType: item.type,
+                      tradeCount: stock.trade
+                  });
+              }
+          });
+      });
+
+      if (list.length === 0) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:30px;">譲渡可能なアイテムはありません</div>`;
+          return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      list.forEach(d => {
+          const el = document.createElement('div');
+          el.style.background = '#fff';
+          el.style.borderBottom = '1px solid #f0e6e6';
+          el.style.padding = '12px 5px';
+          el.style.display = 'flex';
+          el.style.alignItems = 'center';
+          el.innerHTML = `
+            <input type="checkbox" class="trade-check" data-sid="${d.seriesId}" data-idx="${d.itemIdx}" style="width:20px; height:20px; margin-right:12px;">
+            <div style="flex:1; cursor:pointer;" onclick="App.jumpToEditorFromChara('${d.seriesId}', ${d.itemIdx})">
+                <div style="font-size:0.7rem; color:var(--text-sub); margin-bottom:2px;">${d.seriesTitle}</div>
+                <div style="font-size:0.9rem; font-weight:bold; display:flex; justify-content:space-between;">
+                    <span>${d.itemType}</span>
+                    <span style="color:var(--gold);">譲渡: ${d.tradeCount}</span>
+                </div>
+            </div>`;
+          fragment.appendChild(el);
+      });
+      container.appendChild(fragment);
   },
 
   // Render Unboxing Mode
@@ -1347,7 +1492,6 @@ const Render = {
         area.onpointerup = (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); Actions.updateUnboxingCount(c, type, 1); } };
         area.oncontextmenu = (e) => e.preventDefault();
       };
-      
       attachHandler(panel.querySelector('.ub-area-left'), 'own');
       attachHandler(panel.querySelector('.ub-area-right'), 'trade');
       grid.appendChild(panel);
@@ -1393,7 +1537,7 @@ const Actions = {
         s.tags = document.getElementById('msTags').value;
         if (Store.tempImage !== undefined) {
              // undefined means no change (if null, user cleared it)
-             s.image = Store.tempImage; 
+             s.image = Store.tempImage;
         }
         await Store.save();
         document.getElementById('detailHeaderTitle').textContent = s.title; // update header if open
@@ -1404,7 +1548,6 @@ const Actions = {
         const useTemp = document.getElementById('msUseTemplate').checked;
         let items = [];
         if(useTemp) Store.templates.forEach(t => items.push({ type: t, stocks: {}, targets: [...CONSTANTS.DEFAULT_CHARS], status: "not", charSetName: "デフォルト" }));
-        
         Store.db[id] = { 
           title, 
           date: document.getElementById('msDate').value, 
@@ -1469,8 +1612,16 @@ const Actions = {
     history.back();
     document.getElementById('editorView').style.display = 'none';
     
-    if (!Store.editorFromMissing) Render.itemList();
-    else { Store.editorFromMissing = false; Render.missingList(); }
+    // 戻り先の更新
+    if (Store.editorReturnTo === 'missing') {
+        Store.editorReturnTo = null;
+        Render.missingList();
+    } else if (Store.editorReturnTo === 'chara') {
+        Store.editorReturnTo = null;
+        Render.charaTradeList();
+    } else {
+        Render.itemList();
+    }
     Render.seriesList(true); // コンプ状態の更新のため
   },
 
@@ -1542,6 +1693,36 @@ const Actions = {
       Render.editorGrid(Actions.getSelectedTargets());
       Utils.showToast("リセットしました");
     }
+  },
+
+  // --- Bulk Trade Actions (Chara View) ---
+  tradeCheckAll(checked) {
+      document.querySelectorAll('.trade-check').forEach(c => c.checked = checked);
+  },
+
+  async executeCharaBulkTrade() {
+      const checks = document.querySelectorAll('.trade-check:checked');
+      if (checks.length === 0) return Utils.showToast("選択されていません");
+      
+      const char = Store.selectedChar;
+      let count = 0;
+      
+      checks.forEach(c => {
+          const sId = c.dataset.sid;
+          const idx = parseInt(c.dataset.idx);
+          const item = Store.db[sId].items[idx];
+          
+          if (item && item.stocks[char] && item.stocks[char].trade > 0) {
+              item.stocks[char].trade -= 1;
+              item.status = Utils.autoDetermineStatus(item);
+              count++;
+          }
+      });
+      
+      await Store.save();
+      Render.charaTradeList();
+      Render.charaStats(); // Update stats in background
+      Utils.showToast(`${count}件を処理しました`);
   },
 
   // --- Unboxing Logic ---
@@ -1653,7 +1834,6 @@ const App = {
   async init() {
     await Store.init();
     Render.seriesList(true);
-    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail', err));
     }
@@ -1670,10 +1850,18 @@ const App = {
   switchMainTab(tab) {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.getElementById(`tab-${tab}`).classList.add('active');
+    
     document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
     document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+    document.getElementById('charaView').style.display = tab === 'chara' ? 'block' : 'none';
+    
     document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+    
     if (tab === 'missing') Render.missingList();
+    if (tab === 'chara') {
+        App.closeCharaDetail();
+        Render.charaStats();
+    }
   },
 
   openDetail(id) {
@@ -1689,10 +1877,27 @@ const App = {
     if (history.state && history.state.view === 'detail') history.back();
     Render.seriesList(true); // 状態更新反映のため
   },
+  
+  // Chara View Navigation
+  openCharaDetail(charName) {
+      Store.selectedChar = charName;
+      document.getElementById('charaListContainer').style.display = 'none';
+      document.getElementById('charaDetailContainer').style.display = 'block';
+      document.getElementById('charaDetailTitle').textContent = `${charName} の管理`;
+      document.getElementById('charaSearchInput').value = "";
+      Render.charaTradeList();
+  },
+  
+  closeCharaDetail() {
+      Store.selectedChar = null;
+      document.getElementById('charaDetailContainer').style.display = 'none';
+      document.getElementById('charaListContainer').style.display = 'block';
+      Render.charaStats(); // Refresh data
+  },
 
-  openItemEditor(idx = null, fromMissing = false) {
+  openItemEditor(idx = null, returnTo = null) {
     Store.currentItemIdx = idx;
-    Store.editorFromMissing = fromMissing;
+    Store.editorReturnTo = returnTo;
     
     const presetArea = document.getElementById('presetArea');
     const historyBanner = document.getElementById('historyBanner');
@@ -1727,7 +1932,14 @@ const App = {
   closeEditor() {
     document.getElementById('editorView').style.display = 'none';
     if (history.state && history.state.view === 'editor') history.back();
-    if (Store.editorFromMissing) { Store.editorFromMissing = false; Render.missingList(); }
+    
+    if (Store.editorReturnTo === 'missing') {
+        Store.editorReturnTo = null;
+        Render.missingList();
+    } else if (Store.editorReturnTo === 'chara') {
+        Store.editorReturnTo = null;
+        Render.charaTradeList();
+    }
   },
 
   applyHistory() {
@@ -1781,7 +1993,6 @@ const App = {
       document.getElementById('msTags').value = s.tags || "";
       document.getElementById('msTemplateOption').style.display = 'none';
       document.getElementById('msDeleteBtnContainer').style.display = 'block';
-      
       if(s.image) {
           document.getElementById('msImagePreview').src = s.image;
           document.getElementById('msImagePreviewArea').style.display = 'block';
@@ -1849,7 +2060,7 @@ const App = {
 
   jumpToEditorFromMissing(sId, itemIdx, charName) {
     Store.currentSeriesId = sId;
-    App.openItemEditor(itemIdx, true);
+    App.openItemEditor(itemIdx, 'missing');
     setTimeout(() => {
       const rows = document.querySelectorAll('.editor-row');
       for(let row of rows) {
@@ -1861,6 +2072,11 @@ const App = {
         }
       }
     }, 300);
+  },
+
+  jumpToEditorFromChara(sId, itemIdx) {
+      Store.currentSeriesId = sId;
+      App.openItemEditor(itemIdx, 'chara');
   }
 };
 
@@ -1874,9 +2090,12 @@ window.onpopstate = function(e) {
 
   if (editor.style.display === 'block') {
     editor.style.display = 'none';
-    if (Store.editorFromMissing) {
-      Store.editorFromMissing = false;
+    if (Store.editorReturnTo === 'missing') {
+      Store.editorReturnTo = null;
       Render.missingList();
+    } else if (Store.editorReturnTo === 'chara') {
+      Store.editorReturnTo = null;
+      Render.charaTradeList();
     }
   } else if (detail.style.display === 'block' && state.view !== 'detail') {
     detail.style.display = 'none';
@@ -1886,5 +2105,3 @@ window.onpopstate = function(e) {
 </script>
 </body>
 </html>
-
-
